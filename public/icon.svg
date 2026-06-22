@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <rect width="512" height="512" rx="80" fill="#7c3aed"/>
+  <circle cx="256" cy="240" r="140" fill="#a855f7"/>
+  <!-- horn -->
+  <polygon points="256,60 278,190 234,190" fill="#fde68a"/>
+  <!-- mane dots -->
+  <circle cx="170" cy="185" r="30" fill="#f97316"/>
+  <circle cx="342" cy="185" r="30" fill="#3b82f6"/>
+  <circle cx="145" cy="240" r="22" fill="#a855f7"/>
+  <circle cx="367" cy="240" r="22" fill="#38bdf8"/>
+  <!-- eyes -->
+  <circle cx="228" cy="255" r="16" fill="#1e1b4b"/>
+  <circle cx="284" cy="255" r="16" fill="#1e1b4b"/>
+  <circle cx="233" cy="249" r="5" fill="white"/>
+  <circle cx="289" cy="249" r="5" fill="white"/>
+  <!-- star -->
+  <text x="256" y="440" font-size="90" text-anchor="middle" font-family="serif" fill="#fde68a">★</text>
+</svg>
