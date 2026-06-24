@@ -20,4 +20,5 @@ export interface Creature {
   nickname: string
   level: number
   currentHp: number
+  accentColor?: string
 }

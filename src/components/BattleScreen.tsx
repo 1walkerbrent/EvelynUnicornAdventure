@@ -1,0 +1,534 @@
+import { useState, useEffect, useRef, useCallback } from 'react'
+import {
+  createBattleState, nextActor, applyAttack, isBattleOver, calcDamage,
+} from '../engine/battle'
+import type { BattlePony, BattleState } from '../engine/battle'
+import { getTypeMultiplier } from '../engine/combat'
+import CreatureSprite from './CreatureSprite'
+
+// ── Layout constants ──────────────────────────────────────────────────────────
+// Staggered arena positions matching the design mockup (% of viewport).
+// Index 0 = back/top, 2 = front/bottom.
+const PLAYER_POS = [
+  { top: '11%', left: '7%'  },
+  { top: '41%', left: '4%'  },
+  { top: '67%', left: '10%' },
+] as const
+
+const ENEMY_POS = [
+  { top: '9%',  right: '7%'  },
+  { top: '39%', right: '4%'  },
+  { top: '65%', right: '10%' },
+] as const
+
+const SPRITE_SIZE = 96
+
+// ── Types ─────────────────────────────────────────────────────────────────────
+type Phase = 'idle' | 'playerTurn' | 'animating' | 'victory' | 'defeat'
+
+interface DmgFloat {
+  id: number
+  x: number
+  y: number
+  label: string
+  isSuper: boolean
+  isWeak: boolean
+}
+
+interface Props {
+  playerPonies: BattlePony[]
+  enemyPonies: BattlePony[]
+  enemyLabel?: string
+  onVictory: () => void
+  onDefeat: () => void
+}
+
+// ── Component ─────────────────────────────────────────────────────────────────
+export default function BattleScreen({
+  playerPonies: initPlayers,
+  enemyPonies:  initEnemies,
+  enemyLabel = 'Opponent',
+  onVictory,
+  onDefeat,
+}: Props) {
+  const [battleState, setBattleState] = useState<BattleState>(() =>
+    createBattleState(initPlayers, initEnemies),
+  )
+  const [phase,         setPhase]         = useState<Phase>('idle')
+  const [activeActor,   setActiveActor]   = useState<{ pony: BattlePony; isPlayer: boolean } | null>(null)
+  const [attackingId,   setAttackingId]   = useState<string | null>(null)
+  const [attackingLeft, setAttackingLeft] = useState(false)
+  const [flashingId,    setFlashingId]    = useState<string | null>(null)
+  const [tapMode,       setTapMode]       = useState(false)
+  const [dragOrigin,    setDragOrigin]    = useState<{ x: number; y: number } | null>(null)
+  const [dragPos,       setDragPos]       = useState<{ x: number; y: number } | null>(null)
+  const [hovEnemyId,    setHovEnemyId]    = useState<string | null>(null)
+  const [floats,        setFloats]        = useState<DmgFloat[]>([])
+
+  const ponyRefs    = useRef<Record<string, HTMLDivElement | null>>({})
+  const pointerDown = useRef<{ x: number; y: number } | null>(null)
+  // Keep a ref in sync with battleState so callbacks always see current state
+  const stateRef    = useRef(battleState)
+  stateRef.current  = battleState
+
+  // ── executeAttack — runs lunge → flash → HP drain → idle ─────────────────
+  const executeAttack = useCallback((
+    snap: BattleState,
+    attackerId: string,
+    targetId: string,
+  ) => {
+    const { state: newState, event } = applyAttack(snap, attackerId, targetId)
+    const isPlayerAttacker = snap.playerPonies.some(p => p.id === attackerId)
+
+    setAttackingId(attackerId)
+    setAttackingLeft(!isPlayerAttacker)
+
+    // After lunge peak (~380 ms), show impact
+    setTimeout(() => {
+      setAttackingId(null)
+      setFlashingId(targetId)
+      setBattleState(newState)
+
+      // Floating damage number
+      const el = ponyRefs.current[targetId]
+      if (el) {
+        const rect = el.getBoundingClientRect()
+        const fid  = Date.now() + Math.random()
+        setFloats(prev => [...prev, {
+          id:      fid,
+          x:       rect.left + rect.width  / 2,
+          y:       rect.top  + rect.height / 4,
+          label:   String(event.damage),
+          isSuper: event.multiplier === 'super',
+          isWeak:  event.multiplier === 'weak',
+        }])
+        setTimeout(() => setFloats(prev => prev.filter(f => f.id !== fid)), 950)
+      }
+
+      // Clear flash, advance to next turn
+      setTimeout(() => {
+        setFlashingId(null)
+        setTapMode(false)
+        setDragOrigin(null)
+        setDragPos(null)
+        setHovEnemyId(null)
+        setActiveActor(null)
+        setPhase('idle')
+      }, 480)
+    }, 380)
+  }, [])
+
+  // ── Turn machine ──────────────────────────────────────────────────────────
+  useEffect(() => {
+    if (phase !== 'idle') return
+
+    const over = isBattleOver(battleState)
+    if (over === 'player') { setPhase('victory'); return }
+    if (over === 'enemy')  { setPhase('defeat');  return }
+
+    const actor = nextActor(battleState)
+    if (!actor) return
+    setActiveActor(actor)
+
+    if (!actor.isPlayer) {
+      // setPhase must NOT be called here — changing any dep triggers cleanup → clearTimeout
+      const snap = battleState
+      const t = setTimeout(() => {
+        setPhase('animating')
+        const targetId = snap.playerPonies.find(p => p.currentHp > 0)?.id
+        if (targetId) executeAttack(snap, actor.pony.id, targetId)
+      }, 700)
+      return () => clearTimeout(t)
+    } else {
+      setPhase('playerTurn')
+    }
+  }, [battleState, phase, executeAttack])
+
+  // ── Player pony tap (step 1 of tap→tap flow) ─────────────────────────────
+  function handlePonyClick(ponyId: string) {
+    if (phase !== 'playerTurn') return
+    if (activeActor?.pony.id !== ponyId) return
+    setTapMode(t => !t)
+  }
+
+  // ── Enemy tap (step 2, or end of drag) ───────────────────────────────────
+  function fireAtEnemy(enemyId: string) {
+    if (phase !== 'playerTurn' || !activeActor) return
+    const enemy = battleState.enemyPonies.find(p => p.id === enemyId)
+    if (!enemy || enemy.currentHp <= 0) return
+    setPhase('animating')
+    executeAttack(stateRef.current, activeActor.pony.id, enemyId)
+  }
+
+  function handleEnemyClick(enemyId: string) {
+    if (!tapMode) return
+    fireAtEnemy(enemyId)
+  }
+
+  // ── Drag ──────────────────────────────────────────────────────────────────
+  function handlePointerDown(e: React.PointerEvent, ponyId: string) {
+    if (phase !== 'playerTurn' || activeActor?.pony.id !== ponyId) return
+    e.currentTarget.setPointerCapture(e.pointerId)
+    const el = ponyRefs.current[ponyId]
+    if (!el) return
+    const r = el.getBoundingClientRect()
+    pointerDown.current = { x: e.clientX, y: e.clientY }
+    setDragOrigin({ x: r.left + r.width / 2, y: r.top + r.height / 2 })
+    setDragPos({ x: e.clientX, y: e.clientY })
+  }
+
+  function handleStagePointerMove(e: React.PointerEvent) {
+    if (!dragOrigin) return
+    setDragPos({ x: e.clientX, y: e.clientY })
+    // Hit-test enemy pony bounding rects
+    let found: string | null = null
+    for (const [id, el] of Object.entries(ponyRefs.current)) {
+      if (!el) continue
+      if (!battleState.enemyPonies.some(p => p.id === id && p.currentHp > 0)) continue
+      const r = el.getBoundingClientRect()
+      if (e.clientX >= r.left && e.clientX <= r.right &&
+          e.clientY >= r.top  && e.clientY <= r.bottom) {
+        found = id
+        break
+      }
+    }
+    setHovEnemyId(found)
+  }
+
+  function handleStagePointerUp(e: React.PointerEvent) {
+    const start = pointerDown.current
+    pointerDown.current = null
+
+    if (!dragOrigin) return
+
+    // Tiny movement = tap on own pony, not a drag → toggle tapMode
+    const dist = start
+      ? Math.hypot(e.clientX - start.x, e.clientY - start.y)
+      : 99
+
+    if (dist < 10) {
+      setDragOrigin(null)
+      setDragPos(null)
+      return
+    }
+
+    const target = hovEnemyId
+    setDragOrigin(null)
+    setDragPos(null)
+    setHovEnemyId(null)
+
+    if (target) fireAtEnemy(target)
+  }
+
+  // ── Retry: restore both teams to full HP ─────────────────────────────────
+  function handleRetry() {
+    setBattleState(createBattleState(
+      initPlayers.map(p => ({ ...p, currentHp: p.maxHp })),
+      initEnemies.map(p => ({ ...p, currentHp: p.maxHp })),
+    ))
+    setPhase('idle')
+    setActiveActor(null)
+    setAttackingId(null)
+    setFlashingId(null)
+    setTapMode(false)
+    setDragOrigin(null)
+    setDragPos(null)
+    setHovEnemyId(null)
+    setFloats([])
+  }
+
+  // ── Damage preview label ─────────────────────────────────────────────────
+  function previewLabel(enemyId: string): string | null {
+    if (!activeActor?.isPlayer) return null
+    const enemy = battleState.enemyPonies.find(p => p.id === enemyId)
+    if (!enemy || enemy.currentHp <= 0) return null
+    const dmg  = calcDamage(activeActor.pony.power, activeActor.pony.element, enemy.element)
+    const mult = getTypeMultiplier(activeActor.pony.element, enemy.element)
+    return mult === 2 ? `Super! ~${dmg}` : mult === 0.5 ? `Weak ~${dmg}` : `~${dmg}`
+  }
+
+  // ── Helpers ───────────────────────────────────────────────────────────────
+  function spriteClass(pony: BattlePony, isEnemy: boolean): string {
+    if (pony.currentHp <= 0) return 'opacity-25'
+    if (attackingId === pony.id)
+      return isEnemy ? 'battle-lunge-left' : 'battle-lunge-right'
+    if (flashingId === pony.id) return 'battle-flash'
+    return 'battle-bob'
+  }
+
+  function bobDelay(i: number, isEnemy: boolean): string {
+    return `${i * 0.35 + (isEnemy ? 0.18 : 0)}s`
+  }
+
+  // ── Render ────────────────────────────────────────────────────────────────
+  return (
+    <div
+      className="relative h-screen w-screen overflow-hidden select-none"
+      style={{
+        background: 'linear-gradient(160deg, #d8edda 0%, #c4dfc6 45%, #b0d0b3 100%)',
+        touchAction: 'none',
+      }}
+      onPointerMove={handleStagePointerMove}
+      onPointerUp={handleStagePointerUp}
+      // Tapping the empty stage cancels tap-mode
+      onClick={() => setTapMode(false)}
+    >
+      {/* ── Team labels ──────────────────────────────────────────────────── */}
+      <div className="absolute top-3 left-5 text-sm font-semibold text-green-900/50 pointer-events-none">
+        Your team
+      </div>
+      <div className="absolute top-3 right-5 text-sm font-semibold text-green-900/50 pointer-events-none">
+        {enemyLabel}'s team
+      </div>
+
+      {/* ── Turn hint (bottom center) ─────────────────────────────────── */}
+      {phase === 'playerTurn' && !tapMode && (
+        <div className="absolute bottom-5 left-1/2 -translate-x-1/2 bg-yellow-400/90 text-yellow-900
+                        font-bold text-sm px-5 py-2 rounded-full shadow pointer-events-none battle-pop-in">
+          Tap your glowing pony, then tap an enemy!
+        </div>
+      )}
+      {tapMode && (
+        <div className="absolute bottom-5 left-1/2 -translate-x-1/2 bg-orange-500/90 text-white
+                        font-bold text-sm px-5 py-2 rounded-full shadow pointer-events-none battle-pop-in">
+          Now tap an enemy to attack!
+        </div>
+      )}
+      {activeActor && !activeActor.isPlayer && (
+        <div className="absolute bottom-5 left-1/2 -translate-x-1/2 bg-purple-800/80 text-white
+                        text-sm px-5 py-2 rounded-full shadow pointer-events-none">
+          {activeActor.pony.name} attacks!
+        </div>
+      )}
+
+      {/* ── Player ponies (left side) ────────────────────────────────────── */}
+      {battleState.playerPonies.map((pony, i) => {
+        const isActive  = phase === 'playerTurn' && activeActor?.pony.id === pony.id
+        const fainted   = pony.currentHp <= 0
+        const hpPct     = pony.maxHp > 0 ? pony.currentHp / pony.maxHp : 0
+        const hpColor   = hpPct > 0.5 ? '#22c55e' : hpPct > 0.25 ? '#eab308' : '#ef4444'
+
+        return (
+          <div
+            key={pony.id}
+            className="absolute flex flex-col items-center gap-1"
+            style={PLAYER_POS[i]}
+          >
+            {/* Your-turn badge */}
+            {isActive && (
+              <div className="absolute -top-8 left-1/2 -translate-x-1/2 z-20
+                              bg-yellow-400 text-yellow-900 text-xs font-bold
+                              px-3 py-0.5 rounded-full whitespace-nowrap shadow battle-pop-in">
+                Your turn
+              </div>
+            )}
+
+            {/* Sprite wrapper — handles glow ring, lunge, flash, bob */}
+            <div
+              ref={el => { ponyRefs.current[pony.id] = el }}
+              className={`relative cursor-pointer ${spriteClass(pony, false)}`}
+              style={{ animationDelay: bobDelay(i, false) }}
+              onPointerDown={e => { e.stopPropagation(); handlePointerDown(e, pony.id) }}
+              onClick={e => { e.stopPropagation(); handlePonyClick(pony.id) }}
+            >
+              {/* Glow ring */}
+              {isActive && (
+                <div
+                  className="absolute inset-0 rounded-full ring-4 ring-yellow-400 ring-offset-4
+                              ring-offset-transparent animate-pulse z-10 pointer-events-none"
+                  style={{ borderRadius: '50%' }}
+                />
+              )}
+              <CreatureSprite element={pony.element} size={SPRITE_SIZE} />
+            </div>
+
+            <span className="text-xs font-bold text-green-900 drop-shadow-sm mt-0.5">
+              {pony.name}
+            </span>
+            <HpBar current={pony.currentHp} max={pony.maxHp} color={hpColor} fainted={fainted} />
+          </div>
+        )
+      })}
+
+      {/* ── Enemy ponies (right side) ────────────────────────────────────── */}
+      {battleState.enemyPonies.map((pony, i) => {
+        const fainted     = pony.currentHp <= 0
+        const isTargetable = phase === 'playerTurn' && !fainted
+        const isHovered   = (hovEnemyId === pony.id && !!dragPos) ||
+                            (tapMode && isTargetable)
+        const preview     = (hovEnemyId === pony.id && !!dragPos) ||
+                            (tapMode && isTargetable)
+          ? previewLabel(pony.id)
+          : null
+        const hpPct   = pony.maxHp > 0 ? pony.currentHp / pony.maxHp : 0
+        const hpColor = hpPct > 0.5 ? '#22c55e' : hpPct > 0.25 ? '#eab308' : '#ef4444'
+
+        return (
+          <div
+            key={pony.id}
+            className="absolute flex flex-col items-center gap-1"
+            style={ENEMY_POS[i]}
+          >
+            {/* Damage preview label */}
+            {preview && (
+              <div className="absolute -top-8 left-1/2 -translate-x-1/2 z-20
+                              bg-orange-700/95 text-white text-xs font-bold
+                              px-3 py-0.5 rounded-full whitespace-nowrap shadow battle-pop-in">
+                {preview}
+              </div>
+            )}
+
+            {/* Sprite */}
+            <div
+              ref={el => { ponyRefs.current[pony.id] = el }}
+              className={`relative ${isTargetable ? 'cursor-pointer' : ''} ${spriteClass(pony, true)}`}
+              style={{ animationDelay: bobDelay(i, true) }}
+              onClick={e => { e.stopPropagation(); handleEnemyClick(pony.id) }}
+            >
+              {/* Hover/target highlight ring */}
+              {isHovered && (
+                <div
+                  className="absolute inset-0 rounded-full ring-4 ring-orange-400
+                              ring-offset-4 ring-offset-transparent animate-pulse z-10 pointer-events-none"
+                  style={{ borderRadius: '50%' }}
+                />
+              )}
+              <CreatureSprite element={pony.element} size={SPRITE_SIZE} />
+            </div>
+
+            <span className="text-xs font-bold text-green-900 drop-shadow-sm mt-0.5">
+              {pony.name}
+            </span>
+            <HpBar current={pony.currentHp} max={pony.maxHp} color={hpColor} fainted={fainted} />
+          </div>
+        )
+      })}
+
+      {/* ── Drag arrow (SVG fixed overlay) ───────────────────────────────── */}
+      {dragPos && dragOrigin && (
+        <svg
+          style={{
+            position: 'fixed', inset: 0,
+            width: '100%', height: '100%',
+            pointerEvents: 'none', zIndex: 40,
+          }}
+        >
+          <defs>
+            <marker id="bs-arrow" markerWidth="10" markerHeight="7"
+              refX="9" refY="3.5" orient="auto">
+              <polygon points="0 0, 10 3.5, 0 7" fill="#c2410c" />
+            </marker>
+          </defs>
+          <line
+            x1={dragOrigin.x} y1={dragOrigin.y}
+            x2={dragPos.x}    y2={dragPos.y}
+            stroke="#c2410c" strokeWidth="3.5" strokeDasharray="11 5"
+            markerEnd="url(#bs-arrow)"
+          />
+        </svg>
+      )}
+
+      {/* ── Floating damage numbers (fixed so they appear at screen coords) ─ */}
+      {floats.map(f => (
+        <div
+          key={f.id}
+          className="fixed pointer-events-none z-50 font-black text-2xl drop-shadow battle-float-dmg"
+          style={{
+            left:  f.x - 18,
+            top:   f.y,
+            color: f.isSuper ? '#ea580c' : f.isWeak ? '#7c3aed' : '#111827',
+          }}
+        >
+          {f.label}
+          {f.isSuper && <span className="text-base ml-0.5">✨</span>}
+          {f.isWeak  && <span className="text-base ml-0.5 opacity-60">↓</span>}
+        </div>
+      ))}
+
+      {/* ── Victory overlay ───────────────────────────────────────────────── */}
+      {phase === 'victory' && (
+        <Overlay>
+          <div className="text-6xl mb-1">🏆</div>
+          <h2 className="text-3xl font-bold text-yellow-300">You won!</h2>
+          <p className="text-purple-300 italic text-sm px-2">
+            "Your bond with your ponies is real — and you used the type wheel perfectly!
+            Zone 2 is now open to you!"
+            <span className="block text-purple-400 not-italic text-xs mt-1">— Pip</span>
+          </p>
+          <button
+            onClick={onVictory}
+            className="w-full bg-yellow-400 hover:bg-yellow-300 text-purple-950
+                       font-bold py-4 rounded-2xl text-lg transition-colors"
+          >
+            Continue to the World Map 🗺️
+          </button>
+        </Overlay>
+      )}
+
+      {/* ── Defeat overlay ────────────────────────────────────────────────── */}
+      {phase === 'defeat' && (
+        <Overlay>
+          <div className="text-5xl mb-1">💫</div>
+          <h2 className="text-2xl font-bold text-white">Your ponies need to rest!</h2>
+          <p className="text-purple-300 text-sm italic">
+            "Good effort! Think about which elements have the advantage."
+            <span className="block text-purple-400 not-italic text-xs mt-1">— Pip</span>
+          </p>
+          <div className="bg-purple-900/60 rounded-xl p-3 text-left text-sm space-y-1 w-full">
+            <p className="text-yellow-300 font-semibold">💡 Type tips:</p>
+            <p className="text-purple-200">🔥 Fire beats 💨 Air — try Tangerine vs Wisp!</p>
+            <p className="text-purple-200">Focus all three ponies on one enemy at a time.</p>
+          </div>
+          <div className="flex gap-3 w-full">
+            <button
+              onClick={onDefeat}
+              className="flex-1 bg-purple-700 hover:bg-purple-600 text-white
+                         font-semibold py-3 rounded-2xl transition-colors"
+            >
+              Back to Map
+            </button>
+            <button
+              onClick={handleRetry}
+              className="flex-1 bg-yellow-400 hover:bg-yellow-300 text-purple-950
+                         font-bold py-3 rounded-2xl transition-colors"
+            >
+              Try Again! 💪
+            </button>
+          </div>
+        </Overlay>
+      )}
+    </div>
+  )
+}
+
+// ── Small reusable sub-components ─────────────────────────────────────────────
+
+function HpBar({ current, max, color, fainted }: {
+  current: number; max: number; color: string; fainted: boolean
+}) {
+  const pct = max > 0 ? Math.max(0, current / max) * 100 : 0
+  return (
+    <div className="w-20 text-center">
+      <div className="text-xs text-green-900/70 font-medium mb-0.5">
+        {fainted ? 'Fainted' : `${current}/${max}`}
+      </div>
+      <div className="h-2 bg-black/20 rounded-full overflow-hidden">
+        <div
+          className="h-full rounded-full transition-all duration-500"
+          style={{ width: `${pct}%`, backgroundColor: color }}
+        />
+      </div>
+    </div>
+  )
+}
+
+function Overlay({ children }: { children: React.ReactNode }) {
+  return (
+    <div className="absolute inset-0 bg-black/55 flex items-center justify-center z-50">
+      <div className="bg-purple-950 rounded-3xl p-8 max-w-sm w-full mx-6
+                      text-center space-y-4 shadow-2xl border border-purple-700/40">
+        {children}
+      </div>
+    </div>
+  )
+}

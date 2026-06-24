@@ -16,14 +16,17 @@ export default function Nav() {
         <button
           key={screen}
           onClick={() => setScreen(screen)}
-          className={`flex-1 flex flex-col items-center py-2 gap-0.5 transition-colors ${
-            currentScreen === screen
+          className={`flex-1 flex flex-row items-center justify-center py-3 gap-2 transition-colors ${
+            // Area screens belong to the world-map tab flow
+            (screen === 'worldMap'
+              ? ['worldMap', 'areaBrindlewood', 'areaSunflower'].includes(currentScreen)
+              : currentScreen === screen)
               ? 'text-yellow-300'
               : 'text-purple-400 hover:text-purple-200'
           }`}
         >
           <span className="text-xl">{icon}</span>
-          <span className="text-xs font-medium">{label}</span>
+          <span className="text-sm font-medium">{label}</span>
         </button>
       ))}
     </nav>

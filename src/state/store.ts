@@ -1,8 +1,7 @@
 import { create } from 'zustand'
 import type { Creature } from '../engine/types'
-import { saveGame, loadGame } from './save'
+import { saveGame, loadGame, clearSave } from './save'
 
-// Badge table from §6
 const BADGE_LEVEL_CAPS: Record<number, number> = {
   0: 4, 1: 6, 2: 8, 3: 10, 4: 12, 5: 15,
 }
@@ -11,13 +10,22 @@ function getLevelCap(badges: number): number {
   return BADGE_LEVEL_CAPS[Math.min(badges, 5)] ?? 4
 }
 
-export type Screen = 'worldMap' | 'party'
+export type Screen =
+  | 'worldMap'
+  | 'areaBrindlewood'
+  | 'areaSunflower'
+  | 'provingGlade'
+  | 'party'
 
 interface GameStore {
   // persisted
   playerName: string
   party: Creature[]
   badges: number
+  brindlewoodDone: boolean
+  sunflowerDone: boolean
+  zone1Complete: boolean
+  zone2Unlocked: boolean
   // derived — not persisted
   levelCap: number
   // ui — not persisted
@@ -26,54 +34,86 @@ interface GameStore {
   setPlayerName: (name: string) => void
   addToParty: (creature: Creature) => void
   addBadge: () => void
+  setBrindlewoodDone: () => void
+  setSunflowerDone: () => void
+  completeZone1: () => void
   setScreen: (screen: Screen) => void
   save: () => void
   load: () => void
+  resetGame: () => void
 }
 
-export const useGameStore = create<GameStore>()((set, get) => ({
-  playerName: '',
-  party: [],
-  badges: 0,
-  levelCap: getLevelCap(0),
-  currentScreen: 'worldMap',
+export const useGameStore = create<GameStore>()((set, get) => {
+  function persist() {
+    const s = get()
+    saveGame({
+      playerName:      s.playerName,
+      party:           s.party,
+      badges:          s.badges,
+      brindlewoodDone: s.brindlewoodDone,
+      sunflowerDone:   s.sunflowerDone,
+      zone1Complete:   s.zone1Complete,
+      zone2Unlocked:   s.zone2Unlocked,
+    })
+  }
 
-  setPlayerName: (name) => {
-    set({ playerName: name })
-    const { party, badges } = get()
-    saveGame({ playerName: name, party, badges })
-  },
+  return {
+    playerName:      '',
+    party:           [],
+    badges:          0,
+    brindlewoodDone: false,
+    sunflowerDone:   false,
+    zone1Complete:   false,
+    zone2Unlocked:   false,
+    levelCap:        getLevelCap(0),
+    currentScreen:   'worldMap',
 
-  addToParty: (creature) => {
-    const party = [...get().party, creature]
-    set({ party })
-    const { playerName, badges } = get()
-    saveGame({ playerName, party, badges })
-  },
+    setPlayerName: (name) => { set({ playerName: name }); persist() },
 
-  addBadge: () => {
-    const badges = Math.min(get().badges + 1, 5)
-    set({ badges, levelCap: getLevelCap(badges) })
-    const { playerName, party } = get()
-    saveGame({ playerName, party, badges })
-  },
+    addToParty: (creature) => {
+      const party = [...get().party, creature]
+      set({ party })
+      persist()
+    },
 
-  setScreen: (currentScreen) => set({ currentScreen }),
+    addBadge: () => {
+      const badges = Math.min(get().badges + 1, 5)
+      set({ badges, levelCap: getLevelCap(badges) })
+      persist()
+    },
 
-  save: () => {
-    const { playerName, party, badges } = get()
-    saveGame({ playerName, party, badges })
-  },
+    setBrindlewoodDone: () => { set({ brindlewoodDone: true }); persist() },
+    setSunflowerDone:   () => { set({ sunflowerDone:   true }); persist() },
 
-  load: () => {
-    const saved = loadGame()
-    if (saved) {
+    completeZone1: () => {
+      set({ zone1Complete: true, zone2Unlocked: true })
+      persist()
+    },
+
+    setScreen: (currentScreen) => set({ currentScreen }),
+
+    save: () => persist(),
+
+    resetGame: () => {
+      clearSave()
       set({
-        playerName: saved.playerName,
-        party: saved.party,
-        badges: saved.badges,
-        levelCap: getLevelCap(saved.badges),
+        playerName:      '',
+        party:           [],
+        badges:          0,
+        brindlewoodDone: false,
+        sunflowerDone:   false,
+        zone1Complete:   false,
+        zone2Unlocked:   false,
+        levelCap:        getLevelCap(0),
+        currentScreen:   'worldMap',
       })
-    }
-  },
-}))
+    },
+
+    load: () => {
+      const saved = loadGame()
+      if (saved) {
+        set({ ...saved, levelCap: getLevelCap(saved.badges) })
+      }
+    },
+  }
+})

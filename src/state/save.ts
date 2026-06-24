@@ -1,21 +1,26 @@
 import type { Creature } from '../engine/types'
 
 export interface SaveData {
-  version: 1
+  version: 2
   playerName: string
   party: Creature[]
   badges: number
+  brindlewoodDone: boolean
+  sunflowerDone: boolean
+  zone1Complete: boolean
+  zone2Unlocked: boolean
 }
 
-const SAVE_KEY = 'evelyn_unicorn_adventure_v1'
-const VERSION = 1 as const
+const SAVE_KEY = 'evelyn_unicorn_adventure'
+const VERSION = 2 as const
 
-export function saveGame(data: Omit<SaveData, 'version'>): void {
-  const payload: SaveData = { version: VERSION, ...data }
-  localStorage.setItem(SAVE_KEY, JSON.stringify(payload))
+type PersistedState = Omit<SaveData, 'version'>
+
+export function saveGame(data: PersistedState): void {
+  localStorage.setItem(SAVE_KEY, JSON.stringify({ version: VERSION, ...data }))
 }
 
-export function loadGame(): Omit<SaveData, 'version'> | null {
+export function loadGame(): PersistedState | null {
   const raw = localStorage.getItem(SAVE_KEY)
   if (!raw) return null
   try {
@@ -29,9 +34,13 @@ export function loadGame(): Omit<SaveData, 'version'> | null {
     }
     const d = parsed as SaveData
     return {
-      playerName: d.playerName ?? '',
-      party: d.party ?? [],
-      badges: d.badges ?? 0,
+      playerName:      d.playerName      ?? '',
+      party:           d.party           ?? [],
+      badges:          d.badges          ?? 0,
+      brindlewoodDone: d.brindlewoodDone ?? false,
+      sunflowerDone:   d.sunflowerDone   ?? false,
+      zone1Complete:   d.zone1Complete   ?? false,
+      zone2Unlocked:   d.zone2Unlocked   ?? false,
     }
   } catch {
     return null
@@ -48,6 +57,10 @@ export function exportSave(): void {
   a.download = 'evelyn-adventure-save.json'
   a.click()
   URL.revokeObjectURL(url)
+}
+
+export function clearSave(): void {
+  localStorage.removeItem(SAVE_KEY)
 }
 
 export function importSave(file: File): Promise<boolean> {

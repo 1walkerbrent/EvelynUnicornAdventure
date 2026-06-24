@@ -66,7 +66,22 @@ Deliberately simple and readable: a single attack, an HP pool, and speed for tur
 
 **The ×2 / halve pair is the master balance dial.** It keeps the combat arithmetic clean — doubling and halving are easy mental math — and leans hard into type-is-king. Nudge toward ×1.5 / ×0.5 later if you want stats to matter more in advantaged fights.
 
-Battles only happen at **Trials** and the **Champion** fight. Wild collection in Explore is problem-to-tame (no battle).
+Battles happen at **Trials**, the **Champion** fight, and the ~25% of Explore encounters that are wild battles (§8). Quest rewards and the other ~75% of Explore use problem-solving, not battles.
+
+### Battle presentation & interaction (all battles)
+
+The combat *math* above is unchanged — this is how a battle looks and plays. Reference feel: Dragon Mania Legends — one living arena, not a sequence of pages.
+
+- **One persistent arena, never a page-flip.** A single battle scene stays mounted for the whole fight: her 3 ponies on the **left facing right**, the 3 enemies on the **right facing left**, staggered into a shared space (not two roster rows). Sprites are larger with a gentle idle bob; HP bars attach to each pony and show **raw HP numbers**. There are **no intro / target-list / results pages and no "Continue to Round X" button** — everything happens inline on this one stage.
+- **Events animate one at a time (animation queue).** The step-wise engine emits one event per action; the UI plays them sequentially — attacker lunges (or a projectile crosses the arena), the target flashes, a floating damage number pops, the HP bar drains — then advances to the next actor. This is the single change that turns a "results log" into a scene.
+- **Round-based in Speed order** (player wins ties): on her pony's turn it glows with a "Your turn" cue; enemy turns auto-play after a short (~0.7s) beat.
+- **Drag to attack, tap as fallback:** drag from the glowing pony across the arena to an enemy — a targeting arrow follows her finger and valid targets highlight. Tap-the-pony-then-tap-the-target also works and must fully complete a battle on its own.
+- **Type telegraph while aiming:** a live preview at the target — *"Super! ~8"*, *"Weak… ~2"*, or neutral — teaches the wheel mid-battle and previews Power × multiplier.
+- **Painless outcomes:** faints fade in place and are skipped; victory and defeat appear as an overlay **on the scene** (not a new page); defeat offers a free retry with gentle wording.
+
+This screen is the template for **every** battle — Proving Glade now, and all Zone 2–6 Trials, the Champion, and Explore wild battles later.
+
+**Engine note:** this requires exposing combat **step-wise** (next actor → apply one attack → event for animation) rather than resolving a whole round in a batch, so the UI can pause for her drag. The damage/type/Speed rules stay identical.
 
 ---
 
@@ -120,10 +135,10 @@ Earning a Trial badge raises the cap by 5, set to the top of the next zone. Leve
 
 | Zone (focus) | The 3 areas | Math level |
 |---|---|---|
-| **1 — Starter** (neutral) | Brindlewood Home → Sunflower Hollow → Proving Glade | Single-digit +/−, one-step |
-| **2 — Earth** | Pebblebrook → Mossgrove → Granite Hall | 2-digit, no regrouping |
-| **3 — Water** | Saltspray Cove → Mistreef → Coral Sanctum | 2-digit with regrouping, 2-step |
-| **4 — Fire** | Cinderpath → Ashfall Camp → Magma Forge | Mixed 2–3 digit, 2-step |
+| **1 — Starter** (neutral) | Brindlewood Home → Sunflower Hollow → Proving Glade | 2-digit, no regrouping, one-step |
+| **2 — Earth** | Pebblebrook → Mossgrove → Granite Hall | 2-digit with regrouping, 1–2 step |
+| **3 — Water** | Saltspray Cove → Mistreef → Coral Sanctum | Mixed 2–3 digit, 2-step |
+| **4 — Fire** | Cinderpath → Ashfall Camp → Magma Forge | 3-digit, 2-step |
 | **5 — Air** | Windwhistle Pass → Cloudperch → Galecrest Spire | 3-digit with regrouping, multi-step |
 | **6 — Spirit** | Whisperwood → Moonveil → Starfall Temple | 3-digit multi-step + extraneous info to filter |
 
@@ -131,10 +146,29 @@ Earning a Trial badge raises the cap by 5, set to the top of the next zone. Leve
 
 **Movement:** node/map-token travel between connected areas (board-game / world-map style). No free-roam, no tile/collision engine in v1. Within an area: an "Explore" action plus NPCs/shop, not a walkable space.
 
-### Zone 1 detail (the only zone giving 3 creatures)
-- **Area 1 — Brindlewood Home:** character creation, choose your starter companion (creature #1), and a tutorial quest rewarding creature #2.
-- **Area 2 — Sunflower Hollow:** a quest rewarding creature #3.
-- **Area 3 — Proving Glade:** a 3-on-3 graduation battle to prove you're ready to adventure (unlocks Zone 2).
+### Zone 1 detail (the only zone giving 3 creatures) — M1 build target
+
+**Character creation flow (Area 1):** she chooses her starter **pony first**, and its element is **revealed right after** as part of who that pony already is (colors telegraph the element, so the reveal feels natural — "of course the starry lavender one is Spirit!"). Elements are **fixed, not freely assigned** — this protects the balance design and keeps the unpicked four meaningful as rare Explore finds. For ownership without touching balance, she can **rename** her chosen pony and pick a **color accent** (mane tint / sparkle color).
+
+**The five starters (she picks one; each is tier 1):**
+
+| Pony | Element | Look & vibe |
+|---|---|---|
+| Marina Mist | Water | soft teal & seafoam; calm, gentle |
+| Ember Spark | Fire | warm coral & gold; brave, bouncy |
+| Sky Dancer | Air | pale blue & cloud-white; quick, playful |
+| Stella Dream | Spirit | lavender & starlight; dreamy, wise |
+| Meadow Bloom | Earth | leaf-green & sunny; steady, kind |
+
+The other four become **rare Explore finds** later, keeping their natural element. (All names are original, not real My Little Pony characters.)
+
+**Area 1 — Brindlewood Home:** the creation flow above, then a gentle tutorial quest — a **Math problem** (number entry). *Example (two-digit, one-step subtraction):* "Clover Dewdrop will trust you once you've set out the right number of clovers. She likes 38, and you've placed 15. How many more?" (38 − 15 = 23) → tames **Clover Dewdrop (Earth, tier 1)**, creature #2.
+
+**Area 2 — Sunflower Hollow:** a **Story problem** (read the clues and choose the answer — no arithmetic). *Example:* "Tangerine Twirl's hoofprints lead to one of three sunflowers. She did NOT go to the flower on the left, and she did NOT go to the tallest. The flowers are: left (short), middle (tallest), right (medium). Behind which sunflower is she?" (Answer: right) → tames **Tangerine Twirl (Fire, tier 1)**, creature #3.
+
+**Area 3 — Proving Glade:** a friendly 3-on-3 graduation battle vs rival **Pip**, whose team is Pebble (Earth), Wisp (Air), and Glow (Spirit), all tier 1 at level 3. Winning unlocks Zone 2. **No badge here** (badges start at the Zone 2 Trial); this is the tutorial battle that teaches the 3v3 and the type wheel at low stakes. Losing simply lets her retry.
+
+Zone 1 uses one two-digit math problem and one short reading-logic puzzle (§9 ramp); retry/hint rules from §10 apply throughout.
 
 ### Zones 2–6 pattern
 - **Area 1:** problem-solving quest → reward creature.
@@ -165,7 +199,7 @@ Three problem types, divided by where they live:
 - **Story problems** — used in **zone quests**. An equation wrapped in narrative (e.g. "Farmer Bray's creature nibbled 8 of his 15 seeds — how many are left to plant?").
 - **Logic / reading-comprehension problems** — also in quests. She must *read carefully and pick the correct answer*, no arithmetic (e.g. a Guardian says "only the creature unafraid of water may pass"; the story describes three creatures' behavior and she deduces which one).
 
-**Math scope:** addition/subtraction up to 3 digits, ramping by zone per the table in §7 (targets the grade 3–5 band). Mix in pure logic and pattern puzzles to keep "problem solving" broader than arithmetic.
+**Math scope:** addition/subtraction up to 3 digits, ramping by zone per the table in §7 — starting at two-digit in Zone 1 and reaching three-digit multi-step by Zone 6 (targets the grade 3–5 band). Each zone pairs one **Math** problem with one **Story** problem (a reading/logic puzzle). Mix in pattern puzzles too, to keep "problem solving" broader than arithmetic.
 
 ---
 
