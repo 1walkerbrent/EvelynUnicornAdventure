@@ -57,7 +57,6 @@ export default function BattleScreen({
   const [phase,         setPhase]         = useState<Phase>('idle')
   const [activeActor,   setActiveActor]   = useState<{ pony: BattlePony; isPlayer: boolean } | null>(null)
   const [attackingId,   setAttackingId]   = useState<string | null>(null)
-  const [attackingLeft, setAttackingLeft] = useState(false)
   const [flashingId,    setFlashingId]    = useState<string | null>(null)
   const [tapMode,       setTapMode]       = useState(false)
   const [dragOrigin,    setDragOrigin]    = useState<{ x: number; y: number } | null>(null)
@@ -78,10 +77,7 @@ export default function BattleScreen({
     targetId: string,
   ) => {
     const { state: newState, event } = applyAttack(snap, attackerId, targetId)
-    const isPlayerAttacker = snap.playerPonies.some(p => p.id === attackerId)
-
     setAttackingId(attackerId)
-    setAttackingLeft(!isPlayerAttacker)
 
     // After lunge peak (~380 ms), show impact
     setTimeout(() => {
