@@ -1,7 +1,9 @@
 import { useState } from 'react'
 import { useGameStore } from '../state/store'
 import { SPECIES_BY_ID } from '../content/creatures'
-import { BRINDLEWOOD_PROBLEM } from '../engine/problems'
+import { generateMathProblem } from '../engine/mathGenerator'
+import { effectiveDifficulty } from '../engine/difficulty'
+import type { MathProblem } from '../engine/problems'
 import { getStats } from '../engine/stats'
 import ProblemCard from '../components/ProblemCard'
 import CreatureSprite from '../components/CreatureSprite'
@@ -13,7 +15,12 @@ export default function AreaBrindlewood() {
   const addToParty       = useGameStore((s) => s.addToParty)
   const setBrindlewoodDone = useGameStore((s) => s.setBrindlewoodDone)
   const setScreen        = useGameStore((s) => s.setScreen)
+  const party            = useGameStore((s) => s.party)
 
+  const playerLevel = party.reduce((max, c) => Math.max(max, c.level), 1)
+  const [problem]   = useState<MathProblem>(() =>
+    generateMathProblem(effectiveDifficulty(1, playerLevel))
+  )
   const [solved, setSolved] = useState(false)
 
   const reward  = SPECIES_BY_ID[REWARD_ID]
@@ -101,7 +108,7 @@ export default function AreaBrindlewood() {
         </div>
       </div>
 
-      <ProblemCard problem={BRINDLEWOOD_PROBLEM} onSolve={handleSolve} />
+      <ProblemCard problem={problem} onSolve={handleSolve} />
     </div>
   )
 }

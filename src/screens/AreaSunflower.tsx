@@ -1,7 +1,9 @@
 import { useState } from 'react'
 import { useGameStore } from '../state/store'
 import { SPECIES_BY_ID } from '../content/creatures'
-import { SUNFLOWER_PROBLEM } from '../engine/problems'
+import { generateLogicProblem } from '../engine/logicGenerator'
+import { effectiveDifficulty } from '../engine/difficulty'
+import type { LogicProblem } from '../engine/problems'
 import { getStats } from '../engine/stats'
 import ProblemCard from '../components/ProblemCard'
 import CreatureSprite from '../components/CreatureSprite'
@@ -13,7 +15,12 @@ export default function AreaSunflower() {
   const addToParty       = useGameStore((s) => s.addToParty)
   const setSunflowerDone = useGameStore((s) => s.setSunflowerDone)
   const setScreen        = useGameStore((s) => s.setScreen)
+  const party            = useGameStore((s) => s.party)
 
+  const playerLevel = party.reduce((max, c) => Math.max(max, c.level), 1)
+  const [problem]   = useState<LogicProblem>(() =>
+    generateLogicProblem(effectiveDifficulty(1, playerLevel))
+  )
   const [solved, setSolved] = useState(false)
 
   const reward = SPECIES_BY_ID[REWARD_ID]
@@ -96,7 +103,7 @@ export default function AreaSunflower() {
         🌻🌻🌻
       </div>
 
-      <ProblemCard problem={SUNFLOWER_PROBLEM} onSolve={handleSolve} />
+      <ProblemCard problem={problem} onSolve={handleSolve} />
     </div>
   )
 }

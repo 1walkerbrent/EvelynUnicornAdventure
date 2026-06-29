@@ -193,13 +193,46 @@ The freedom valve that lets her build a *unique* team instead of being locked in
 
 ## 9. Quests & problem types
 
-Three problem types, divided by where they live:
+Problems are **generated from rules, never stored as a fixed list** — a hand-written bank runs dry and kills replay value. Each encounter rolls a fresh problem, which is what keeps the learning loop alive across many play sessions. Three types, divided by where they live:
 
 - **Worksheet-style equations** — used in **Explore** encounters. Fast fluency drills, high volume.
-- **Story problems** — used in **zone quests**. An equation wrapped in narrative (e.g. "Farmer Bray's creature nibbled 8 of his 15 seeds — how many are left to plant?").
-- **Logic / reading-comprehension problems** — also in quests. She must *read carefully and pick the correct answer*, no arithmetic (e.g. a Guardian says "only the creature unafraid of water may pass"; the story describes three creatures' behavior and she deduces which one).
+- **Story problems** — used in **zone quests**. An equation wrapped in narrative.
+- **Logic / reading-comprehension problems** — also in quests. She must *read carefully and pick the correct answer*, no arithmetic.
 
-**Math scope:** addition/subtraction up to 3 digits, ramping by zone per the table in §7 — starting at two-digit in Zone 1 and reaching three-digit multi-step by Zone 6 (targets the grade 3–5 band). Each zone pairs one **Math** problem with one **Story** problem (a reading/logic puzzle). Mix in pattern puzzles too, to keep "problem solving" broader than arithmetic.
+Each zone pairs one **Math** problem with one **Story** problem (a reading/logic puzzle).
+
+### Difficulty: one knob, fed by two dials
+
+Difficulty is a single **effective-difficulty number** the generators read. It is set by **both** the zone and the player's level:
+
+- **Zone sets the band** — its floor and ceiling (Zone 1 = two-digit territory; Zone 6 = three-digit multi-step).
+- **Player level nudges within the band**, and once high enough, slightly past the floor of the next band. So a low-level player in a zone gets the easy end of its range; a high-level player replaying it gets the hard end.
+- Formula (tune in playtest): `effective = zoneFloor + round(playerLevel × smallFactor)`, **clamped** so it can't shoot past the zone's intended ceiling or produce something age-inappropriate.
+
+This is the seam the future **New Game+** plugs into (see §15): a leveled-up restart just applies a global level offset, every generator reads a higher number, and the whole game's math shifts up — no new content required.
+
+### Math generator
+
+Takes the zone's parameters — digit count, regrouping allowed (y/n), one-step vs two-step, operations (+/−) — and rolls fresh numbers within those bounds each encounter, then wraps them in a **rotating set of story templates** (e.g. "Clover needs ___ clovers, you have ___…", "the basket holds ___, ___ fell out…"). The math is always new and the flavor varies. **Must guarantee clean answers:** no negative results, subtraction is always larger − smaller, results land in-range.
+
+Per-zone math bands (matching the §7 ramp):
+
+| Zone | Digits | Regrouping | Steps |
+|---|---|---|---|
+| 1 | 2-digit | no | one-step |
+| 2 | 2-digit | yes | 1–2 step |
+| 3 | mixed 2–3 digit | yes | 2-step |
+| 4 | 3-digit | yes | 2-step |
+| 5 | 3-digit | yes | multi-step |
+| 6 | 3-digit | yes | multi-step + extraneous info to filter |
+
+### Story / logic generator
+
+Genuine reasoning puzzles can't be infinitely generated as cleanly, so use a **pool of templates with swappable variables** — a deduction like "the pony is behind one of three flowers; not the tallest, not the leftmost" shuffles which attributes and which answer each time, yielding dozens of variations from a handful of templates. Build ~8–12 logic templates per difficulty band and shuffle through them.
+
+### Anti-repetition
+
+Track recently-seen problems (by a template/seed id) and don't repeat one until the pool has cycled, so she never gets the same question twice in a row — this is what makes it *feel* fresh, not just technically random.
 
 ---
 
@@ -287,6 +320,7 @@ Framed as expansion / unlock-style content once v1 is proven and loved:
 - **Owlicorns and Pegasi** as new families (new art, family-specific flavor).
 - **Breeding:** offspring inherit element from parents; the "unique variant" payoff is a **palette swap** (e.g. Starlight or Shadow coloring), so it adds depth with near-zero new base art.
 - **Achievements / unlock milestones.**
+- **New Game+ (leveled restart):** on beating the game, offer "start over (same difficulty)" or "start over (harder)." The harder mode applies a global level offset that every problem generator reads (§9), so the math scales up automatically with no new content. Assign levels that keep problems getting incrementally harder as she progresses.
 
 ---
 
