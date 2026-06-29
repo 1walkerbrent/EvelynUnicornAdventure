@@ -4,6 +4,7 @@ import { SPECIES_BY_ID } from '../content/creatures'
 import { buildBattlePony } from '../engine/battle'
 import type { BattlePony } from '../engine/battle'
 import type { Element } from '../engine/types'
+import { XP_PER_BATTLE_WIN } from '../engine/leveling'
 import BattleScreen from '../components/BattleScreen'
 
 // Pip's fixed team for the Zone 1 graduation battle (§7)
@@ -33,9 +34,10 @@ function buildPlayerTeam(party: ReturnType<typeof useGameStore.getState>['party'
 }
 
 export default function ProvingGlade() {
-  const party         = useGameStore(s => s.party)
-  const completeZone1 = useGameStore(s => s.completeZone1)
-  const setScreen     = useGameStore(s => s.setScreen)
+  const party          = useGameStore(s => s.party)
+  const completeZone1  = useGameStore(s => s.completeZone1)
+  const setScreen      = useGameStore(s => s.setScreen)
+  const awardXpToParty = useGameStore(s => s.awardXpToParty)
 
   // Memoised so team objects stay stable across re-renders
   const playerPonies = useMemo(() => buildPlayerTeam(party), [party])
@@ -46,7 +48,7 @@ export default function ProvingGlade() {
       playerPonies={playerPonies}
       enemyPonies={enemyPonies}
       enemyLabel="Pip"
-      onVictory={() => { completeZone1(); setScreen('worldMap') }}
+      onVictory={() => { awardXpToParty(XP_PER_BATTLE_WIN); completeZone1(); setScreen('worldMap') }}
       onDefeat={() => setScreen('worldMap')}
     />
   )

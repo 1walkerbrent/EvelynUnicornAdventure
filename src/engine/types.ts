@@ -20,5 +20,7 @@ export interface Creature {
   nickname: string
   level: number
   currentHp: number
+  /** Accumulated experience toward the next level (§5/§9). Defaults to 0 when absent. */
+  xp?: number
   accentColor?: string
 }

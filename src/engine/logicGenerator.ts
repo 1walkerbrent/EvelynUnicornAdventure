@@ -1,5 +1,6 @@
 import type { LogicProblem } from './problems'
 import { RecentlySeenTracker } from './antiRepeat'
+import { bandForDifficulty } from './difficulty'
 
 type Rng = () => number
 
@@ -226,8 +227,115 @@ const TEMPLATES: LogicFactory[] = [
 const antiRepeat = new RecentlySeenTracker(TEMPLATES.length)
 const TEMPLATE_IDS = TEMPLATES.map((_, i) => i)
 
-export function generateLogicProblem(_difficulty: number): LogicProblem {
+function generateThreeOption(): LogicProblem {
   const idx = antiRepeat.pickFresh(TEMPLATE_IDS, Math.random)
   const result = TEMPLATES[idx](Math.random)
   return { type: 'logic', ...result }
+}
+
+// ════════════════════════════════════════════════════════════════════════════
+// GENERIC N-OPTION PUZZLES (bands 3–6) — 4 or 5 options, scaling clue counts
+// ════════════════════════════════════════════════════════════════════════════
+//
+// Each option has a unique POSITION and a unique ATTRIBUTE. To leave exactly one
+// answer, we emit one clue per WRONG option (numOptions − 1 clues), each "NOT the
+// {attribute}" or "NOT the one on the {position}". Because every attribute and
+// position is unique and the correct option is never targeted, the clues
+// eliminate every wrong option and exactly one survivor remains — the answer is
+// always correct AND unique by construction.
+
+export interface NTheme {
+  intro: string
+  noun: string
+  /** At least 5 visually distinct attributes. */
+  attributes: string[]
+}
+
+export const N_THEMES: NTheme[] = [
+  { intro: 'A magic key is hidden behind one of these doors!',
+    noun: 'door',   attributes: ['red', 'blue', 'green', 'gold', 'silver'] },
+  { intro: 'A sparkly gem rests inside one of these chests!',
+    noun: 'chest',  attributes: ['tiny', 'small', 'medium', 'large', 'huge'] },
+  { intro: 'A wish token glows on one of these stars!',
+    noun: 'star',   attributes: ['dim', 'faint', 'bright', 'glowing', 'brilliant'] },
+  { intro: 'A tiny fairy is sleeping under one of these mushrooms!',
+    noun: 'mushroom', attributes: ['red', 'orange', 'yellow', 'purple', 'spotted'] },
+  { intro: 'A secret is tucked inside one of these lanterns!',
+    noun: 'lantern', attributes: ['crimson', 'amber', 'emerald', 'azure', 'violet'] },
+  { intro: 'A friendly pony is waiting by one of these flowers!',
+    noun: 'flower', attributes: ['pink', 'white', 'yellow', 'orange', 'blue'] },
+]
+
+function positionNames(n: number): string[] {
+  if (n <= 3) return ['left', 'middle', 'right']
+  if (n === 4) return ['far-left', 'middle-left', 'middle-right', 'far-right']
+  return ['far-left', 'left', 'middle', 'right', 'far-right']
+}
+
+export interface LogicPuzzle {
+  problem: LogicProblem
+  /** Wrong-option indices eliminated by the clues (for tests). */
+  targeted: number[]
+}
+
+export function buildLogicPuzzle(rng: Rng, numOptions: number, theme: NTheme): LogicPuzzle {
+  const positions = positionNames(numOptions)
+  const attributes = shuffle(theme.attributes, rng).slice(0, numOptions)
+
+  const correctIndex = randInt(rng, 0, numOptions - 1)
+  const wrongs = Array.from({ length: numOptions }, (_, i) => i).filter(i => i !== correctIndex)
+
+  // Choices listed in position order: option i sits at position i.
+  const choices = positions.map((pos, i) => `${pos} ${theme.noun} (${attributes[i]})`)
+
+  // One clue per wrong option, alternating attribute / position styles for variety.
+  const clues = shuffle(wrongs, rng).map((w, k) =>
+    k % 2 === 0
+      ? `It is NOT the ${attributes[w]} ${theme.noun}.`
+      : `It is NOT the ${theme.noun} on the ${positions[w]}.`,
+  )
+
+  const optionList = choices.map(c => `• ${c}`).join('\n')
+  const prompt =
+    `${theme.intro}\n\n${optionList}\n\n${clues.join('\n')}\n\n` +
+    `Which ${theme.noun} is the right one?`
+
+  const hint =
+    `Cross off each clue one at a time. ${clues.length} clues remove ${clues.length} ${theme.noun}s — ` +
+    `the one left over is your answer!`
+
+  return {
+    problem: { type: 'logic', prompt, choices, correctIndex, hint },
+    targeted: wrongs,
+  }
+}
+
+const N_THEME_IDS = N_THEMES.map((_, i) => i)
+const nThemeTrackers = new Map<number, RecentlySeenTracker>()
+function nThemeTrackerFor(numOptions: number): RecentlySeenTracker {
+  let t = nThemeTrackers.get(numOptions)
+  if (!t) {
+    t = new RecentlySeenTracker(N_THEMES.length)
+    nThemeTrackers.set(numOptions, t)
+  }
+  return t
+}
+
+function optionCountForBand(band: number): number {
+  if (band <= 2) return 3
+  if (band <= 4) return 4
+  return 5
+}
+
+// ════════════════════════════════════════════════════════════════════════════
+// PUBLIC ENTRY — routes by effective difficulty
+// ════════════════════════════════════════════════════════════════════════════
+
+export function generateLogicProblem(difficulty: number): LogicProblem {
+  const band = bandForDifficulty(difficulty)
+  const numOptions = optionCountForBand(band)
+  if (numOptions === 3) return generateThreeOption()
+
+  const themeIdx = nThemeTrackerFor(numOptions).pickFresh(N_THEME_IDS, Math.random)
+  return buildLogicPuzzle(Math.random, numOptions, N_THEMES[themeIdx]).problem
 }

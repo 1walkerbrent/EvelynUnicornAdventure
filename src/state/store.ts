@@ -1,13 +1,11 @@
 import { create } from 'zustand'
 import type { Creature } from '../engine/types'
 import { saveGame, loadGame, clearSave } from './save'
-
-const BADGE_LEVEL_CAPS: Record<number, number> = {
-  0: 4, 1: 6, 2: 8, 3: 10, 4: 12, 5: 15,
-}
+import { SPECIES_BY_ID } from '../content/creatures'
+import { addXp, levelCapForBadges } from '../engine/leveling'
 
 function getLevelCap(badges: number): number {
-  return BADGE_LEVEL_CAPS[Math.min(badges, 5)] ?? 4
+  return levelCapForBadges(badges)
 }
 
 export type Screen =
@@ -33,6 +31,7 @@ interface GameStore {
   // actions
   setPlayerName: (name: string) => void
   addToParty: (creature: Creature) => void
+  awardXpToParty: (amount: number) => void
   addBadge: () => void
   setBrindlewoodDone: () => void
   setSunflowerDone: () => void
@@ -72,6 +71,19 @@ export const useGameStore = create<GameStore>()((set, get) => {
 
     addToParty: (creature) => {
       const party = [...get().party, creature]
+      set({ party })
+      persist()
+    },
+
+    // Grants XP to every party creature (correct answers & battle wins, §5).
+    // Level is clamped at the current badge-based cap (§6); stats recompute on level-up.
+    awardXpToParty: (amount) => {
+      const cap = get().levelCap
+      const party = get().party.map((c) => {
+        const tier = SPECIES_BY_ID[c.speciesId]?.tier
+        if (!tier) return c
+        return addXp(c, tier, amount, cap).creature
+      })
       set({ party })
       persist()
     },

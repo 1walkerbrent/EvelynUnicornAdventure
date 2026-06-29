@@ -3,6 +3,7 @@ import { useGameStore } from '../state/store'
 import { SPECIES_BY_ID } from '../content/creatures'
 import { generateMathProblem } from '../engine/mathGenerator'
 import { effectiveDifficulty } from '../engine/difficulty'
+import { XP_PER_CORRECT_ANSWER } from '../engine/leveling'
 import type { MathProblem } from '../engine/problems'
 import { getStats } from '../engine/stats'
 import ProblemCard from '../components/ProblemCard'
@@ -16,6 +17,7 @@ export default function AreaBrindlewood() {
   const setBrindlewoodDone = useGameStore((s) => s.setBrindlewoodDone)
   const setScreen        = useGameStore((s) => s.setScreen)
   const party            = useGameStore((s) => s.party)
+  const awardXpToParty   = useGameStore((s) => s.awardXpToParty)
 
   const playerLevel = party.reduce((max, c) => Math.max(max, c.level), 1)
   const [problem]   = useState<MathProblem>(() =>
@@ -28,11 +30,13 @@ export default function AreaBrindlewood() {
 
   function handleSolve() {
     if (!brindlewoodDone) {
+      awardXpToParty(XP_PER_CORRECT_ANSWER)   // reward the party for solving (§5)
       addToParty({
         speciesId: REWARD_ID,
         nickname:  reward.name,
         level:     3,
         currentHp: rStats.heart,
+        xp:        0,
       })
       setBrindlewoodDone()       // also saves
     }

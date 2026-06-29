@@ -309,7 +309,16 @@ Build Zone 1 end-to-end before anything else, with placeholder art (colored shap
 
 - **M0 — Skeleton:** project scaffold (Vite/React/TS/PWA), data types, save/load, navigation between a couple of screens.
 - **M1 — Playable vertical slice (Zone 1):** character creation, pick companion, two problem-quests with the retry/hint rules, the Proving Glade 3v3 battle using the stat/type engine, a Party/Dex screen, `localStorage` save. Placeholder art. **Goal: a playable graduation to test with her.**
-- **M2 — Full v1 content:** Zones 2–6 with element focus, Explore mode, signature creatures, badge caps, the math ramp, the Champion fight. Swap in real Leonardo art. PWA install on the tablet.
+- **M2 — Full v1 content**, built in four ordered sub-stages, each ending in a clean build:
+  - **M2a — Engine foundations ✅ DONE:** math/logic generator bands for Zones 2–6 (§9), plus XP/leveling and badge-based level caps (§5–§6). Pure, tested; no new screens.
+    - **Math bands 2–6** in `src/engine/mathGenerator.ts`, routed by `bandForDifficulty` (`difficulty.ts`): band 2 = 2-digit w/ regrouping (1–2 step), band 3 = mixed 2–3 digit (2-step), band 4 = 3-digit (2-step), band 5 = 3-digit (2–3 step), band 6 = 3-digit (2–3 step) **with an extraneous number** the solver must ignore. A structured `buildMathSpec` enforces the §9 guarantees (no negative answer or intermediate step, subtraction always larger − smaller, answer in the band's digit range, internally consistent multi-step); a rotating themed renderer wraps the numbers in prose. Band 1 (Zone 1) is unchanged.
+    - **Logic bands** in `logicGenerator.ts`: scale with difficulty — 3 options/2 clues (bands 1–2), 4 options/3 clues (bands 3–4), 5 options/4 clues (bands 5–6). `buildLogicPuzzle` emits one clue per wrong option so the stated answer is always correct **and unique** by construction.
+    - **XP/leveling** in `leveling.ts`: `XP_PER_CORRECT_ANSWER` (20) and `XP_PER_BATTLE_WIN` (50); `addXp` levels a creature via the §5 formula and recomputes stats; level is **clamped at the §6 badge cap** (0→4 … 5→15) while XP keeps accumulating past it. Wired into the store (`awardXpToParty`) and awarded on correct quest answers (both Zone 1 quests) and on the Proving Glade victory; persisted via the existing save system. `partyLevel` (party's highest creature level) still feeds `effectiveDifficulty`.
+    - Tests: `mathBands.test.ts`, `logicBands.test.ts`, `leveling.test.ts` (existing `generators.test.ts` still green) — 93 tests passing, `npm run build` clean.
+  - **M2b — Zone content/data:** all five zones as typed data — area names, quest reward creatures, Guardians, signature creatures, Trial teams, Explore pools, creature tiers.
+  - **M2c — World map + Trials:** the 6-region node map (locked/unlocked), two generated quests per zone, Trial battles granting badge + signature + next-zone unlock, and the Champion fight.
+  - **M2d — Explore mode:** problem-to-tame with the 25% wild-battle chance, themed pools, rare unpicked-starter finds, feeding XP.
+  - Then swap in real Leonardo art across the finished world.
 - **M3 — Polish:** balance tuning (the 1.5/0.5 dial), audio, save backup UX, content top-ups to the Explore pool.
 
 ---
@@ -321,6 +330,11 @@ Framed as expansion / unlock-style content once v1 is proven and loved:
 - **Breeding:** offspring inherit element from parents; the "unique variant" payoff is a **palette swap** (e.g. Starlight or Shadow coloring), so it adds depth with near-zero new base art.
 - **Achievements / unlock milestones.**
 - **New Game+ (leveled restart):** on beating the game, offer "start over (same difficulty)" or "start over (harder)." The harder mode applies a global level offset that every problem generator reads (§9), so the math scales up automatically with no new content. Assign levels that keep problems getting incrementally harder as she progresses.
+
+### Combat turn-order refinements (revisit when next touching battle)
+
+- **Bug — Speed isn't ordering turns:** right now her whole team always acts before the enemies (bottom-to-top), which means the Speed stat isn't actually deciding order. Fix so turn order interleaves both teams by Speed (player wins ties), per §4.
+- **Choice — let her pick which pony acts:** she currently can't choose her attacker; it's forced bottom-to-top. She should be able to attack with any ready pony in any order. Recommended rule: let her choose the order *among her own ponies*, while Speed still governs when enemy turns interleave and breaks ties — this preserves Speed's meaning while giving her the agency to drag whichever pony she wants.
 
 ---
 

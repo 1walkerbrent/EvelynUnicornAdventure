@@ -22,3 +22,15 @@ export function effectiveDifficulty(zoneNumber: number, playerLevel: number): nu
   const raw = band.floor + Math.round(playerLevel * SMALL_FACTOR)
   return Math.min(raw, band.ceiling)
 }
+
+// Maps a single effective-difficulty number onto its generator band (1–6).
+// Thresholds line up with each zone band's ceiling, so a zone's difficulty
+// range always resolves to that zone's band.
+export function bandForDifficulty(difficulty: number): 1 | 2 | 3 | 4 | 5 | 6 {
+  if (difficulty <= ZONE_BANDS[1].ceiling) return 1
+  if (difficulty <= ZONE_BANDS[2].ceiling) return 2
+  if (difficulty <= ZONE_BANDS[3].ceiling) return 3
+  if (difficulty <= ZONE_BANDS[4].ceiling) return 4
+  if (difficulty <= ZONE_BANDS[5].ceiling) return 5
+  return 6
+}
