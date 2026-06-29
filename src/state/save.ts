@@ -1,6 +1,23 @@
 import type { Creature } from '../engine/types'
 
 export interface SaveData {
+  version: 3
+  playerName: string
+  party: Creature[]
+  /** Completed area ids — the single source of truth for progression. */
+  areasDone: string[]
+  championDefeated: boolean
+  /** Last zone she was viewing (restored on load for convenience). */
+  lastZoneId?: string
+}
+
+const SAVE_KEY = 'evelyn_unicorn_adventure'
+const VERSION = 3 as const
+
+export type PersistedState = Omit<SaveData, 'version'>
+
+// ── v2 shape (Zone-1-only flags) — kept for one-way migration ────────────────
+interface SaveDataV2 {
   version: 2
   playerName: string
   party: Creature[]
@@ -11,10 +28,18 @@ export interface SaveData {
   zone2Unlocked: boolean
 }
 
-const SAVE_KEY = 'evelyn_unicorn_adventure'
-const VERSION = 2 as const
-
-type PersistedState = Omit<SaveData, 'version'>
+function migrateV2(d: SaveDataV2): PersistedState {
+  const areasDone: string[] = []
+  if (d.brindlewoodDone) areasDone.push('brindlewood')
+  if (d.sunflowerDone)   areasDone.push('sunflower')
+  if (d.zone1Complete)   areasDone.push('proving') // clearing Proving Glade unlocks Zone 2
+  return {
+    playerName:       d.playerName ?? '',
+    party:            d.party ?? [],
+    areasDone,
+    championDefeated: false,
+  }
+}
 
 export function saveGame(data: PersistedState): void {
   localStorage.setItem(SAVE_KEY, JSON.stringify({ version: VERSION, ...data }))
@@ -25,23 +50,21 @@ export function loadGame(): PersistedState | null {
   if (!raw) return null
   try {
     const parsed: unknown = JSON.parse(raw)
-    if (
-      typeof parsed !== 'object' ||
-      parsed === null ||
-      (parsed as SaveData).version !== VERSION
-    ) {
-      return null
+    if (typeof parsed !== 'object' || parsed === null) return null
+    const version = (parsed as { version?: number }).version
+
+    if (version === VERSION) {
+      const d = parsed as SaveData
+      return {
+        playerName:       d.playerName ?? '',
+        party:            d.party ?? [],
+        areasDone:        d.areasDone ?? [],
+        championDefeated: d.championDefeated ?? false,
+        lastZoneId:       d.lastZoneId,
+      }
     }
-    const d = parsed as SaveData
-    return {
-      playerName:      d.playerName      ?? '',
-      party:           d.party           ?? [],
-      badges:          d.badges          ?? 0,
-      brindlewoodDone: d.brindlewoodDone ?? false,
-      sunflowerDone:   d.sunflowerDone   ?? false,
-      zone1Complete:   d.zone1Complete   ?? false,
-      zone2Unlocked:   d.zone2Unlocked   ?? false,
-    }
+    if (version === 2) return migrateV2(parsed as SaveDataV2)
+    return null
   } catch {
     return null
   }
@@ -69,11 +92,8 @@ export function importSave(file: File): Promise<boolean> {
     reader.onload = (e) => {
       try {
         const parsed: unknown = JSON.parse(e.target?.result as string)
-        if (
-          typeof parsed !== 'object' ||
-          parsed === null ||
-          (parsed as SaveData).version !== VERSION
-        ) {
+        const version = (parsed as { version?: number })?.version
+        if (version !== VERSION && version !== 2) {
           resolve(false)
           return
         }

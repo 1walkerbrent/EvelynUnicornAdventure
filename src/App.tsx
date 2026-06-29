@@ -2,11 +2,20 @@ import { useEffect } from 'react'
 import { useGameStore } from './state/store'
 import CharacterCreation from './screens/CharacterCreation'
 import WorldMap from './screens/WorldMap'
-import AreaBrindlewood from './screens/AreaBrindlewood'
-import AreaSunflower from './screens/AreaSunflower'
+import ZoneView from './screens/ZoneView'
+import Quest from './screens/Quest'
 import ProvingGlade from './screens/ProvingGlade'
+import Trial from './screens/Trial'
+import Champion from './screens/Champion'
+import GameComplete from './screens/GameComplete'
+import ExploreHub from './screens/ExploreHub'
+import ExplorePractice from './screens/ExplorePractice'
+import ExploreHunt from './screens/ExploreHunt'
 import Party from './screens/Party'
 import Nav from './components/Nav'
+
+// Immersive full-screen experiences (no header/nav chrome).
+const FULLSCREEN_SCREENS = new Set(['provingGlade', 'trial', 'champion', 'gameComplete', 'exploreHunt'])
 
 export default function App() {
   const playerName    = useGameStore((s) => s.playerName)
@@ -17,14 +26,18 @@ export default function App() {
     load()
   }, [load])
 
-  const isCreating = playerName === ''
-  // Proving Glade is its own immersive full-screen experience (no chrome)
-  const isFullscreen = isCreating || currentScreen === 'provingGlade'
+  const isCreating   = playerName === ''
+  const isFullscreen = isCreating || FULLSCREEN_SCREENS.has(currentScreen)
 
   if (isFullscreen) {
     return (
       <div className="h-screen w-screen bg-purple-950 text-white overflow-hidden">
-        {isCreating ? <CharacterCreation /> : <ProvingGlade />}
+        {isCreating                          ? <CharacterCreation /> :
+         currentScreen === 'provingGlade'    ? <ProvingGlade /> :
+         currentScreen === 'trial'           ? <Trial /> :
+         currentScreen === 'champion'        ? <Champion /> :
+         currentScreen === 'exploreHunt'     ? <ExploreHunt /> :
+         currentScreen === 'gameComplete'    ? <GameComplete /> : null}
       </div>
     )
   }
@@ -38,8 +51,10 @@ export default function App() {
       </header>
       <main className="flex-1 overflow-y-auto">
         {currentScreen === 'worldMap'        && <WorldMap />}
-        {currentScreen === 'areaBrindlewood' && <AreaBrindlewood />}
-        {currentScreen === 'areaSunflower'   && <AreaSunflower />}
+        {currentScreen === 'zone'            && <ZoneView />}
+        {currentScreen === 'quest'           && <Quest />}
+        {currentScreen === 'exploreHub'      && <ExploreHub />}
+        {currentScreen === 'explorePractice' && <ExplorePractice />}
         {currentScreen === 'party'           && <Party />}
       </main>
       <Nav />

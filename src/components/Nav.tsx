@@ -17,9 +17,9 @@ export default function Nav() {
           key={screen}
           onClick={() => setScreen(screen)}
           className={`flex-1 flex flex-row items-center justify-center py-3 gap-2 transition-colors ${
-            // Area screens belong to the world-map tab flow
+            // Zone/quest/explore screens belong to the world-map tab flow
             (screen === 'worldMap'
-              ? ['worldMap', 'areaBrindlewood', 'areaSunflower'].includes(currentScreen)
+              ? ['worldMap', 'zone', 'quest', 'exploreHub', 'explorePractice'].includes(currentScreen)
               : currentScreen === screen)
               ? 'text-yellow-300'
               : 'text-purple-400 hover:text-purple-200'

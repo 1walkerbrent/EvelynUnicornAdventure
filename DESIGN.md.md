@@ -74,14 +74,14 @@ The combat *math* above is unchanged — this is how a battle looks and plays. R
 
 - **One persistent arena, never a page-flip.** A single battle scene stays mounted for the whole fight: her 3 ponies on the **left facing right**, the 3 enemies on the **right facing left**, staggered into a shared space (not two roster rows). Sprites are larger with a gentle idle bob; HP bars attach to each pony and show **raw HP numbers**. There are **no intro / target-list / results pages and no "Continue to Round X" button** — everything happens inline on this one stage.
 - **Events animate one at a time (animation queue).** The step-wise engine emits one event per action; the UI plays them sequentially — attacker lunges (or a projectile crosses the arena), the target flashes, a floating damage number pops, the HP bar drains — then advances to the next actor. This is the single change that turns a "results log" into a scene.
-- **Round-based in Speed order** (player wins ties): on her pony's turn it glows with a "Your turn" cue; enemy turns auto-play after a short (~0.7s) beat.
-- **Drag to attack, tap as fallback:** drag from the glowing pony across the arena to an enemy — a targeting arrow follows her finger and valid targets highlight. Tap-the-pony-then-tap-the-target also works and must fully complete a battle on its own.
+- **Round = two team phases; Speed decides which goes first** (player wins ties). A round is split into a **player phase** and an **enemy phase**. The team with the faster pony takes its phase first; ties go to the player (home advantage). **Within her phase, every un-acted pony glows ("Ready!") and she picks the order freely** — she can send any pony at any enemy, and each pony acts exactly once per round. Once a pony has attacked it dims out for the rest of the round. When her phase is done the enemy phase auto-plays (~0.7s beats), then a new round begins (Speed re-checked). *Implemented in `battle.ts` via `startingPhase` + `availableActors`; the engine tracks `activePhase` and `actedIds` rather than a single global Speed queue.*
+- **Drag to attack, tap as fallback:** drag from any glowing (Ready) pony across the arena to an enemy — a targeting arrow follows her finger and valid targets highlight. Tap-a-glowing-pony-then-tap-the-target also works and must fully complete a battle on its own.
 - **Type telegraph while aiming:** a live preview at the target — *"Super! ~8"*, *"Weak… ~2"*, or neutral — teaches the wheel mid-battle and previews Power × multiplier.
 - **Painless outcomes:** faints fade in place and are skipped; victory and defeat appear as an overlay **on the scene** (not a new page); defeat offers a free retry with gentle wording.
 
 This screen is the template for **every** battle — Proving Glade now, and all Zone 2–6 Trials, the Champion, and Explore wild battles later.
 
-**Engine note:** this requires exposing combat **step-wise** (next actor → apply one attack → event for animation) rather than resolving a whole round in a batch, so the UI can pause for her drag. The damage/type/Speed rules stay identical.
+**Engine note:** this requires exposing combat **step-wise** (next actor → apply one attack → event for animation) rather than resolving a whole round in a batch, so the UI can pause for her to choose. The damage/type rules stay identical; Speed now decides **phase order between teams** (not a per-pony interleave), which is what lets her sequence her own ponies freely.
 
 ---
 
@@ -182,12 +182,28 @@ Zone 1 uses one two-digit math problem and one short reading-logic puzzle (§9 r
 
 The freedom valve that lets her build a *unique* team instead of being locked into zone order.
 
-- Available in **any zone she has already unlocked**.
-- **Problem-to-tame (75%):** solve a problem correctly → the creature is calmed and joins. Unlimited tries — a pure positive loop.
-- **Wild battle (25%):** occasionally the encounter is a quick battle instead of a problem; win it to tame the creature. Kept low-stakes (retry freely) so it adds variety without punishing her.
-- **Difficulty scales by zone:** re-exploring Zone 2 stays easy (safe confidence farming); exploring Zone 6 is hard. She picks her own challenge level.
-- Each zone has a small themed **Explore pool** (~2–3 element creatures). Once caught, Explore still gives math practice and (later) feeds breeding.
-- Splits the two pillars cleanly: **Explore trains math** (fast, repeatable), **Trials train strategy** (high-stakes battles).
+- Available in **any zone she has already unlocked** — each unlocked zone shows an **Explore** action on the world map.
+- **Two explicit modes she chooses between** (not a random roll), cleanly separating the two pillars — *Practice = learning/leveling, Hunt = collecting:*
+  - **Practice (problem-solving, XP only — no pony):** always a generated Math or Story/Logic problem (mixed). Solve it → the **whole party earns XP** (M2a system). Unlimited tries, same retry/3rd-attempt-hint rules, no failure state, and an "another one" loop so she can grind problems to level her team. Never grants a creature — this is the pure learning outlet.
+  - **Hunt (battle to tame — the collection faucet):** always a single-creature `<BattleScreen>` battle, her team vs one wild pony pulled from that zone's themed **Explore pool**. It's 3-on-1, but the lone wild pony is a **mini-boss** (see *Hunt mini-boss scaling* below) so taming feels earned. Win → it joins the party + XP; loss → painless free retry. Once the zone's pool is fully tamed, Hunt gently says *"you've caught them all here."*
+- **Rare starter finds:** the four starters she did **not** pick at creation appear as **rare Hunt encounters** (low chance, ~12%), with their natural element, tameable on a win (§11 resolved calls).
+- **Difficulty scales by zone:** `effectiveDifficulty(zone, partyLevel)` — re-exploring Zone 2 stays easy (safe confidence farming); exploring Zone 6 is hard. She picks her own challenge level.
+- Splits the two pillars cleanly: **Practice trains math** (fast, repeatable), **Hunt + Trials train strategy/collection** (battles).
+
+### Hunt mini-boss scaling (M2d balance pass)
+
+A same-level 3-on-1 wild battle was a free win. To make taming feel earned and to **reward type-smart play** (a neutral-matchup team should grind; bringing the element counter + focusing fire wins cleanly), the wild Hunt pony is a **mini-boss**: on top of its normal tier/level stats it gets
+
+- **Level = party's highest level + 2**
+- **Heart (HP) × 2**
+- **Power × 1.2** (rounded normally)
+- **Speed unchanged**
+
+These **three multipliers are the tuning dials** (`WILD_MINIBOSS_MOD` in `engine/explore.ts`, applied by `buildWildMiniBoss`). The ×2/×0.5 type multiplier (§4) and `<BattleScreen>` are unchanged — this only buffs the wild pony's raw stats, so an advantaged team still hits for ×2 while taking ×0.5, and wins clearly faster than a neutral team. It stays **3-on-1**.
+
+**Tame-at-cap rule:** catch difficulty and reward power are kept **separate**. When a hunted pony is tamed it joins the party at the player's **current level cap** (§6 badge cap) at **full HP** — *not* at the boosted mini-boss level. So the reward is strong and usable but **never above cap**. (Practice mode, Trials, and the Proving Glade are unaffected by this change.)
+
+*Implementation (M2d):* `engine/explore.ts` (`pickWildEncounter` + `buildWildMiniBoss`, pure + tested) drives Hunt selection from `zone.explorePoolSpeciesIds` + unpicked starters and builds the mini-boss; screens `ExploreHub` / `ExplorePractice` / `ExploreHunt` reuse the generators, the generic `<BattleScreen>` (now with prop-driven victory/defeat flavor text), and the existing taming/XP/save flow (`ExploreHunt` tames at `levelCap`).
 
 ---
 
@@ -266,6 +282,33 @@ Most of the roster is collectable in the wild — that's the core loop. Gyms/rew
 
 **Starter choice:** she picks from **all five elements** at character creation, so her opening creature can be any type; the two Zone 1 quest creatures round out early coverage.
 
+### Creature roster (Zones 2–6) — M2b data (implemented)
+
+Typed data in `src/content/` (`creatures.ts`, `zones.ts`, `guardians.ts`). All unicorns; placeholder art = an element-keyed color. Tier = zone number − 1. Per zone: 2 quest rewards (Areas 1 & 2), 1 Guardian signature, 3 Explore-pool species.
+
+| Zone (element, tier) | Quest rewards | Signature (ace) | Explore pool |
+|---|---|---|---|
+| **2 Earth** (t1) | Acorn Sprout, Fern Whisper | **Boulderhoof** | Daisy Dapple, Clay Canter, Mossy Tussock |
+| **3 Water** (t2) | Bubble Brook, Pearl Ripple | **Tidalhoof** | Splash Pebble, Coral Shimmer, Misty Wave |
+| **4 Fire** (t3) | Spark Flicker, Cinder Cocoa | **Blazehoof** | Flame Twirl, Ember Glow, Sunny Scorch |
+| **5 Air** (t4) | Breezy Lark, Cloud Skip | **Galehoof** | Wind Whistle, Feather Float, Gust Dancer |
+| **6 Spirit** (t5) | Star Sparkle, Moon Glimmer | **Astralhoof** | Wishing Star, Dusk Twinkle, Nova Drift |
+
+**Champion / legendary:** **Aurelune** (Spirit, tier 5) — Grand Champion Vesper's ace.
+
+**Guardians & Trial teams** (ace + 2 element species, levels near the zone cap §6; win → badge + signature + next-zone unlock):
+
+| Zone | Guardian | Trial team (levels) | Badge → unlock |
+|---|---|---|---|
+| 2 | Warden Bramblewood | Daisy Dapple 3, Clay Canter 3, **Boulderhoof 4** | Badge 1 → Zone 3 |
+| 3 | Tidecaller Nerida | Splash Pebble 5, Coral Shimmer 5, **Tidalhoof 6** | Badge 2 → Zone 4 |
+| 4 | Emberwarden Cinda | Flame Twirl 7, Ember Glow 7, **Blazehoof 8** | Badge 3 → Zone 5 |
+| 5 | Skywarden Zephyra | Wind Whistle 9, Feather Float 9, **Galehoof 10** | Badge 4 → Zone 6 |
+| 6 | Starwarden Lumina | Dusk Twinkle 11, Nova Drift 11, **Astralhoof 12** | Badge 5 → Champion |
+| — | Grand Champion Vesper | Star Sparkle 14, Moon Glimmer 14, **Aurelune 15** | post-game capstone |
+
+Data integrity is enforced by `src/content/content.test.ts` (every referenced id exists, tiers/elements match the zone, one badge per zone, correct unlock targets, Trial teams reference real species).
+
 ---
 
 ## 12. Art pipeline (Leonardo, paid)
@@ -315,9 +358,9 @@ Build Zone 1 end-to-end before anything else, with placeholder art (colored shap
     - **Logic bands** in `logicGenerator.ts`: scale with difficulty — 3 options/2 clues (bands 1–2), 4 options/3 clues (bands 3–4), 5 options/4 clues (bands 5–6). `buildLogicPuzzle` emits one clue per wrong option so the stated answer is always correct **and unique** by construction.
     - **XP/leveling** in `leveling.ts`: `XP_PER_CORRECT_ANSWER` (20) and `XP_PER_BATTLE_WIN` (50); `addXp` levels a creature via the §5 formula and recomputes stats; level is **clamped at the §6 badge cap** (0→4 … 5→15) while XP keeps accumulating past it. Wired into the store (`awardXpToParty`) and awarded on correct quest answers (both Zone 1 quests) and on the Proving Glade victory; persisted via the existing save system. `partyLevel` (party's highest creature level) still feeds `effectiveDifficulty`.
     - Tests: `mathBands.test.ts`, `logicBands.test.ts`, `leveling.test.ts` (existing `generators.test.ts` still green) — 93 tests passing, `npm run build` clean.
-  - **M2b — Zone content/data:** all five zones as typed data — area names, quest reward creatures, Guardians, signature creatures, Trial teams, Explore pools, creature tiers.
-  - **M2c — World map + Trials:** the 6-region node map (locked/unlocked), two generated quests per zone, Trial battles granting badge + signature + next-zone unlock, and the Champion fight.
-  - **M2d — Explore mode:** problem-to-tame with the 25% wild-battle chance, themed pools, rare unpicked-starter finds, feeding XP.
+  - **M2b — Zone content/data ✅ DONE:** all five zones as typed data — area names, quest reward creatures, Guardians, signature creatures, Trial teams, Explore pools, creature tiers. In `src/content/`: 31 species across Zones 2–6 + Champion Aurelune (`creatures.ts`), 6 Guardians with Trial teams (`guardians.ts`), and enriched `Zone` data mapping each zone to its element, 3 areas (2 quest + 1 Trial), quest rewards, Guardian, signature, badge, unlock target, and Explore pool (`zones.ts`). Integrity-tested in `content.test.ts`. See the §11 roster subsection.
+  - **M2c — World map + Trials ✅ DONE:** the 6-region node map (locked/unlocked) → zone view → 3 area nodes, two generated quests per zone, Trial battles granting badge + signature + next-zone unlock, and the Champion fight + end screen. Progression is derived from one persisted `areasDone[]` set via pure helpers in `engine/progression.ts` (zone/area unlock, badge count, champion unlock; tested in `progression.test.ts`). One reusable `screens/Quest.tsx` replaces the old per-area screens (Area 1 = Math, Area 2 = Logic at `effectiveDifficulty`, same retry/hint). Trials reuse the generic `<BattleScreen>` fed each Guardian's M2b team via `screens/teams.ts` (`Trial.tsx`/`Champion.tsx`); `store.winTrial(zoneId)` atomically clears the gate, raises the §6 cap, and awards the signature creature. Save bumped to **v3 with a v2→v3 migration** so existing progress survives.
+  - **M2d — Explore mode ✅ DONE (M2 complete):** the **Practice / Hunt** split (replacing the old 75/25 problem-to-tame model, see §8). Practice = generated Math/Logic for party XP with an "another one" loop, no pony; Hunt = single-wild `<BattleScreen>` → tame, drawn from the zone's Explore pool with rare unpicked-starter finds. `engine/explore.ts` (`pickWildEncounter`, tested) + screens `ExploreHub`/`ExplorePractice`/`ExploreHunt`, reached from the world map per unlocked zone. `<BattleScreen>` victory/defeat text is now prop-driven so Trials/Champion/Hunt read correctly. 131 tests passing, build clean.
   - Then swap in real Leonardo art across the finished world.
 - **M3 — Polish:** balance tuning (the 1.5/0.5 dial), audio, save backup UX, content top-ups to the Explore pool.
 

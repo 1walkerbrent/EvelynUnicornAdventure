@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
 import {
-  createBattleState, nextActor, applyAttack, isBattleOver, calcDamage,
+  createBattleState, nextActor, availableActors, applyAttack, isBattleOver, calcDamage,
 } from '../engine/battle'
 import type { BattlePony, BattleState } from '../engine/battle'
 import { getTypeMultiplier } from '../engine/combat'
@@ -24,7 +24,9 @@ const ENEMY_POS = [
 const SPRITE_SIZE = 96
 
 // ── Types ─────────────────────────────────────────────────────────────────────
-type Phase = 'idle' | 'playerTurn' | 'animating' | 'victory' | 'defeat'
+// 'playerPhase' = her whole team's turn — every un-acted pony is selectable and
+// she picks the order. 'animating' plays a single attack; enemy phase auto-plays.
+type Phase = 'idle' | 'playerPhase' | 'animating' | 'victory' | 'defeat'
 
 interface DmgFloat {
   id: number
@@ -41,6 +43,11 @@ interface Props {
   enemyLabel?: string
   onVictory: () => void
   onDefeat: () => void
+  // Optional overlay flavor (defaults are generic so any battle reads correctly).
+  victoryTitle?: string
+  victoryMessage?: string
+  victoryButtonLabel?: string
+  defeatTip?: string
 }
 
 // ── Component ─────────────────────────────────────────────────────────────────
@@ -50,22 +57,41 @@ export default function BattleScreen({
   enemyLabel = 'Opponent',
   onVictory,
   onDefeat,
+  victoryTitle = 'You won! 🏆',
+  victoryMessage = 'Great battling — you used the type wheel well!',
+  victoryButtonLabel = 'Continue →',
+  defeatTip = 'Think about which element beats which, and focus your team on one enemy at a time.',
 }: Props) {
   const [battleState, setBattleState] = useState<BattleState>(() =>
     createBattleState(initPlayers, initEnemies),
   )
   const [phase,         setPhase]         = useState<Phase>('idle')
-  const [activeActor,   setActiveActor]   = useState<{ pony: BattlePony; isPlayer: boolean } | null>(null)
+  // The player pony she has tapped/grabbed to act with next (her chosen order).
+  const [selectedId,    setSelectedId]    = useState<string | null>(null)
   const [attackingId,   setAttackingId]   = useState<string | null>(null)
   const [flashingId,    setFlashingId]    = useState<string | null>(null)
-  const [tapMode,       setTapMode]       = useState(false)
   const [dragOrigin,    setDragOrigin]    = useState<{ x: number; y: number } | null>(null)
   const [dragPos,       setDragPos]       = useState<{ x: number; y: number } | null>(null)
   const [hovEnemyId,    setHovEnemyId]    = useState<string | null>(null)
   const [floats,        setFloats]        = useState<DmgFloat[]>([])
 
+  // Player ponies that still have their action this round (only during her phase).
+  const readyIds =
+    phase === 'playerPhase' && battleState.activePhase === 'player'
+      ? availableActors(battleState).map(p => p.id)
+      : []
+
+  // Name of the enemy currently mid-attack (for the "… attacks!" banner).
+  const enemyActingName =
+    attackingId
+      ? battleState.enemyPonies.find(p => p.id === attackingId)?.name ?? null
+      : null
+
   const ponyRefs    = useRef<Record<string, HTMLDivElement | null>>({})
   const pointerDown = useRef<{ x: number; y: number } | null>(null)
+  // Which pony a drag started from (kept in a ref so the tap-click that follows
+  // pointerup doesn't clobber the selection).
+  const dragFrom    = useRef<string | null>(null)
   // Keep a ref in sync with battleState so callbacks always see current state
   const stateRef    = useRef(battleState)
   stateRef.current  = battleState
@@ -104,11 +130,10 @@ export default function BattleScreen({
       // Clear flash, advance to next turn
       setTimeout(() => {
         setFlashingId(null)
-        setTapMode(false)
+        setSelectedId(null)
         setDragOrigin(null)
         setDragPos(null)
         setHovEnemyId(null)
-        setActiveActor(null)
         setPhase('idle')
       }, 480)
     }, 380)
@@ -122,48 +147,50 @@ export default function BattleScreen({
     if (over === 'player') { setPhase('victory'); return }
     if (over === 'enemy')  { setPhase('defeat');  return }
 
+    if (battleState.activePhase === 'player') {
+      // Hand control to her — every ready pony is selectable, in any order.
+      setPhase('playerPhase')
+      return
+    }
+
+    // Enemy phase: auto-play the next enemy. setPhase must NOT be called here —
+    // changing any dep triggers cleanup → clearTimeout.
     const actor = nextActor(battleState)
     if (!actor) return
-    setActiveActor(actor)
-
-    if (!actor.isPlayer) {
-      // setPhase must NOT be called here — changing any dep triggers cleanup → clearTimeout
-      const snap = battleState
-      const t = setTimeout(() => {
-        setPhase('animating')
-        const targetId = snap.playerPonies.find(p => p.currentHp > 0)?.id
-        if (targetId) executeAttack(snap, actor.pony.id, targetId)
-      }, 700)
-      return () => clearTimeout(t)
-    } else {
-      setPhase('playerTurn')
-    }
+    const snap = battleState
+    const t = setTimeout(() => {
+      setPhase('animating')
+      const targetId = snap.playerPonies.find(p => p.currentHp > 0)?.id
+      if (targetId) executeAttack(snap, actor.pony.id, targetId)
+    }, 700)
+    return () => clearTimeout(t)
   }, [battleState, phase, executeAttack])
 
-  // ── Player pony tap (step 1 of tap→tap flow) ─────────────────────────────
+  // ── Player pony tap (step 1: choose which pony acts) ─────────────────────
   function handlePonyClick(ponyId: string) {
-    if (phase !== 'playerTurn') return
-    if (activeActor?.pony.id !== ponyId) return
-    setTapMode(t => !t)
+    if (phase !== 'playerPhase' || !readyIds.includes(ponyId)) return
+    // Toggle this pony as the selected attacker (tap again to deselect).
+    setSelectedId(prev => (prev === ponyId ? null : ponyId))
   }
 
-  // ── Enemy tap (step 2, or end of drag) ───────────────────────────────────
-  function fireAtEnemy(enemyId: string) {
-    if (phase !== 'playerTurn' || !activeActor) return
+  // ── Fire the chosen pony at an enemy (shared by tap and drag) ─────────────
+  function fireFrom(attackerId: string | null, enemyId: string) {
+    if (phase !== 'playerPhase' || !attackerId || !readyIds.includes(attackerId)) return
     const enemy = battleState.enemyPonies.find(p => p.id === enemyId)
     if (!enemy || enemy.currentHp <= 0) return
     setPhase('animating')
-    executeAttack(stateRef.current, activeActor.pony.id, enemyId)
+    executeAttack(stateRef.current, attackerId, enemyId)
   }
 
   function handleEnemyClick(enemyId: string) {
-    if (!tapMode) return
-    fireAtEnemy(enemyId)
+    if (!selectedId) return
+    fireFrom(selectedId, enemyId)
   }
 
   // ── Drag ──────────────────────────────────────────────────────────────────
   function handlePointerDown(e: React.PointerEvent, ponyId: string) {
-    if (phase !== 'playerTurn' || activeActor?.pony.id !== ponyId) return
+    if (phase !== 'playerPhase' || !readyIds.includes(ponyId)) return
+    dragFrom.current = ponyId
     e.currentTarget.setPointerCapture(e.pointerId)
     const el = ponyRefs.current[ponyId]
     if (!el) return
@@ -197,23 +224,26 @@ export default function BattleScreen({
 
     if (!dragOrigin) return
 
-    // Tiny movement = tap on own pony, not a drag → toggle tapMode
+    // Tiny movement = a tap, not a drag → let the pony's onClick handle selection.
     const dist = start
       ? Math.hypot(e.clientX - start.x, e.clientY - start.y)
       : 99
 
     if (dist < 10) {
+      dragFrom.current = null
       setDragOrigin(null)
       setDragPos(null)
       return
     }
 
     const target = hovEnemyId
+    const from = dragFrom.current
+    dragFrom.current = null
     setDragOrigin(null)
     setDragPos(null)
     setHovEnemyId(null)
 
-    if (target) fireAtEnemy(target)
+    if (target) fireFrom(from, target)
   }
 
   // ── Retry: restore both teams to full HP ─────────────────────────────────
@@ -223,23 +253,26 @@ export default function BattleScreen({
       initEnemies.map(p => ({ ...p, currentHp: p.maxHp })),
     ))
     setPhase('idle')
-    setActiveActor(null)
+    setSelectedId(null)
     setAttackingId(null)
     setFlashingId(null)
-    setTapMode(false)
+    dragFrom.current = null
     setDragOrigin(null)
     setDragPos(null)
     setHovEnemyId(null)
     setFloats([])
   }
 
-  // ── Damage preview label ─────────────────────────────────────────────────
+  // ── Damage preview label (uses the pony she's about to attack with) ───────
   function previewLabel(enemyId: string): string | null {
-    if (!activeActor?.isPlayer) return null
+    const attackerId = dragFrom.current ?? selectedId
+    if (!attackerId) return null
+    const attacker = battleState.playerPonies.find(p => p.id === attackerId)
+    if (!attacker) return null
     const enemy = battleState.enemyPonies.find(p => p.id === enemyId)
     if (!enemy || enemy.currentHp <= 0) return null
-    const dmg  = calcDamage(activeActor.pony.power, activeActor.pony.element, enemy.element)
-    const mult = getTypeMultiplier(activeActor.pony.element, enemy.element)
+    const dmg  = calcDamage(attacker.power, attacker.element, enemy.element)
+    const mult = getTypeMultiplier(attacker.element, enemy.element)
     return mult === 2 ? `Super! ~${dmg}` : mult === 0.5 ? `Weak ~${dmg}` : `~${dmg}`
   }
 
@@ -266,8 +299,8 @@ export default function BattleScreen({
       }}
       onPointerMove={handleStagePointerMove}
       onPointerUp={handleStagePointerUp}
-      // Tapping the empty stage cancels tap-mode
-      onClick={() => setTapMode(false)}
+      // Tapping the empty stage deselects the chosen pony
+      onClick={() => setSelectedId(null)}
     >
       {/* ── Team labels ──────────────────────────────────────────────────── */}
       <div className="absolute top-3 left-5 text-sm font-semibold text-green-900/50 pointer-events-none">
@@ -278,28 +311,29 @@ export default function BattleScreen({
       </div>
 
       {/* ── Turn hint (bottom center) ─────────────────────────────────── */}
-      {phase === 'playerTurn' && !tapMode && (
+      {phase === 'playerPhase' && !selectedId && (
         <div className="absolute bottom-5 left-1/2 -translate-x-1/2 bg-yellow-400/90 text-yellow-900
                         font-bold text-sm px-5 py-2 rounded-full shadow pointer-events-none battle-pop-in">
-          Tap your glowing pony, then tap an enemy!
+          Pick any glowing pony, then tap an enemy! ({readyIds.length} ready)
         </div>
       )}
-      {tapMode && (
+      {phase === 'playerPhase' && selectedId && (
         <div className="absolute bottom-5 left-1/2 -translate-x-1/2 bg-orange-500/90 text-white
                         font-bold text-sm px-5 py-2 rounded-full shadow pointer-events-none battle-pop-in">
           Now tap an enemy to attack!
         </div>
       )}
-      {activeActor && !activeActor.isPlayer && (
+      {enemyActingName && (
         <div className="absolute bottom-5 left-1/2 -translate-x-1/2 bg-purple-800/80 text-white
                         text-sm px-5 py-2 rounded-full shadow pointer-events-none">
-          {activeActor.pony.name} attacks!
+          {enemyActingName} attacks!
         </div>
       )}
 
       {/* ── Player ponies (left side) ────────────────────────────────────── */}
       {battleState.playerPonies.map((pony, i) => {
-        const isActive  = phase === 'playerTurn' && activeActor?.pony.id === pony.id
+        const isReady    = readyIds.includes(pony.id)
+        const isSelected = selectedId === pony.id
         const fainted   = pony.currentHp <= 0
         const hpPct     = pony.maxHp > 0 ? pony.currentHp / pony.maxHp : 0
         const hpColor   = hpPct > 0.5 ? '#22c55e' : hpPct > 0.25 ? '#eab308' : '#ef4444'
@@ -310,28 +344,29 @@ export default function BattleScreen({
             className="absolute flex flex-col items-center gap-1"
             style={PLAYER_POS[i]}
           >
-            {/* Your-turn badge */}
-            {isActive && (
-              <div className="absolute -top-8 left-1/2 -translate-x-1/2 z-20
-                              bg-yellow-400 text-yellow-900 text-xs font-bold
-                              px-3 py-0.5 rounded-full whitespace-nowrap shadow battle-pop-in">
-                Your turn
+            {/* Badge: ready ponies invite a tap; the selected one is locked in */}
+            {isReady && (
+              <div className={`absolute -top-8 left-1/2 -translate-x-1/2 z-20 text-xs font-bold
+                              px-3 py-0.5 rounded-full whitespace-nowrap shadow battle-pop-in
+                              ${isSelected ? 'bg-orange-500 text-white' : 'bg-yellow-400 text-yellow-900'}`}>
+                {isSelected ? 'Pick a target →' : 'Ready!'}
               </div>
             )}
 
             {/* Sprite wrapper — handles glow ring, lunge, flash, bob */}
             <div
               ref={el => { ponyRefs.current[pony.id] = el }}
-              className={`relative cursor-pointer ${spriteClass(pony, false)}`}
+              className={`relative ${isReady ? 'cursor-pointer' : ''} ${spriteClass(pony, false)}`}
               style={{ animationDelay: bobDelay(i, false) }}
               onPointerDown={e => { e.stopPropagation(); handlePointerDown(e, pony.id) }}
               onClick={e => { e.stopPropagation(); handlePonyClick(pony.id) }}
             >
-              {/* Glow ring */}
-              {isActive && (
+              {/* Glow ring — every ready pony glows; the selected one glows orange */}
+              {isReady && (
                 <div
-                  className="absolute inset-0 rounded-full ring-4 ring-yellow-400 ring-offset-4
-                              ring-offset-transparent animate-pulse z-10 pointer-events-none"
+                  className={`absolute inset-0 rounded-full ring-4 ring-offset-4 ring-offset-transparent
+                              animate-pulse z-10 pointer-events-none
+                              ${isSelected ? 'ring-orange-500' : 'ring-yellow-400'}`}
                   style={{ borderRadius: '50%' }}
                 />
               )}
@@ -349,11 +384,12 @@ export default function BattleScreen({
       {/* ── Enemy ponies (right side) ────────────────────────────────────── */}
       {battleState.enemyPonies.map((pony, i) => {
         const fainted     = pony.currentHp <= 0
-        const isTargetable = phase === 'playerTurn' && !fainted
+        const isTargetable = phase === 'playerPhase' && !fainted
+        // Highlight on drag-hover, or when a pony is selected and waiting for a target.
         const isHovered   = (hovEnemyId === pony.id && !!dragPos) ||
-                            (tapMode && isTargetable)
+                            (!!selectedId && isTargetable)
         const preview     = (hovEnemyId === pony.id && !!dragPos) ||
-                            (tapMode && isTargetable)
+                            (!!selectedId && isTargetable)
           ? previewLabel(pony.id)
           : null
         const hpPct   = pony.maxHp > 0 ? pony.currentHp / pony.maxHp : 0
@@ -445,18 +481,14 @@ export default function BattleScreen({
       {phase === 'victory' && (
         <Overlay>
           <div className="text-6xl mb-1">🏆</div>
-          <h2 className="text-3xl font-bold text-yellow-300">You won!</h2>
-          <p className="text-purple-300 italic text-sm px-2">
-            "Your bond with your ponies is real — and you used the type wheel perfectly!
-            Zone 2 is now open to you!"
-            <span className="block text-purple-400 not-italic text-xs mt-1">— Pip</span>
-          </p>
+          <h2 className="text-3xl font-bold text-yellow-300">{victoryTitle}</h2>
+          <p className="text-purple-300 italic text-sm px-2">{victoryMessage}</p>
           <button
             onClick={onVictory}
             className="w-full bg-yellow-400 hover:bg-yellow-300 text-purple-950
                        font-bold py-4 rounded-2xl text-lg transition-colors"
           >
-            Continue to the World Map 🗺️
+            {victoryButtonLabel}
           </button>
         </Overlay>
       )}
@@ -467,13 +499,11 @@ export default function BattleScreen({
           <div className="text-5xl mb-1">💫</div>
           <h2 className="text-2xl font-bold text-white">Your ponies need to rest!</h2>
           <p className="text-purple-300 text-sm italic">
-            "Good effort! Think about which elements have the advantage."
-            <span className="block text-purple-400 not-italic text-xs mt-1">— Pip</span>
+            Good effort — give it another try!
           </p>
           <div className="bg-purple-900/60 rounded-xl p-3 text-left text-sm space-y-1 w-full">
-            <p className="text-yellow-300 font-semibold">💡 Type tips:</p>
-            <p className="text-purple-200">🔥 Fire beats 💨 Air — try Tangerine vs Wisp!</p>
-            <p className="text-purple-200">Focus all three ponies on one enemy at a time.</p>
+            <p className="text-yellow-300 font-semibold">💡 Type tip:</p>
+            <p className="text-purple-200">{defeatTip}</p>
           </div>
           <div className="flex gap-3 w-full">
             <button

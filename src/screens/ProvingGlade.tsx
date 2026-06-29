@@ -1,11 +1,10 @@
 import { useMemo } from 'react'
 import { useGameStore } from '../state/store'
-import { SPECIES_BY_ID } from '../content/creatures'
 import { buildBattlePony } from '../engine/battle'
 import type { BattlePony } from '../engine/battle'
 import type { Element } from '../engine/types'
-import { XP_PER_BATTLE_WIN } from '../engine/leveling'
 import BattleScreen from '../components/BattleScreen'
+import { buildPlayerTeam } from './teams'
 
 // Pip's fixed team for the Zone 1 graduation battle (§7)
 const PIP_ROSTER: Array<{ id: string; name: string; element: Element }> = [
@@ -20,24 +19,10 @@ function buildPipTeam(): BattlePony[] {
   )
 }
 
-function buildPlayerTeam(party: ReturnType<typeof useGameStore.getState>['party']): BattlePony[] {
-  return party.slice(0, 3).map((c, i) => {
-    const species = SPECIES_BY_ID[c.speciesId]
-    return buildBattlePony(
-      `player-${i}`,
-      c.nickname || species.name,
-      species.element,
-      species.tier,
-      c.level,
-    )
-  })
-}
-
 export default function ProvingGlade() {
-  const party          = useGameStore(s => s.party)
-  const completeZone1  = useGameStore(s => s.completeZone1)
-  const setScreen      = useGameStore(s => s.setScreen)
-  const awardXpToParty = useGameStore(s => s.awardXpToParty)
+  const party     = useGameStore(s => s.party)
+  const winTrial  = useGameStore(s => s.winTrial)
+  const setScreen = useGameStore(s => s.setScreen)
 
   // Memoised so team objects stay stable across re-renders
   const playerPonies = useMemo(() => buildPlayerTeam(party), [party])
@@ -48,7 +33,12 @@ export default function ProvingGlade() {
       playerPonies={playerPonies}
       enemyPonies={enemyPonies}
       enemyLabel="Pip"
-      onVictory={() => { awardXpToParty(XP_PER_BATTLE_WIN); completeZone1(); setScreen('worldMap') }}
+      victoryTitle="You won!"
+      victoryMessage="“Your bond with your ponies is real — and you used the type wheel perfectly! Zone 2 is now open to you!” — Pip"
+      victoryButtonLabel="Continue to the World Map 🗺️"
+      defeatTip="🔥 Fire beats 💨 Air — try Tangerine vs Wisp! Focus all three ponies on one enemy."
+      // Clears Zone 1's gating area ('proving') → unlocks Zone 2 + awards battle XP.
+      onVictory={() => { winTrial('z1'); setScreen('worldMap') }}
       onDefeat={() => setScreen('worldMap')}
     />
   )

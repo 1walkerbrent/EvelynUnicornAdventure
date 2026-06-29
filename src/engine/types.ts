@@ -13,6 +13,8 @@ export interface CreatureSpecies {
   /** 1 = starter zone, 5 = spirit zone — determines base stats (§5) */
   tier: 1 | 2 | 3 | 4 | 5
   spritePlaceholderColor: string
+  /** Champion / one-of-a-kind finale creature (§11). */
+  legendary?: boolean
 }
 
 export interface Creature {

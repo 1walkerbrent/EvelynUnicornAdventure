@@ -3,12 +3,22 @@ import { getStats } from './stats'
 import { getTypeMultiplier } from './combat'
 
 // ── Step-wise battle API ─────────────────────────────────────────────────────
+//
+// Turn model (§4): a round is split into two team PHASES. Speed decides which
+// team's phase goes first — the team with the fastest pony leads, player wins
+// ties (home advantage). Within a phase, every alive pony on that team acts
+// exactly once; the player freely chooses the order of her ponies, while enemy
+// ponies are auto-played. When both phases are done the round resets.
+
+export type Phase = 'player' | 'enemy'
 
 export interface BattleState {
   playerPonies: BattlePony[]
   enemyPonies: BattlePony[]
-  /** IDs of ponies yet to act in the current round, in Speed order. */
-  turnQueue: string[]
+  /** Which team is acting right now. */
+  activePhase: Phase
+  /** IDs of ponies that have already acted in the current round. */
+  actedIds: string[]
 }
 
 export interface AttackEvent {
@@ -20,21 +30,27 @@ export interface AttackEvent {
   targetFainted: boolean
 }
 
-function buildQueue(players: BattlePony[], enemies: BattlePony[]): string[] {
-  const all = [
-    ...players.filter(p => p.currentHp > 0).map(p => ({ id: p.id, speed: p.speed, isPlayer: true })),
-    ...enemies.filter(p => p.currentHp > 0).map(p => ({ id: p.id, speed: p.speed, isPlayer: false })),
-  ]
-  // Speed descending; player wins ties (§4)
-  all.sort((a, b) => b.speed - a.speed || (a.isPlayer ? -1 : 1))
-  return all.map(x => x.id)
+function fastestSpeed(ponies: BattlePony[]): number {
+  return ponies
+    .filter(p => p.currentHp > 0)
+    .reduce((m, p) => Math.max(m, p.speed), -Infinity)
+}
+
+/** Which team's phase leads this round: faster team first, player wins ties (§4). */
+export function startingPhase(players: BattlePony[], enemies: BattlePony[]): Phase {
+  return fastestSpeed(players) >= fastestSpeed(enemies) ? 'player' : 'enemy'
 }
 
 export function createBattleState(
   playerPonies: BattlePony[],
   enemyPonies: BattlePony[],
 ): BattleState {
-  return { playerPonies, enemyPonies, turnQueue: buildQueue(playerPonies, enemyPonies) }
+  return {
+    playerPonies,
+    enemyPonies,
+    activePhase: startingPhase(playerPonies, enemyPonies),
+    actedIds: [],
+  }
 }
 
 function findPony(
@@ -48,18 +64,28 @@ function findPony(
   return null
 }
 
-/** Returns the next pony to act, skipping any that have fainted since the queue was built. */
+/** Alive ponies on the active team that still have their action this round (Speed order). */
+export function availableActors(state: BattleState): BattlePony[] {
+  const team = state.activePhase === 'player' ? state.playerPonies : state.enemyPonies
+  return team
+    .filter(p => p.currentHp > 0 && !state.actedIds.includes(p.id))
+    .sort((a, b) => b.speed - a.speed)
+}
+
+/**
+ * The next pony to act. In the player phase this is just the fastest un-acted
+ * pony as a default suggestion — the UI may let her pick any available pony.
+ * In the enemy phase it is the pony the auto-player should move next.
+ */
 export function nextActor(
   state: BattleState,
 ): { pony: BattlePony; isPlayer: boolean } | null {
-  for (const id of state.turnQueue) {
-    const found = findPony(state, id)
-    if (found && found.pony.currentHp > 0) return found
-  }
-  return null
+  const actor = availableActors(state)[0]
+  if (!actor) return null
+  return { pony: actor, isPlayer: state.activePhase === 'player' }
 }
 
-/** Pure: applies one attack, advances the queue, returns new state + event. */
+/** Pure: applies one attack, advances the phase/round, returns new state + event. */
 export function applyAttack(
   state: BattleState,
   attackerId: string,
@@ -79,16 +105,31 @@ export function applyAttack(
   const newPlayers = update(state.playerPonies)
   const newEnemies = update(state.enemyPonies)
 
-  // Remove attacker; rebuild queue when no alive ponies remain in it
-  let newQueue = state.turnQueue.filter(id => id !== attackerId)
-  const aliveInQueue = newQueue.some(id => {
-    const f = findPony({ playerPonies: newPlayers, enemyPonies: newEnemies, turnQueue: [] }, id)
-    return f && f.pony.currentHp > 0
-  })
-  if (!aliveInQueue) newQueue = buildQueue(newPlayers, newEnemies)
+  const next: BattleState = {
+    playerPonies: newPlayers,
+    enemyPonies: newEnemies,
+    activePhase: state.activePhase,
+    actedIds: [...state.actedIds, attackerId],
+  }
+
+  // If the active team has no one left to act, hand off to the other phase —
+  // or, if both teams are done, start a fresh round (re-checking Speed).
+  if (availableActors(next).length === 0) {
+    const other: Phase = next.activePhase === 'player' ? 'enemy' : 'player'
+    const otherTeam = other === 'player' ? newPlayers : newEnemies
+    const otherHasActors = otherTeam.some(
+      p => p.currentHp > 0 && !next.actedIds.includes(p.id),
+    )
+    if (otherHasActors) {
+      next.activePhase = other
+    } else {
+      next.actedIds = []
+      next.activePhase = startingPhase(newPlayers, newEnemies)
+    }
+  }
 
   return {
-    state: { playerPonies: newPlayers, enemyPonies: newEnemies, turnQueue: newQueue },
+    state: next,
     event: {
       attackerId,
       targetId,
@@ -131,64 +172,4 @@ export function buildBattlePony(
 /** Damage formula from §4: round(Power × multiplier), minimum 1. */
 export function calcDamage(power: number, attackerEl: Element, defenderEl: Element): number {
   return Math.max(1, Math.round(power * getTypeMultiplier(attackerEl, defenderEl)))
-}
-
-export interface RoundResult {
-  playerPonies: BattlePony[]
-  oppPonies: BattlePony[]
-  log: string[]
-}
-
-/**
- * Resolves one full round of combat.
- * All alive ponies act in Speed order (desc); player wins ties.
- * Player ponies all target playerTargetIdx (falls back to first alive opponent if fainted).
- * Opponent ponies always target the first alive player pony.
- */
-export function resolveRound(
-  playerPonies: BattlePony[],
-  oppPonies: BattlePony[],
-  playerTargetIdx: number,
-): RoundResult {
-  const players = playerPonies.map((p) => ({ ...p }))
-  const opps = oppPonies.map((p) => ({ ...p }))
-  const log: string[] = []
-
-  type Turn = { isPlayer: boolean; idx: number; speed: number }
-  const turns: Turn[] = [
-    ...players.map((p, i): Turn => ({ isPlayer: true, idx: i, speed: p.speed })),
-    ...opps.map((p, i): Turn => ({ isPlayer: false, idx: i, speed: p.speed })),
-  ]
-  // Sort by speed desc; player wins ties (home advantage)
-  turns.sort((a, b) => b.speed - a.speed || (a.isPlayer ? -1 : 1))
-
-  for (const turn of turns) {
-    if (turn.isPlayer) {
-      const attacker = players[turn.idx]
-      if (attacker.currentHp <= 0) continue
-      let tIdx = playerTargetIdx
-      if (tIdx >= opps.length || opps[tIdx].currentHp <= 0)
-        tIdx = opps.findIndex((o) => o.currentHp > 0)
-      if (tIdx < 0) break
-      const target = opps[tIdx]
-      const dmg = calcDamage(attacker.power, attacker.element, target.element)
-      const mult = getTypeMultiplier(attacker.element, target.element)
-      target.currentHp = Math.max(0, target.currentHp - dmg)
-      const tag = mult === 2 ? ' ✨ Super effective!' : mult === 0.5 ? ' (not very effective)' : ''
-      log.push(`${attacker.name} → ${target.name}: ${dmg}${tag}${target.currentHp <= 0 ? ' 💫 Fainted!' : ''}`)
-    } else {
-      const attacker = opps[turn.idx]
-      if (attacker.currentHp <= 0) continue
-      const tIdx = players.findIndex((p) => p.currentHp > 0)
-      if (tIdx < 0) break
-      const target = players[tIdx]
-      const dmg = calcDamage(attacker.power, attacker.element, target.element)
-      const mult = getTypeMultiplier(attacker.element, target.element)
-      target.currentHp = Math.max(0, target.currentHp - dmg)
-      const tag = mult === 2 ? ' ✨ Super effective!' : mult === 0.5 ? ' (not very effective)' : ''
-      log.push(`${attacker.name} → ${target.name}: ${dmg}${tag}${target.currentHp <= 0 ? ' 💫 Fainted!' : ''}`)
-    }
-  }
-
-  return { playerPonies: players, oppPonies: opps, log }
 }
