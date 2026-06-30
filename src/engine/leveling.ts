@@ -22,6 +22,29 @@ export function xpForNextLevel(level: number): number {
   return level * 100
 }
 
+/**
+ * Per-pony XP display values for the UI (M2f). Pure derive — does NOT change how
+ * XP is earned or applied. `xpIntoLevel` is the stored remainder toward the next
+ * level; `xpForNextLevel` reads the existing curve; `atCap` reuses the §6 cap
+ * (pass the store's already-derived `levelCap`, don't recompute it here).
+ */
+export interface XpProgress {
+  level: number
+  xpIntoLevel: number
+  xpForNextLevel: number
+  atCap: boolean
+}
+
+export function xpProgress(creature: Creature, levelCap: number): XpProgress {
+  const level = creature.level
+  return {
+    level,
+    xpIntoLevel:    creature.xp ?? 0,
+    xpForNextLevel: xpForNextLevel(level),
+    atCap:          level >= levelCap,
+  }
+}
+
 export interface AddXpResult {
   creature: Creature
   leveledUp: boolean

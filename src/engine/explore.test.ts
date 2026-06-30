@@ -1,17 +1,40 @@
 import { describe, it, expect } from 'vitest'
 import {
-  pickWildEncounter, uncaughtPoolSpecies, uncaughtStarters, RARE_STARTER_CHANCE,
+  pickWildEncounter, uncaughtPoolSpecies, uncaughtStarters, uncaughtCrossZoneSpecies,
+  RARE_STARTER_CHANCE, CROSS_ZONE_CHANCE,
   buildWildMiniBoss, WILD_MINIBOSS_MOD,
 } from './explore'
 import { buildBattlePony, calcDamage } from './battle'
 import { getStats } from './stats'
-import { ZONE_BY_ID } from '../content/zones'
-import { STARTER_SPECIES } from '../content/creatures'
+import { ZONE_BY_ID, ZONES } from '../content/zones'
+import { STARTER_SPECIES, SPECIES_BY_ID } from '../content/creatures'
 
 // Deterministic rng that yields a fixed queue of values.
 function seq(values: number[]): () => number {
   let i = 0
   return () => values[i++ % values.length]
+}
+
+// Small seeded PRNG (mulberry32) for "weights roughly hold over many trials".
+function mulberry32(seed: number): () => number {
+  let a = seed
+  return () => {
+    a |= 0; a = (a + 0x6d2b79f5) | 0
+    let t = Math.imul(a ^ (a >>> 15), 1 | a)
+    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296
+  }
+}
+
+// Every signature (Guardian ace) species — these must never appear as wild catches.
+const SIGNATURE_IDS = ZONES.map(z => z.signatureSpeciesId).filter(Boolean) as string[]
+
+// The set of species a given zone contributes to cross-zone pulls (quest rewards
+// + Explore pool, minus its signature).
+function zoneCrossContribution(zoneId: string): string[] {
+  const z = ZONE_BY_ID[zoneId]
+  return [...(z.questRewardSpeciesIds ?? []), ...(z.explorePoolSpeciesIds ?? [])]
+    .filter(id => id !== z.signatureSpeciesId)
 }
 
 describe('uncaught helpers', () => {
@@ -58,7 +81,101 @@ describe('pickWildEncounter', () => {
   it('returns null when pool AND starters are all caught', () => {
     const pool = ZONE_BY_ID['z2'].explorePoolSpeciesIds!
     const owned = new Set([...pool, ...STARTER_SPECIES.map(s => s.id)])
+    // z2 (tier 1) has no earlier Hunt zone, so cross-zone is empty too.
     expect(pickWildEncounter('z2', owned, seq([0.99, 0]))).toBeNull()
+  })
+})
+
+describe('cross-zone Hunt diversity', () => {
+  it('uncaughtCrossZoneSpecies draws from earlier unlocked Hunt zones, never the current zone or signatures', () => {
+    // In z4 (tier 3): earlier Hunt zones are z2 (tier 1) and z3 (tier 2).
+    const cross = uncaughtCrossZoneSpecies('z4', new Set())
+    const expected = new Set([...zoneCrossContribution('z2'), ...zoneCrossContribution('z3')])
+    expect(new Set(cross)).toEqual(expected)
+
+    // Never includes the current zone's own pool…
+    for (const id of ZONE_BY_ID['z4'].explorePoolSpeciesIds!) {
+      expect(cross).not.toContain(id)
+    }
+    // …and never any signature species.
+    for (const sig of SIGNATURE_IDS) {
+      expect(cross).not.toContain(sig)
+    }
+  })
+
+  it('excludes higher-tier (not-yet-unlocked) zones', () => {
+    // From z2 (tier 1) nothing earlier exists; z3+ are still locked.
+    expect(uncaughtCrossZoneSpecies('z2', new Set())).toEqual([])
+  })
+
+  it('a cross-zone pull can appear once earlier zones are unlocked, built at the CURRENT zone tier', () => {
+    // roll in [0.12, 0.30) → cross-zone preferred; second rng = 0 → first candidate.
+    const enc = pickWildEncounter('z4', new Set(), seq([RARE_STARTER_CHANCE + 0.01, 0]))
+    expect(enc).not.toBeNull()
+    expect(enc!.rare).toBe(false)
+
+    const crossSet = new Set([...zoneCrossContribution('z2'), ...zoneCrossContribution('z3')])
+    expect(crossSet.has(enc!.speciesId)).toBe(true)
+    // Not from z4's own pool — it's genuinely cross-zone.
+    expect(ZONE_BY_ID['z4'].explorePoolSpeciesIds).not.toContain(enc!.speciesId)
+
+    // Tier-scaling rule: built at the current zone's tier, not the species' native tier.
+    expect(enc!.tier).toBe(ZONE_BY_ID['z4'].tier)
+    const native = SPECIES_BY_ID[enc!.speciesId].tier
+    expect(native).toBeLessThan(ZONE_BY_ID['z4'].tier) // earlier-zone species are lower tier
+    // …and that scaled tier makes a stronger mini-boss than the native tier would.
+    const partyTop = 8
+    const scaled = buildWildMiniBoss('w', 'W', SPECIES_BY_ID[enc!.speciesId].element, enc!.tier, partyTop)
+    const asNative = buildWildMiniBoss('w', 'W', SPECIES_BY_ID[enc!.speciesId].element, native, partyTop)
+    expect(scaled.maxHp).toBeGreaterThan(asNative.maxHp)
+  })
+})
+
+describe('signature species never appear wild', () => {
+  it('when the ONLY uncaught species are signatures, every zone yields no encounter', () => {
+    // Own everything except the five Guardian aces. Nothing should be catchable:
+    // signatures are excluded from own pools (by data) and cross-zone (by rule).
+    const allButSignatures = new Set(
+      Object.keys(SPECIES_BY_ID).filter(id => !SIGNATURE_IDS.includes(id)),
+    )
+    for (const z of ZONES) {
+      // Try a starter-preferring AND a pool-preferring roll — both must be null.
+      expect(pickWildEncounter(z.id, allButSignatures, seq([0.01, 0]))).toBeNull()
+      expect(pickWildEncounter(z.id, allButSignatures, seq([0.99, 0]))).toBeNull()
+    }
+  })
+
+  it('never returns a signature across many randomized trials', () => {
+    const rng = mulberry32(20260630)
+    for (let i = 0; i < 5000; i++) {
+      const enc = pickWildEncounter('z6', new Set(), rng) // tier 5: all earlier zones unlocked
+      if (enc) expect(SIGNATURE_IDS).not.toContain(enc.speciesId)
+    }
+  })
+})
+
+describe('Hunt selection weights roughly hold (~70 own / ~18 cross / ~12 starter)', () => {
+  it('converges to the configured weights over many trials', () => {
+    // z4 with nothing owned: all three sources are non-empty, so the weighted
+    // roll maps directly onto source choice.
+    const ownPool = new Set(ZONE_BY_ID['z4'].explorePoolSpeciesIds!)
+    const starterIds = new Set(STARTER_SPECIES.map(s => s.id))
+
+    const rng = mulberry32(12345)
+    const N = 12000
+    let own = 0, cross = 0, starter = 0
+    for (let i = 0; i < N; i++) {
+      const enc = pickWildEncounter('z4', new Set(), rng)!
+      if (enc.rare) starter++
+      else if (ownPool.has(enc.speciesId)) own++
+      else cross++
+      // A starter draw is the only `rare` source; sanity-check classification.
+      if (enc.rare) expect(starterIds.has(enc.speciesId)).toBe(true)
+    }
+
+    expect(own / N).toBeCloseTo(0.70, 1)
+    expect(cross / N).toBeCloseTo(CROSS_ZONE_CHANCE, 1)     // 0.18
+    expect(starter / N).toBeCloseTo(RARE_STARTER_CHANCE, 1) // 0.12
   })
 })
 

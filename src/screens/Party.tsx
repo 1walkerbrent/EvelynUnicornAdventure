@@ -1,20 +1,26 @@
 import { useRef, useState } from 'react'
 import type { ChangeEvent } from 'react'
 import { useGameStore } from '../state/store'
-import { SPECIES_BY_ID } from '../content/creatures'
-import CreatureSprite from '../components/CreatureSprite'
-import { getStats } from '../engine/stats'
+import PartyCard from '../components/PartyCard'
+import TeamPicker from '../components/TeamPicker'
+import { resolveBattleTeam, shouldShowPicker } from '../engine/team'
 import { exportSave, importSave } from '../state/save'
 
 export default function Party() {
   const playerName  = useGameStore((s) => s.playerName)
   const party       = useGameStore((s) => s.party)
+  const activeTeam  = useGameStore((s) => s.activeTeam)
+  const setActiveTeam = useGameStore((s) => s.setActiveTeam)
   const badges      = useGameStore((s) => s.badges)
   const levelCap    = useGameStore((s) => s.levelCap)
   const load        = useGameStore((s) => s.load)
   const resetGame   = useGameStore((s) => s.resetGame)
   const fileInputRef = useRef<HTMLInputElement>(null)
   const [confirmReset, setConfirmReset] = useState(false)
+  const [pickerOpen, setPickerOpen] = useState(false)
+
+  const activeIds = new Set(resolveBattleTeam(party, activeTeam).map((c) => c.speciesId))
+  const canPick = shouldShowPicker(party)
 
   const handleImport = async (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
@@ -43,32 +49,37 @@ export default function Party() {
         </div>
       ) : (
         <div className="space-y-3">
-          {party.map((creature, i) => {
-            const species = SPECIES_BY_ID[creature.speciesId]
-            if (!species) return null
-            const stats = getStats(species.tier, creature.level)
-            return (
-              <div key={i} className="bg-purple-900/60 rounded-2xl p-3 flex items-center gap-3">
-                <CreatureSprite
-                  element={species.element}
-                  color={creature.accentColor ?? species.spritePlaceholderColor}
-                  size={56}
-                />
-                <div className="flex-1 min-w-0">
-                  <div className="font-bold text-white truncate">
-                    {creature.nickname || species.name}
-                  </div>
-                  <div className="text-purple-300 text-sm capitalize">
-                    Lv.{creature.level} · {species.element}
-                  </div>
-                  <div className="text-purple-400 text-xs mt-0.5">
-                    HP {creature.currentHp}/{stats.heart} · Pwr {stats.power} · Spd {stats.speed}
-                  </div>
-                </div>
-              </div>
-            )
-          })}
+          {canPick && (
+            <div className="flex items-center justify-between bg-purple-900/40 rounded-2xl px-3 py-2">
+              <p className="text-sm text-purple-200">
+                Battle team: <span className="text-white font-semibold">{activeIds.size} of 3 ponies</span>
+              </p>
+              <button
+                onClick={() => setPickerOpen(true)}
+                className="bg-yellow-400 hover:bg-yellow-300 text-purple-950 font-bold text-sm px-4 py-2 rounded-xl transition-colors"
+              >
+                Choose team
+              </button>
+            </div>
+          )}
+          {party.map((creature, i) => (
+            <PartyCard
+              key={i}
+              creature={creature}
+              levelCap={levelCap}
+              active={canPick && activeIds.has(creature.speciesId)}
+            />
+          ))}
         </div>
+      )}
+
+      {pickerOpen && (
+        <TeamPicker
+          party={party}
+          initialSelection={[...activeIds]}
+          onConfirm={(ids) => { setActiveTeam(ids); setPickerOpen(false) }}
+          onCancel={() => setPickerOpen(false)}
+        />
       )}
 
       <div className="flex gap-2 pt-2">

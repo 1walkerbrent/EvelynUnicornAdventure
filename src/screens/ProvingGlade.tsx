@@ -3,6 +3,7 @@ import { useGameStore } from '../state/store'
 import { buildBattlePony } from '../engine/battle'
 import type { BattlePony } from '../engine/battle'
 import type { Element } from '../engine/types'
+import { resolveBattleTeam } from '../engine/team'
 import BattleScreen from '../components/BattleScreen'
 import { buildPlayerTeam } from './teams'
 
@@ -20,12 +21,16 @@ function buildPipTeam(): BattlePony[] {
 }
 
 export default function ProvingGlade() {
-  const party     = useGameStore(s => s.party)
-  const winTrial  = useGameStore(s => s.winTrial)
-  const setScreen = useGameStore(s => s.setScreen)
+  const party      = useGameStore(s => s.party)
+  const activeTeam = useGameStore(s => s.activeTeam)
+  const winTrial   = useGameStore(s => s.winTrial)
+  const setScreen  = useGameStore(s => s.setScreen)
 
   // Memoised so team objects stay stable across re-renders
-  const playerPonies = useMemo(() => buildPlayerTeam(party), [party])
+  const playerPonies = useMemo(
+    () => buildPlayerTeam(resolveBattleTeam(party, activeTeam)),
+    [party, activeTeam],
+  )
   const enemyPonies  = useMemo(() => buildPipTeam(), [])
 
   return (

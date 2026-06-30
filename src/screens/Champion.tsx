@@ -1,6 +1,7 @@
 import { useMemo } from 'react'
 import { useGameStore } from '../state/store'
 import { CHAMPION } from '../content/guardians'
+import { resolveBattleTeam } from '../engine/team'
 import BattleScreen from '../components/BattleScreen'
 import { buildPlayerTeam, buildGuardianTeam } from './teams'
 
@@ -8,10 +9,14 @@ import { buildPlayerTeam, buildGuardianTeam } from './teams'
 // Victory → store.winChampion (awards Aurelune) → celebratory end screen.
 export default function Champion() {
   const party       = useGameStore((s) => s.party)
+  const activeTeam  = useGameStore((s) => s.activeTeam)
   const winChampion = useGameStore((s) => s.winChampion)
   const setScreen   = useGameStore((s) => s.setScreen)
 
-  const playerPonies = useMemo(() => buildPlayerTeam(party), [party])
+  const playerPonies = useMemo(
+    () => buildPlayerTeam(resolveBattleTeam(party, activeTeam)),
+    [party, activeTeam],
+  )
   const enemyPonies  = useMemo(() => buildGuardianTeam(CHAMPION), [])
 
   return (

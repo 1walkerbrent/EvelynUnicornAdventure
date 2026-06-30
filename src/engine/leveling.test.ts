@@ -2,6 +2,7 @@ import { describe, it, expect } from 'vitest'
 import {
   addXp,
   xpForNextLevel,
+  xpProgress,
   levelCapForBadges,
   XP_PER_CORRECT_ANSWER,
   XP_PER_BATTLE_WIN,
@@ -107,6 +108,42 @@ describe('addXp — recomputes §5 stats on level-up', () => {
     // tier-2 base 7/3/4 + growth (3/1/1)×5
     expect(stats).toEqual({ heart: 22, power: 8, speed: 9 })
     expect(r.creature.currentHp).toBe(22)
+  })
+})
+
+describe('xpProgress — M2f display derive', () => {
+  it('a mid-level pony reports into/needed and a fractional fill', () => {
+    // Level 3 with 50 XP banked toward the next level (needs 300 at L3).
+    const p = xpProgress(mkCreature(3, 50), 8)
+    expect(p.level).toBe(3)
+    expect(p.xpIntoLevel).toBe(50)
+    expect(p.xpForNextLevel).toBe(xpForNextLevel(3)) // 300, from the existing curve
+    expect(p.atCap).toBe(false)
+    // Fractional fill: strictly between empty and full.
+    const fill = p.xpIntoLevel / p.xpForNextLevel
+    expect(fill).toBeCloseTo(50 / 300)
+    expect(fill).toBeGreaterThan(0)
+    expect(fill).toBeLessThan(1)
+  })
+
+  it('xpForNextLevel matches the existing curve at a couple of levels', () => {
+    expect(xpProgress(mkCreature(1, 0), 8).xpForNextLevel).toBe(xpForNextLevel(1)) // 100
+    expect(xpProgress(mkCreature(5, 0), 8).xpForNextLevel).toBe(xpForNextLevel(5)) // 500
+  })
+
+  it('a pony at the badge cap reports atCap (drives the MAX state, not a normal bar)', () => {
+    // 2 badges → cap 8. A level-8 pony with banked overflow XP is maxed.
+    const cap = levelCapForBadges(2)
+    const p = xpProgress(mkCreature(8, 120), cap)
+    expect(p.atCap).toBe(true)
+    // The MAX bar ignores into/needed for its fill; banked XP still surfaces but
+    // must never read as "almost there" — the card renders a full gold bar.
+    expect(p.level).toBe(cap)
+  })
+
+  it('defaults missing xp to 0 (back-compat with pre-XP saves)', () => {
+    const noXp = { speciesId: 'test', nickname: 'Test', level: 2, currentHp: 1 }
+    expect(xpProgress(noXp, 8).xpIntoLevel).toBe(0)
   })
 })
 

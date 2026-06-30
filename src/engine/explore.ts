@@ -1,13 +1,21 @@
-import { ZONE_BY_ID } from '../content/zones'
-import { STARTER_SPECIES } from '../content/creatures'
+import { ZONE_BY_ID, ZONES } from '../content/zones'
+import { STARTER_SPECIES, SPECIES_BY_ID } from '../content/creatures'
 import { buildBattlePony, type BattlePony } from './battle'
 import type { Element } from './types'
 
-// Explore "Hunt" encounter selection (§8). The wild pony is pulled from the
-// zone's themed Explore pool; rarely it's one of the four unpicked starters
-// (their natural element), per §11's resolved calls.
+// Explore "Hunt" encounter selection (§8). The wild pony is drawn from three
+// tiers so Hunt stays diverse for the whole game:
+//   1. the current zone's own themed Explore pool   (common)
+//   2. an unowned species from an already-unlocked   (cross-zone diversity)
+//      earlier/peer Hunt zone — kept on-level by
+//      building it at the CURRENT zone's tier
+//   3. one of the four unpicked starters             (rare bonus, §11)
+// Signature (Guardian ace) species never appear wild — they stay an exclusive
+// Trial-win reward.
 
 export const RARE_STARTER_CHANCE = 0.12
+export const CROSS_ZONE_CHANCE   = 0.18
+// The remaining ~0.70 goes to the current zone's own Explore pool.
 
 type Rng = () => number
 
@@ -15,6 +23,30 @@ type Rng = () => number
 export function uncaughtPoolSpecies(zoneId: string, ownedIds: Set<string>): string[] {
   const zone = ZONE_BY_ID[zoneId]
   return (zone?.explorePoolSpeciesIds ?? []).filter(id => !ownedIds.has(id))
+}
+
+/**
+ * Unowned species the player can pull cross-zone for diversity: drawn from every
+ * already-unlocked Hunt zone (tier ≥ 1, tier ≤ the current zone's tier) other
+ * than the current zone. Each zone contributes its quest rewards + Explore pool,
+ * but never its signatureSpeciesId — Guardian aces stay Trial-exclusive. The
+ * neutral starter zone (tier 0) has no Hunt pool and is excluded.
+ */
+export function uncaughtCrossZoneSpecies(zoneId: string, ownedIds: Set<string>): string[] {
+  const current = ZONE_BY_ID[zoneId]
+  if (!current) return []
+  const ids: string[] = []
+  for (const z of ZONES) {
+    if (z.id === zoneId) continue
+    if (z.tier < 1 || z.tier > current.tier) continue
+    const roster = [...(z.questRewardSpeciesIds ?? []), ...(z.explorePoolSpeciesIds ?? [])]
+    for (const id of roster) {
+      if (id === z.signatureSpeciesId) continue // Guardian ace — Trial reward only
+      if (ownedIds.has(id)) continue
+      ids.push(id)
+    }
+  }
+  return [...new Set(ids)]
 }
 
 /** Starter species the player has never owned — i.e. the ones she didn't pick. */
@@ -25,6 +57,13 @@ export function uncaughtStarters(ownedIds: Set<string>): string[] {
 export interface WildEncounter {
   speciesId: string
   rare: boolean
+  /**
+   * Tier to build the wild mini-boss at. For own-pool/cross-zone pulls this is
+   * the CURRENT zone's tier so the catch is on-level (a cross-zone pony is never
+   * a permanently weaker pushover); for a rare starter it's the starter's own
+   * tier, preserving the original rare-find behavior.
+   */
+  tier: 1 | 2 | 3 | 4 | 5
 }
 
 // ── Wild Hunt mini-boss scaling (§8) ─────────────────────────────────────────
@@ -70,27 +109,45 @@ export function buildWildMiniBoss(
 
 /**
  * Choose a wild creature for a Hunt in the given zone, or null if there's
- * nothing left to catch (pool exhausted and no unpicked starters remain).
- * A rare unpicked starter can appear with low probability; if the pool is
- * already empty, a remaining starter is offered as a fallback.
+ * nothing left to catch anywhere. A weighted roll picks a preferred source —
+ * ~70% the zone's own pool, ~18% a cross-zone diversity pull, 12% a rare
+ * unpicked starter — then falls through the remaining sources so a Hunt still
+ * yields a catch as long as anything remains uncaught.
  */
 export function pickWildEncounter(
   zoneId: string,
   ownedIds: Set<string>,
   rng: Rng = Math.random,
 ): WildEncounter | null {
+  const zone = ZONE_BY_ID[zoneId]
+  if (!zone) return null
+
   const pool     = uncaughtPoolSpecies(zoneId, ownedIds)
+  const cross    = uncaughtCrossZoneSpecies(zoneId, ownedIds)
   const starters = uncaughtStarters(ownedIds)
 
-  const rareRoll = rng() < RARE_STARTER_CHANCE && starters.length > 0
-  if (rareRoll) {
-    return { speciesId: starters[Math.floor(rng() * starters.length)], rare: true }
+  // Own-pool and cross-zone catches scale to the current zone's tier (on-level);
+  // a rare starter keeps its own native tier.
+  const zoneTier = zone.tier as 1 | 2 | 3 | 4 | 5
+  const draw = (list: string[]): string => list[Math.floor(rng() * list.length)]
+  const fromPool      = (): WildEncounter => ({ speciesId: draw(pool),  rare: false, tier: zoneTier })
+  const fromCrossZone = (): WildEncounter => ({ speciesId: draw(cross), rare: false, tier: zoneTier })
+  const fromStarter   = (): WildEncounter => {
+    const id = draw(starters)
+    return { speciesId: id, rare: true, tier: SPECIES_BY_ID[id].tier }
   }
-  if (pool.length > 0) {
-    return { speciesId: pool[Math.floor(rng() * pool.length)], rare: false }
-  }
-  if (starters.length > 0) {
-    return { speciesId: starters[Math.floor(rng() * starters.length)], rare: true }
+
+  // Preference order set by the weighted roll; remaining sources are fallbacks.
+  const roll = rng()
+  const order =
+    roll < RARE_STARTER_CHANCE
+      ? [{ list: starters, make: fromStarter },   { list: cross, make: fromCrossZone }, { list: pool,  make: fromPool }]
+      : roll < RARE_STARTER_CHANCE + CROSS_ZONE_CHANCE
+        ? [{ list: cross, make: fromCrossZone }, { list: pool,  make: fromPool },      { list: starters, make: fromStarter }]
+        : [{ list: pool,  make: fromPool },      { list: cross, make: fromCrossZone }, { list: starters, make: fromStarter }]
+
+  for (const { list, make } of order) {
+    if (list.length > 0) return make()
   }
   return null
 }

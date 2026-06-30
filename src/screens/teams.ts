@@ -8,7 +8,7 @@ import type { Guardian } from '../content/guardians'
 export function buildPlayerTeam(party: Creature[]): BattlePony[] {
   return party.slice(0, 3).map((c, i) => {
     const sp = SPECIES_BY_ID[c.speciesId]
-    return buildBattlePony(`player-${i}`, c.nickname || sp.name, sp.element, sp.tier, c.level)
+    return { ...buildBattlePony(`player-${i}`, c.nickname || sp.name, sp.element, sp.tier, c.level), speciesId: sp.id }
   })
 }
 
@@ -16,6 +16,6 @@ export function buildPlayerTeam(party: Creature[]): BattlePony[] {
 export function buildGuardianTeam(guardian: Guardian): BattlePony[] {
   return guardian.team.map((t, i) => {
     const sp = SPECIES_BY_ID[t.speciesId]
-    return buildBattlePony(`foe-${i}`, sp.name, sp.element, sp.tier, t.level)
+    return { ...buildBattlePony(`foe-${i}`, sp.name, sp.element, sp.tier, t.level), speciesId: sp.id }
   })
 }

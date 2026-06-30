@@ -3,6 +3,7 @@ import { useGameStore } from '../state/store'
 import { SPECIES_BY_ID } from '../content/creatures'
 import { getStats } from '../engine/stats'
 import { pickWildEncounter, buildWildMiniBoss } from '../engine/explore'
+import { resolveBattleTeam } from '../engine/team'
 import { XP_PER_BATTLE_WIN } from '../engine/leveling'
 import BattleScreen from '../components/BattleScreen'
 import { buildPlayerTeam } from './teams'
@@ -11,6 +12,7 @@ import { buildPlayerTeam } from './teams'
 // Explore pool (rarely an unpicked starter) — win the battle to tame it.
 export default function ExploreHunt() {
   const party          = useGameStore((s) => s.party)
+  const activeTeam     = useGameStore((s) => s.activeTeam)
   const levelCap       = useGameStore((s) => s.levelCap)
   const addToParty     = useGameStore((s) => s.addToParty)
   const awardXpToParty = useGameStore((s) => s.awardXpToParty)
@@ -27,13 +29,19 @@ export default function ExploreHunt() {
 
   const species = encounter ? SPECIES_BY_ID[encounter.speciesId] : undefined
 
-  const playerPonies = useMemo(() => buildPlayerTeam(party), [party])
+  // Hunts use the active team as-is (no swap nudge — the wild element is unknown).
+  const playerPonies = useMemo(
+    () => buildPlayerTeam(resolveBattleTeam(party, activeTeam)),
+    [party, activeTeam],
+  )
   // The wild pony is a mini-boss (§8): level = party top + 2, with buffed
   // Heart/Power so taming is earned. Catch difficulty is decoupled from the
   // reward — see tameAndReturn, which joins it at the current level cap.
+  // Built at encounter.tier (the current zone's tier for cross-zone pulls) so a
+  // cross-zone catch is on-level rather than a permanently weaker pony.
   const enemyPonies  = useMemo(
-    () => species ? [buildWildMiniBoss('wild-0', species.name, species.element, species.tier, partyLevel)] : [],
-    [species, partyLevel],
+    () => species && encounter ? [{ ...buildWildMiniBoss('wild-0', species.name, species.element, encounter.tier, partyLevel), speciesId: species.id }] : [],
+    [species, encounter, partyLevel],
   )
 
   // ── Nothing left to catch here ───────────────────────────────────────────

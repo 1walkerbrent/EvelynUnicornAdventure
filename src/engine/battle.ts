@@ -150,6 +150,9 @@ export function isBattleOver(state: BattleState): 'player' | 'enemy' | null {
 
 export interface BattlePony {
   id: string
+  // Source species (when known) so the UI can show real art; undefined for
+  // generic/placeholder ponies, which fall back to the element emoji-circle.
+  speciesId?: string
   name: string
   element: Element
   maxHp: number

@@ -14,3 +14,8 @@ export function getTypeMultiplier(attacker: Element, defender: Element): 2 | 0.5
   if (BEATS[defender] === attacker) return 0.5
   return 1
 }
+
+/** The element that beats `defender` (its ×2 counter on the wheel, §3). */
+export function getCounterElement(defender: Element): Element {
+  return (Object.keys(BEATS) as Element[]).find((e) => BEATS[e] === defender)!
+}

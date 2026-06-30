@@ -7,6 +7,7 @@ import { GUARDIAN_BY_ID } from '../content/guardians'
 import { addXp, levelCapForBadges, XP_PER_BATTLE_WIN } from '../engine/leveling'
 import { getStats } from '../engine/stats'
 import { finalAreaId, badgeCount } from '../engine/progression'
+import { bumpStreak, clearStreak } from '../engine/team'
 
 export type Screen =
   | 'worldMap'
@@ -27,6 +28,10 @@ interface GameStore {
   party: Creature[]
   areasDone: string[]
   championDefeated: boolean
+  /** Active team (M2e): speciesIds of the ≤3 ponies that fight; [] = default top-3. */
+  activeTeam: string[]
+  /** Per-Guardian loss streaks (M2e): guardianId → consecutive losses. */
+  trialLossStreaks: Record<string, number>
   // derived from areasDone — not persisted
   badges: number
   levelCap: number
@@ -38,6 +43,8 @@ interface GameStore {
   setPlayerName: (name: string) => void
   addToParty: (creature: Creature) => void
   awardXpToParty: (amount: number) => void
+  setActiveTeam: (speciesIds: string[]) => void
+  recordTrialLoss: (guardianId: string) => void
   completeArea: (areaId: string) => void
   winTrial: (zoneId: string) => void
   winChampion: () => void
@@ -58,6 +65,8 @@ export const useGameStore = create<GameStore>()((set, get) => {
       party:            s.party,
       areasDone:        s.areasDone,
       championDefeated: s.championDefeated,
+      activeTeam:       s.activeTeam,
+      trialLossStreaks: s.trialLossStreaks,
       lastZoneId:       s.selectedZoneId ?? undefined,
     })
   }
@@ -89,6 +98,8 @@ export const useGameStore = create<GameStore>()((set, get) => {
     party:            [],
     areasDone:        [],
     championDefeated: false,
+    activeTeam:       [],
+    trialLossStreaks: {},
     badges:           0,
     levelCap:         levelCapForBadges(0),
     currentScreen:    'worldMap',
@@ -104,6 +115,18 @@ export const useGameStore = create<GameStore>()((set, get) => {
 
     awardXpToParty: (amount) => {
       set({ party: xpParty(get().party, amount, get().levelCap) })
+      persist()
+    },
+
+    // Persist her chosen active team (M2e). Empty resolves to the default top-3.
+    setActiveTeam: (speciesIds) => {
+      set({ activeTeam: speciesIds.slice(0, 3) })
+      persist()
+    },
+
+    // Record a Trial loss vs a Guardian (M2e) — drives the 3-loss safety net.
+    recordTrialLoss: (guardianId) => {
+      set({ trialLossStreaks: bumpStreak(get().trialLossStreaks, guardianId) })
       persist()
     },
 
@@ -135,7 +158,12 @@ export const useGameStore = create<GameStore>()((set, get) => {
       }
       party = xpParty(party, XP_PER_BATTLE_WIN, levelCap)
 
-      set({ areasDone, badges, levelCap, party })
+      // Reset this Guardian's loss streak on a win (M2e safety net clears).
+      const trialLossStreaks = zone.guardianId
+        ? clearStreak(get().trialLossStreaks, zone.guardianId)
+        : get().trialLossStreaks
+
+      set({ areasDone, badges, levelCap, party, trialLossStreaks })
       persist()
     },
 
@@ -174,6 +202,8 @@ export const useGameStore = create<GameStore>()((set, get) => {
         party:            [],
         areasDone:        [],
         championDefeated: false,
+        activeTeam:       [],
+        trialLossStreaks: {},
         badges:           0,
         levelCap:         levelCapForBadges(0),
         currentScreen:    'worldMap',
@@ -190,6 +220,8 @@ export const useGameStore = create<GameStore>()((set, get) => {
           party:            saved.party,
           areasDone:        saved.areasDone,
           championDefeated: saved.championDefeated,
+          activeTeam:       saved.activeTeam ?? [],
+          trialLossStreaks: saved.trialLossStreaks ?? {},
           selectedZoneId:   saved.lastZoneId ?? null,
           currentScreen:    'worldMap',
           ...derive(saved.areasDone),
