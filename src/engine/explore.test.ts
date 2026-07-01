@@ -2,10 +2,12 @@ import { describe, it, expect } from 'vitest'
 import {
   pickWildEncounter, uncaughtPoolSpecies, uncaughtStarters, uncaughtCrossZoneSpecies,
   RARE_STARTER_CHANCE, CROSS_ZONE_CHANCE,
-  buildWildMiniBoss, WILD_MINIBOSS_MOD,
+  buildWildMiniBoss,
 } from './explore'
 import { buildBattlePony, calcDamage } from './battle'
 import { getStats } from './stats'
+import { MAX_IVS } from './ivs'
+import { BOSS_MODS, HUNT_LEVEL_BONUS } from './boss'
 import { ZONE_BY_ID, ZONES } from '../content/zones'
 import { STARTER_SPECIES, SPECIES_BY_ID } from '../content/creatures'
 
@@ -183,23 +185,21 @@ describe('buildWildMiniBoss', () => {
   const topLevel = 6
   const tier = 2 as const
 
-  it('scales level +2, Heart ×2, Power ×1.2, Speed unchanged vs the base pony', () => {
-    const base = buildBattlePony('b', 'B', 'water', tier, topLevel + WILD_MINIBOSS_MOD.levelBonus)
+  it('is the hunt boss tier: level +2, MAX IVs, then Heart ×2 / Power ×1.2 / Speed ×1.0', () => {
+    const level = topLevel + HUNT_LEVEL_BONUS
+    // Now built on a MAX-IV base (the slight buff over the old IV-0 mini-boss).
+    const base = getStats(tier, level, MAX_IVS)
     const boss = buildWildMiniBoss('w', 'W', 'water', tier, topLevel)
 
-    // Level shows through the base stats: a plain pony at topLevel+2.
-    expect(getStats(tier, topLevel + 2)).toEqual({
-      heart: base.maxHp, power: base.power, speed: base.speed,
-    })
+    expect(HUNT_LEVEL_BONUS).toBe(2)                            // level = party top + 2
+    expect(boss.maxHp).toBe(Math.round(base.heart * BOSS_MODS.hunt.heart)) // ×2 HP
+    expect(boss.currentHp).toBe(boss.maxHp)                     // starts full
+    expect(boss.power).toBe(Math.round(base.power * BOSS_MODS.hunt.power)) // ×1.2 Power
+    expect(boss.speed).toBe(Math.round(base.speed * BOSS_MODS.hunt.speed)) // ×1.0 Speed
 
-    expect(boss.maxHp).toBe(Math.round(base.maxHp * 2))     // ~2× HP
-    expect(boss.currentHp).toBe(boss.maxHp)                  // starts full
-    expect(boss.power).toBe(Math.round(base.power * 1.2))    // ~1.2× Power
-    expect(boss.speed).toBe(base.speed)                       // Speed unchanged
-
-    // Sanity: meaningfully tankier and harder-hitting than a same-level pony.
-    expect(boss.maxHp).toBeGreaterThan(base.maxHp * 1.8)
-    expect(boss.power).toBeGreaterThan(base.power)
+    // Slight buff vs the old IV-0 mini-boss: max IVs make it a touch tankier.
+    const oldHeart = Math.round(getStats(tier, level).heart * BOSS_MODS.hunt.heart)
+    expect(boss.maxHp).toBeGreaterThan(oldHeart)
   })
 
   it('tame-at-cap: reward joins at the current cap, never above and never the boss level', () => {
@@ -208,7 +208,7 @@ describe('buildWildMiniBoss', () => {
     // tameAndReturn, which sets `level: levelCap` at full HP (getStats heart).
     const levelCap  = 8
     const tameLevel = levelCap
-    const bossLevel = topLevel + WILD_MINIBOSS_MOD.levelBonus // 8
+    const bossLevel = topLevel + HUNT_LEVEL_BONUS // 8
 
     expect(tameLevel).toBe(levelCap)          // joins exactly at cap
     expect(tameLevel).toBeLessThanOrEqual(levelCap) // never above cap

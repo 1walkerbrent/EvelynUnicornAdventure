@@ -1,5 +1,6 @@
-import type { Element } from './types'
+import type { Element, Ivs } from './types'
 import { getStats } from './stats'
+import { ZERO_IVS } from './ivs'
 import { getTypeMultiplier } from './combat'
 
 // ── Step-wise battle API ─────────────────────────────────────────────────────
@@ -167,8 +168,9 @@ export function buildBattlePony(
   element: Element,
   tier: 1 | 2 | 3 | 4 | 5,
   level: number,
+  ivs: Ivs = ZERO_IVS,
 ): BattlePony {
-  const stats = getStats(tier, level)
+  const stats = getStats(tier, level, ivs)
   return { id, name, element, maxHp: stats.heart, currentHp: stats.heart, power: stats.power, speed: stats.speed }
 }
 

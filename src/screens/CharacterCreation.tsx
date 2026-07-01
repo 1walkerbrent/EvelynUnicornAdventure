@@ -3,7 +3,8 @@ import { useGameStore } from '../state/store'
 import { STARTER_SPECIES, STARTER_VIBES, SPECIES_BY_ID } from '../content/creatures'
 import CreatureSprite from '../components/CreatureSprite'
 import { getStats } from '../engine/stats'
-import type { Element } from '../engine/types'
+import { rollIvs } from '../engine/ivs'
+import type { Element, Ivs } from '../engine/types'
 
 const ELEMENT_LABEL: Record<Element, string> = {
   water: 'Water', fire: 'Fire', air: 'Air', spirit: 'Spirit', earth: 'Earth',
@@ -36,24 +37,28 @@ export default function CharacterCreation() {
   const [pickedId,     setPickedId]    = useState('')
   const [nickname,     setNickname]    = useState('')
   const [accentColor,  setAccentColor] = useState('#f472b6')
+  // Her starter's permanent IVs (§5), rolled when she picks a pony.
+  const [starterIvs,   setStarterIvs]  = useState<Ivs>(() => rollIvs())
 
   function handlePick(speciesId: string) {
     const species = SPECIES_BY_ID[speciesId]
     setPickedId(speciesId)
     setNickname(species.name)
     setAccentColor(species.spritePlaceholderColor)
+    setStarterIvs(rollIvs())   // fresh IVs for this chosen pony
     setStep('customize')
   }
 
   function handleStartAdventure() {
     const species = SPECIES_BY_ID[pickedId]
-    const stats   = getStats(species.tier, 3)     // all Zone 1 ponies start at level 3
+    const stats   = getStats(species.tier, 3, starterIvs)  // all Zone 1 ponies start at level 3
     addToParty({
       speciesId:   pickedId,
       nickname:    nickname.trim() || species.name,
       level:       3,
       currentHp:   stats.heart,
       accentColor,
+      ivs:         starterIvs,
     })
     setPlayerName(trainerName.trim() || 'Trainer') // setPlayerName also saves
     setScreen('worldMap')
@@ -117,7 +122,7 @@ export default function CharacterCreation() {
 
   // ── Step 2: Reveal element & customize ──────────────────────────────────
   const picked = SPECIES_BY_ID[pickedId]
-  const stats  = getStats(picked.tier, 3)
+  const stats  = getStats(picked.tier, 3, starterIvs)
 
   return (
     <div className="min-h-screen bg-purple-950 flex flex-col">

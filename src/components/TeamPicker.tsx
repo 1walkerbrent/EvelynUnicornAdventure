@@ -46,7 +46,7 @@ export default function TeamPicker({ party, initialSelection, opponentElement, o
           {party.map((c) => {
             const sp = SPECIES_BY_ID[c.speciesId]
             if (!sp) return null
-            const stats = getStats(sp.tier, c.level)
+            const stats = getStats(sp.tier, c.level, c.ivs)
             const isSel = selected.includes(c.speciesId)
             const matchup = opponentElement ? matchupVsElement(sp.element, opponentElement) : null
 

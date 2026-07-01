@@ -8,6 +8,7 @@ import { effectiveDifficulty } from '../engine/difficulty'
 import { zoneNumber } from '../engine/progression'
 import { XP_PER_CORRECT_ANSWER } from '../engine/leveling'
 import { getStats } from '../engine/stats'
+import { rollIvs } from '../engine/ivs'
 import type { Problem } from '../engine/problems'
 import ProblemCard from '../components/ProblemCard'
 import CreatureSprite from '../components/CreatureSprite'
@@ -44,6 +45,8 @@ export default function Quest() {
 
   const alreadyDone = area ? areasDone.includes(area.id) : false
   const [solved, setSolved] = useState(false)
+  // Roll the reward pony's permanent IVs once (§5), used for its stats + storage.
+  const [rewardIvs] = useState(() => rollIvs())
 
   if (!zone || !area || !area.rewardSpeciesId) {
     return (
@@ -58,7 +61,7 @@ export default function Quest() {
   }
 
   const reward  = SPECIES_BY_ID[area.rewardSpeciesId]
-  const rStats  = getStats(reward.tier, rewardLevel)
+  const rStats  = getStats(reward.tier, rewardLevel, rewardIvs)
 
   function handleSolve() {
     if (!alreadyDone) {
@@ -68,6 +71,7 @@ export default function Quest() {
         level:     rewardLevel,
         currentHp: rStats.heart,
         xp:        0,
+        ivs:       rewardIvs,
       })
       awardXpToParty(XP_PER_CORRECT_ANSWER)
       completeArea(area!.id)

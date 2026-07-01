@@ -23,6 +23,31 @@ describe('getStats', () => {
     expect(getStats(3, 1)).toEqual({ heart: 9,  power: 4, speed: 5 })
     expect(getStats(5, 1)).toEqual({ heart: 13, power: 6, speed: 7 })
   })
+
+  it('omitting IVs is identical to passing zero IVs (back-compat)', () => {
+    expect(getStats(2, 8)).toEqual(getStats(2, 8, { heart: 0, power: 0, speed: 0 }))
+  })
+})
+
+describe('getStats — §5 IV formula: (base + IV) + growth × (level − 1)', () => {
+  it('applies each IV to the effective base at level 1', () => {
+    // tier-1 base 5/2/3 + IVs 1/2/3 → 6/4/6 (growth term is zero at level 1)
+    expect(getStats(1, 1, { heart: 1, power: 2, speed: 3 })).toEqual({ heart: 6, power: 4, speed: 6 })
+  })
+
+  it('IVs shift the base, then shared growth scales by level', () => {
+    // tier-1 L8, IVs 2/1/3:
+    //   heart (5+2)+3×7 = 28, power (2+1)+1×7 = 10, speed (3+3)+1×7 = 13
+    expect(getStats(1, 8, { heart: 2, power: 1, speed: 3 })).toEqual({ heart: 28, power: 10, speed: 13 })
+  })
+
+  it('max IVs (3/3/3) add exactly 3 to each stat vs zero IVs, at any level', () => {
+    const zero = getStats(2, 6)
+    const max  = getStats(2, 6, { heart: 3, power: 3, speed: 3 })
+    expect(max.heart).toBe(zero.heart + 3)
+    expect(max.power).toBe(zero.power + 3)
+    expect(max.speed).toBe(zero.speed + 3)
+  })
 })
 
 describe('getTypeMultiplier', () => {

@@ -25,7 +25,7 @@ export default function PartyCard({ creature, levelCap, active }: { creature: Cr
 
   if (!species) return null
 
-  const stats = getStats(species.tier, creature.level)
+  const stats = getStats(species.tier, creature.level, creature.ivs)
   const { level, xpIntoLevel, xpForNextLevel, atCap } = xpProgress(creature, levelCap)
   const fillPct = atCap ? 100 : Math.min(100, (xpIntoLevel / xpForNextLevel) * 100)
   const pulseClass = pulsing ? ' level-pulse' : ''

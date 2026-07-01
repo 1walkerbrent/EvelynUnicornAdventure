@@ -1,4 +1,5 @@
-import type { Stats } from './types'
+import type { Stats, Ivs } from './types'
+import { ZERO_IVS } from './ivs'
 
 // Base stats at level 1 by tier (§5 table)
 const TIER_BASE: Record<1 | 2 | 3 | 4 | 5, Stats> = {
@@ -12,12 +13,16 @@ const TIER_BASE: Record<1 | 2 | 3 | 4 | 5, Stats> = {
 // Shared growth per level — identical for every creature (§5)
 const GROWTH: Stats = { heart: 3, power: 1, speed: 1 }
 
-/** Returns full stats for a creature of the given tier at the given level. Formula: stat = base + growth × (level − 1) */
-export function getStats(tier: 1 | 2 | 3 | 4 | 5, level: number): Stats {
+/**
+ * Full stats for a creature of the given tier + level, including its IVs (§5).
+ * Formula: `stat = (base + IV) + growth × (level − 1)`. IVs default to 0, so
+ * `getStats(tier, level)` still yields the pure base+growth curve.
+ */
+export function getStats(tier: 1 | 2 | 3 | 4 | 5, level: number, ivs: Ivs = ZERO_IVS): Stats {
   const base = TIER_BASE[tier]
   return {
-    heart: base.heart + GROWTH.heart * (level - 1),
-    power: base.power + GROWTH.power * (level - 1),
-    speed: base.speed + GROWTH.speed * (level - 1),
+    heart: (base.heart + ivs.heart) + GROWTH.heart * (level - 1),
+    power: (base.power + ivs.power) + GROWTH.power * (level - 1),
+    speed: (base.speed + ivs.speed) + GROWTH.speed * (level - 1),
   }
 }

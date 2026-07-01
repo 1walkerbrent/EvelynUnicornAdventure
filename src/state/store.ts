@@ -6,6 +6,8 @@ import { ZONE_BY_ID } from '../content/zones'
 import { GUARDIAN_BY_ID } from '../content/guardians'
 import { addXp, levelCapForBadges, XP_PER_BATTLE_WIN } from '../engine/leveling'
 import { getStats } from '../engine/stats'
+import { MAX_IVS } from '../engine/ivs'
+import type { Ivs } from '../engine/types'
 import { finalAreaId, badgeCount } from '../engine/progression'
 import { bumpStreak, clearStreak } from '../engine/team'
 
@@ -81,10 +83,11 @@ export const useGameStore = create<GameStore>()((set, get) => {
   }
 
   // Build a fresh party member from a species at a level (clamped to the cap).
-  function makeCreature(speciesId: string, level: number): Creature {
+  // Callers pass the IVs — signature/Champion trophies use MAX_IVS (§5).
+  function makeCreature(speciesId: string, level: number, ivs: Ivs): Creature {
     const sp = SPECIES_BY_ID[speciesId]
-    const stats = getStats(sp.tier, level)
-    return { speciesId, nickname: sp.name, level, currentHp: stats.heart, xp: 0 }
+    const stats = getStats(sp.tier, level, ivs)
+    return { speciesId, nickname: sp.name, level, currentHp: stats.heart, xp: 0, ivs }
   }
 
   // Recompute badges + cap from the completed-areas set (single source of truth).
@@ -154,7 +157,8 @@ export const useGameStore = create<GameStore>()((set, get) => {
       if (zone.signatureSpeciesId) {
         const guardian = zone.guardianId ? GUARDIAN_BY_ID[zone.guardianId] : undefined
         const aceLevel = guardian?.team.find(t => t.speciesId === zone.signatureSpeciesId)?.level ?? levelCap
-        party = [...party, makeCreature(zone.signatureSpeciesId, Math.min(aceLevel, levelCap))]
+        // Guardian-signature trophies join with max IVs (§5) — these are earned.
+        party = [...party, makeCreature(zone.signatureSpeciesId, Math.min(aceLevel, levelCap), MAX_IVS)]
       }
       party = xpParty(party, XP_PER_BATTLE_WIN, levelCap)
 
@@ -170,8 +174,9 @@ export const useGameStore = create<GameStore>()((set, get) => {
     // Beat Grand Champion Vesper: award the legendary Aurelune, mark the game done.
     winChampion: () => {
       const cap = get().levelCap
+      // The legendary Aurelune is the ultimate trophy — max IVs (§5).
       const party = xpParty(
-        [...get().party, makeCreature('aurelune', Math.min(15, cap))],
+        [...get().party, makeCreature('aurelune', Math.min(15, cap), MAX_IVS)],
         XP_PER_BATTLE_WIN,
         cap,
       )

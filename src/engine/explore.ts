@@ -1,6 +1,7 @@
 import { ZONE_BY_ID, ZONES } from '../content/zones'
 import { STARTER_SPECIES, SPECIES_BY_ID } from '../content/creatures'
-import { buildBattlePony, type BattlePony } from './battle'
+import type { BattlePony } from './battle'
+import { buildBossBattlePony, HUNT_LEVEL_BONUS } from './boss'
 import type { Element } from './types'
 
 // Explore "Hunt" encounter selection (§8). The wild pony is drawn from three
@@ -69,25 +70,15 @@ export interface WildEncounter {
 // ── Wild Hunt mini-boss scaling (§8) ─────────────────────────────────────────
 //
 // A Hunt is 3-on-1, but the lone wild pony is a MINI-BOSS so taming feels
-// earned: it's buffed on top of its normal tier/level stats. A neutral-matchup
-// team should grind; bringing the element counter + focusing fire wins cleanly
-// (the ×2/×0.5 type multiplier and BattleScreen are unchanged — this only buffs
-// the wild pony's raw stats). These three dials are the tuning knobs.
-
-export const WILD_MINIBOSS_MOD = {
-  /** Level = party's highest level + this. */
-  levelBonus: 2,
-  /** Heart (HP) multiplier. */
-  hpMult: 2,
-  /** Power multiplier (rounded normally). */
-  powerMult: 1.2,
-  // Speed is intentionally unchanged.
-} as const
+// earned. This now runs through the unified boss system (engine/boss.ts) with
+// the `hunt` tier: max IVs + Heart ×2 / Power ×1.2 / Speed ×1.0, at level
+// (party top + HUNT_LEVEL_BONUS). A neutral-matchup team should grind; bringing
+// the element counter + focusing fire wins cleanly (the ×2/×0.5 type multiplier
+// and BattleScreen are unchanged — this only buffs the wild pony's raw stats).
 
 /**
- * Build the wild Hunt opponent as a mini-boss: take its normal stats at
- * (partyTopLevel + levelBonus), then apply the Heart and Power multipliers.
- * Speed is left as-is. Tune the three dials in WILD_MINIBOSS_MOD to rebalance.
+ * Build the wild Hunt opponent as a mini-boss (§8): the `hunt` boss tier at
+ * (partyTopLevel + HUNT_LEVEL_BONUS). Tune the multipliers via BOSS_MODS.hunt.
  */
 export function buildWildMiniBoss(
   id: string,
@@ -96,15 +87,7 @@ export function buildWildMiniBoss(
   tier: 1 | 2 | 3 | 4 | 5,
   partyTopLevel: number,
 ): BattlePony {
-  const level = partyTopLevel + WILD_MINIBOSS_MOD.levelBonus
-  const base = buildBattlePony(id, name, element, tier, level)
-  const maxHp = Math.round(base.maxHp * WILD_MINIBOSS_MOD.hpMult)
-  return {
-    ...base,
-    maxHp,
-    currentHp: maxHp,
-    power: Math.round(base.power * WILD_MINIBOSS_MOD.powerMult),
-  }
+  return buildBossBattlePony(id, name, element, tier, partyTopLevel + HUNT_LEVEL_BONUS, 'hunt')
 }
 
 /**

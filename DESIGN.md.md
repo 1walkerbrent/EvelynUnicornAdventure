@@ -103,9 +103,11 @@ A **hybrid** model: a persistent active team for everything, a swap nudge where 
 
 Stats are shown as **raw numbers** (intentional stealth math — she compares and adds them constantly).
 
-**Formula:** `stat = base + growth × (level − 1)`
+**Formula:** `stat = (base + IV) + growth × (level − 1)`
 
 **Shared growth per level (identical for every creature):** +3 Heart, +1 Power, +1 Speed.
+
+**Individual Values (IVs).** Every pony has three IVs — one per stat (Heart, Power, Speed) — each an integer **0–3**, rolled **uniformly at random once on acquisition** (starter, Hunt tame, quest/Explore reward) and **stored permanently** (`ivs` on the creature; §5 formula folds the IV into the effective base). The only exception: **Guardian-signature ponies (and the legendary Aurelune) always get max IVs (3/3/3)** — they're trophies. IVs are surfaced only through the **computed stat** shown on party cards / team picker / battle UI (base + IV + growth × (level − 1)); the raw IV isn't displayed — she just notices "this Marina has higher Heart than that one." *(Implemented in `engine/ivs.ts` + `getStats(tier, level, ivs)`; save **v5** backfills random IVs for pre-IV ponies.)*
 
 Only the **base** scales by tier. Because growth is shared, a higher-tier creature's lead is a *fixed* amount — so as both level up, the gap shrinks in relative terms. Early favorites never become useless; they become specialists.
 
@@ -199,7 +201,7 @@ The freedom valve that lets her build a *unique* team instead of being locked in
 - Available in **any zone she has already unlocked** — each unlocked zone shows an **Explore** action on the world map.
 - **Two explicit modes she chooses between** (not a random roll), cleanly separating the two pillars — *Practice = learning/leveling, Hunt = collecting:*
   - **Practice (problem-solving, XP only — no pony):** always a generated Math or Story/Logic problem (mixed). Solve it → the **whole party earns XP** (M2a system). Unlimited tries, same retry/3rd-attempt-hint rules, no failure state, and an "another one" loop so she can grind problems to level her team. Never grants a creature — this is the pure learning outlet.
-  - **Hunt (battle to tame — the collection faucet):** always a single-creature `<BattleScreen>` battle, her team vs one wild pony chosen by the **three-tier selection** below. It's 3-on-1, but the lone wild pony is a **mini-boss** (see *Hunt mini-boss scaling* below) so taming feels earned. Win → it joins the party + XP; loss → painless free retry. Once everything catchable from here is tamed, Hunt gently says *"you've caught them all here."*
+  - **Hunt (battle to tame — the collection faucet):** always a single-creature `<BattleScreen>` battle, her team vs one wild pony chosen by the **three-tier selection** below. It's 3-on-1, but the lone wild pony is a **mini-boss** (the `hunt` boss tier — see *Boss / special-pony stat modifiers* below) so taming feels earned. Win → it joins the party + XP; loss → painless free retry. Once everything catchable from here is tamed, Hunt gently says *"you've caught them all here."*
 
 #### Hunt encounter selection (three tiers)
 
@@ -216,18 +218,26 @@ To keep Hunt diverse for the whole game (not just until a zone's own pool is emp
 - **Difficulty scales by zone:** `effectiveDifficulty(zone, partyLevel)` — re-exploring Zone 2 stays easy (safe confidence farming); exploring Zone 6 is hard. She picks her own challenge level.
 - Splits the two pillars cleanly: **Practice trains math** (fast, repeatable), **Hunt + Trials train strategy/collection** (battles).
 
-### Hunt mini-boss scaling (M2d balance pass)
+### Boss / special-pony stat modifiers (§8)
 
-A same-level 3-on-1 wild battle was a free win. To make taming feel earned and to **reward type-smart play** (a neutral-matchup team should grind; bringing the element counter + focusing fire wins cleanly), the wild Hunt pony is a **mini-boss**: on top of its normal tier/level stats it gets
+Enemy ponies in the "earned" battles (Hunt mini-boss, Trials, Champion) are **bosses**: tiered stat multipliers applied *after* the §5 formula, on top of **max IVs**. This makes taming/Trials feel earned and **rewards type-smart play** — a neutral-matchup team grinds; bringing the element counter + focusing fire wins cleanly (the ×2/×0.5 type multiplier from §4 and `<BattleScreen>` are unchanged; this only buffs the enemy's raw stats).
 
-- **Level = party's highest level + 2**
-- **Heart (HP) × 2**
-- **Power × 1.2** (rounded normally)
-- **Speed unchanged**
+**The four boss tiers** (`BOSS_MODS` in `engine/boss.ts` — the easy-to-find tuning dials):
 
-These **three multipliers are the tuning dials** (`WILD_MINIBOSS_MOD` in `engine/explore.ts`, applied by `buildWildMiniBoss`). The ×2/×0.5 type multiplier (§4) and `<BattleScreen>` are unchanged — this only buffs the wild pony's raw stats, so an advantaged team still hits for ×2 while taking ×0.5, and wins clearly faster than a neutral team. It stays **3-on-1**.
+| Boss tier | Level | Heart × | Power × | Speed × |
+|---|---|---|---|---|
+| **hunt** | party top + 2 | 2.0 | 1.2 | 1.0 |
+| **trialTeam** | zone level cap | 1.5 | 1.3 | 1.1 |
+| **guardian** | zone level cap + 1 | 2.5 | 1.5 | 1.2 |
+| **champion** | 15 | 3.0 | 1.6 | 1.3 |
 
-**Tame-at-cap rule:** catch difficulty and reward power are kept **separate**. When a hunted pony is tamed it joins the party at the player's **current level cap** (§6 badge cap) at **full HP** — *not* at the boosted mini-boss level. So the reward is strong and usable but **never above cap**. (Practice mode, Trials, and the Proving Glade are unaffected by this change.)
+**All bosses use max IVs (3/3/3)** before the multipliers. The pipeline (`bossStats`): (1) look up base stats for the pony's tier/zone, (2) set IVs to 3/3/3, (3) compute raw `(base + 3) + growth × (level − 1)`, (4) apply the tier multiplier `round(raw × mult)`.
+
+- **Hunt** uses the `hunt` tier (level = party top + 2). Equivalent to the previous mini-boss (Heart ×2 / Power ×1.2 / Speed ×1.0) — the only change is the max-IV base, a slight buff.
+- **Trials:** the Guardian's two teammates use `trialTeam`; the **Guardian's ace** uses `guardian` (a level higher). The **Champion's** ace uses `champion` (its teammates stay `trialTeam`), all at the fixed Champion level 15.
+- **Combat-only:** these multipliers never carry to a *tamed* copy's stats — a caught wild pony joins as a normal roster pony (see tame-at-cap below). The exception is a **Guardian-signature** trophy, which joins the roster keeping its **max IVs** (but no multipliers). *(`applyBossMod` / `bossStats` / `buildBossBattlePony` in `engine/boss.ts`; wired via `screens/teams.ts` and `engine/explore.ts`.)*
+
+**Tame-at-cap rule:** catch difficulty and reward power are kept **separate**. When a hunted pony is tamed it joins the party at the player's **current level cap** (§6 badge cap) at **full HP** — *not* at the boosted mini-boss level, and with **its own rolled IVs** (not the boss's max IVs). So the reward is strong and usable but **never above cap**. (Practice mode, Trials, and the Proving Glade are unaffected by this.)
 
 *Implementation (M2d):* `engine/explore.ts` (`pickWildEncounter` + `buildWildMiniBoss`, pure + tested) drives the three-tier Hunt selection — `uncaughtPoolSpecies` (own zone), `uncaughtCrossZoneSpecies` (cross-zone, signature-excluded), and `uncaughtStarters` (rare), weighted by `RARE_STARTER_CHANCE` (0.12) / `CROSS_ZONE_CHANCE` (0.18) / remainder — and tags each `WildEncounter` with the `tier` to build at; `ExploreHunt` passes `encounter.tier` to `buildWildMiniBoss`. Screens `ExploreHub` / `ExplorePractice` / `ExploreHunt` reuse the generators, the generic `<BattleScreen>` (with prop-driven victory/defeat flavor text), and the existing taming/XP/save flow (`ExploreHunt` tames at `levelCap`).
 

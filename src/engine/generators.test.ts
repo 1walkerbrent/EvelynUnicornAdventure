@@ -3,6 +3,18 @@ import { effectiveDifficulty, ZONE_BANDS } from './difficulty'
 import { generateMathProblem } from './mathGenerator'
 import { generateLogicProblem } from './logicGenerator'
 
+// Seeded PRNG (mulberry32) so statistical assertions are deterministic and never
+// flake on unlucky Math.random draws.
+function mulberry32(seed: number): () => number {
+  let a = seed
+  return () => {
+    a |= 0; a = (a + 0x6d2b79f5) | 0
+    let t = Math.imul(a ^ (a >>> 15), 1 | a)
+    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296
+  }
+}
+
 // ── effectiveDifficulty ──────────────────────────────────────────────────────
 
 describe('effectiveDifficulty', () => {
@@ -67,14 +79,19 @@ describe('generateMathProblem — hard invariants over 200 samples', () => {
   })
 
   it('difficulty 1 produces smaller numbers than difficulty 3', () => {
+    // Seeded rng → deterministic sample, so the mean comparison can't flake. Both
+    // difficulties resolve to band 1 (two-digit); difficulty 3 draws from a wider
+    // tens range (maxTens 9 vs 3), so its mean answer is reliably higher. N is
+    // large enough that the separation dwarfs any per-sample noise.
+    const rng1 = mulberry32(0xC0FFEE)
+    const rng3 = mulberry32(0xBEEF)
     let sumDiff1 = 0
     let sumDiff3 = 0
-    const N = 100
+    const N = 300
     for (let i = 0; i < N; i++) {
-      sumDiff1 += generateMathProblem(1).correctAnswer
-      sumDiff3 += generateMathProblem(3).correctAnswer
+      sumDiff1 += generateMathProblem(1, rng1).correctAnswer
+      sumDiff3 += generateMathProblem(3, rng3).correctAnswer
     }
-    // difficulty-3 numbers are drawn from a wider/higher range — mean should be higher
     expect(sumDiff3 / N).toBeGreaterThan(sumDiff1 / N)
   })
 })

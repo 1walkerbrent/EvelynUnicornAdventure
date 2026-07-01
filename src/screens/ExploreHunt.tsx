@@ -3,6 +3,7 @@ import { useGameStore } from '../state/store'
 import { SPECIES_BY_ID } from '../content/creatures'
 import { getStats } from '../engine/stats'
 import { pickWildEncounter, buildWildMiniBoss } from '../engine/explore'
+import { rollIvs } from '../engine/ivs'
 import { resolveBattleTeam } from '../engine/team'
 import { XP_PER_BATTLE_WIN } from '../engine/leveling'
 import BattleScreen from '../components/BattleScreen'
@@ -68,13 +69,16 @@ export default function ExploreHunt() {
     // cap at full HP — strong and usable, but never above cap and never at the
     // boosted mini-boss level. Catch difficulty and reward power stay separate.
     const tameLevel = levelCap
-    const stats = getStats(species!.tier, tameLevel)
+    // Roll this pony's permanent IVs on acquisition (§5).
+    const ivs = rollIvs()
+    const stats = getStats(species!.tier, tameLevel, ivs)
     addToParty({
       speciesId: species!.id,
       nickname:  species!.name,
       level:     tameLevel,
       currentHp: stats.heart,
       xp:        0,
+      ivs,
     })
     awardXpToParty(XP_PER_BATTLE_WIN)
     setScreen('exploreHub')

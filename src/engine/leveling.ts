@@ -70,9 +70,10 @@ export function addXp(creature: Creature, tier: Tier, amount: number, levelCap: 
   const leveledUp = levelsGained > 0
 
   // On level-up, recompute the HP pool and heal to full (§5 stats; kid-friendly).
+  // Include the pony's IVs so the healed max matches its displayed Heart.
   let currentHp = creature.currentHp
   if (leveledUp) {
-    const stats: Stats = getStats(tier, level)
+    const stats: Stats = getStats(tier, level, creature.ivs)
     currentHp = stats.heart
   }
 

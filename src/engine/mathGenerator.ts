@@ -101,16 +101,16 @@ const ADD_TEMPLATES: OneStepTemplate[] = [
 const BAND1_IDS = [0, 1, 2, 3, 4, 5]
 const band1Tracker = new RecentlySeenTracker(BAND1_IDS.length)
 
-function generateBand1(difficulty: number): MathProblem {
-  const templateIdx = band1Tracker.pickFresh(BAND1_IDS, Math.random)
+function generateBand1(difficulty: number, rng: Rng): MathProblem {
+  const templateIdx = band1Tracker.pickFresh(BAND1_IDS, rng)
   const maxTens = maxTensForDiff(difficulty)
 
   if (templateIdx < 3) {
-    const nums = sub2NoRegroup(Math.random, maxTens)
+    const nums = sub2NoRegroup(rng, maxTens)
     const { prompt, hint } = SUB_TEMPLATES[templateIdx](nums.a, nums.b)
     return { type: 'math', prompt, correctAnswer: nums.answer, hint }
   } else {
-    const nums = add2NoRegroup(Math.random, maxTens)
+    const nums = add2NoRegroup(rng, maxTens)
     const { prompt, hint } = ADD_TEMPLATES[templateIdx - 3](nums.a, nums.b)
     return { type: 'math', prompt, correctAnswer: nums.answer, hint }
   }
@@ -289,7 +289,7 @@ function themeTrackerFor(band: number): RecentlySeenTracker {
   return t
 }
 
-function renderSpec(theme: StoryTheme, spec: MathSpec): TemplateResult {
+function renderSpec(theme: StoryTheme, spec: MathSpec, rng: Rng): TemplateResult {
   const sentences = [theme.start(spec.numbers[0])]
   for (let i = 0; i < spec.ops.length; i++) {
     sentences.push(spec.ops[i] === '+' ? theme.plus(spec.numbers[i + 1]) : theme.minus(spec.numbers[i + 1]))
@@ -298,7 +298,7 @@ function renderSpec(theme: StoryTheme, spec: MathSpec): TemplateResult {
   if (spec.extraneous !== undefined) {
     // Insert the distractor somewhere after the first sentence so it reads naturally
     // but is clearly about something other than the counted item.
-    const pos = 1 + Math.floor(Math.random() * sentences.length)
+    const pos = 1 + Math.floor(rng() * sentences.length)
     sentences.splice(pos, 0, theme.distractor(spec.extraneous))
   }
 
@@ -317,10 +317,10 @@ function renderSpec(theme: StoryTheme, spec: MathSpec): TemplateResult {
   return { prompt, hint }
 }
 
-function generateBanded(band: 2 | 3 | 4 | 5 | 6): MathProblem {
-  const spec = buildMathSpec(Math.random, band)
-  const themeIdx = themeTrackerFor(band).pickFresh(THEME_IDS, Math.random)
-  const { prompt, hint } = renderSpec(THEMES[themeIdx], spec)
+function generateBanded(band: 2 | 3 | 4 | 5 | 6, rng: Rng): MathProblem {
+  const spec = buildMathSpec(rng, band)
+  const themeIdx = themeTrackerFor(band).pickFresh(THEME_IDS, rng)
+  const { prompt, hint } = renderSpec(THEMES[themeIdx], spec, rng)
   return { type: 'math', prompt, correctAnswer: spec.answer, hint }
 }
 
@@ -328,8 +328,8 @@ function generateBanded(band: 2 | 3 | 4 | 5 | 6): MathProblem {
 // PUBLIC ENTRY — routes by effective difficulty
 // ════════════════════════════════════════════════════════════════════════════
 
-export function generateMathProblem(difficulty: number): MathProblem {
+export function generateMathProblem(difficulty: number, rng: Rng = Math.random): MathProblem {
   const band = bandForDifficulty(difficulty)
-  if (band === 1) return generateBand1(difficulty)
-  return generateBanded(band)
+  if (band === 1) return generateBand1(difficulty, rng)
+  return generateBanded(band, rng)
 }
