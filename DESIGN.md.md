@@ -312,7 +312,7 @@ Most of the roster is collectable in the wild — that's the core loop. Gyms/rew
 
 Typed data in `src/content/` (`creatures.ts`, `zones.ts`, `guardians.ts`). All unicorns; placeholder art = an element-keyed color. Tier = zone number − 1. Per zone: 2 quest rewards (Areas 1 & 2), 1 Guardian signature, 3 Explore-pool species.
 
-**Art status:** the 5 starters (`marina-mist`, `ember-spark`, `sky-dancer`, `stella-dream`, `meadow-bloom`) now have real art assets under `src/assets/ponies/`, rendered by `CreatureSprite` via a `speciesId`-keyed sprite map (Party list and BattleScreen). The rest of the roster still falls back to the element-keyed placeholder circles, pending future art passes.
+**Art status:** the 5 starters (`marina-mist`, `ember-spark`, `sky-dancer`, `stella-dream`, `meadow-bloom`) now have real art assets under `src/assets/ponies/`, rendered by `CreatureSprite` (Party list and BattleScreen). Sprites are **glob-based**: `CreatureSprite` uses `import.meta.glob('/src/assets/ponies/*.png', { eager: true, import: 'default' })` to build a `speciesId → image` map keyed by each PNG's filename (without extension). **Adding a new pony's art is just dropping a correctly-named `<speciesId>.png` into `src/assets/ponies/`** — no code change needed. Any species without a matching file falls back to the element-keyed placeholder circle, so the rest of the roster still renders until its art lands.
 
 | Zone (element, tier) | Quest rewards | Signature (ace) | Explore pool |
 |---|---|---|---|

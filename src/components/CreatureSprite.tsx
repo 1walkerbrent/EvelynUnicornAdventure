@@ -1,19 +1,19 @@
 import type { Element } from '../engine/types'
-import marinaMist from '../assets/ponies/marina-mist.png'
-import emberSpark from '../assets/ponies/ember-spark.png'
-import skyDancer from '../assets/ponies/sky-dancer.png'
-import stellaDream from '../assets/ponies/stella-dream.png'
-import meadowBloom from '../assets/ponies/meadow-bloom.png'
 
-// Real art for the 5 starters, keyed by speciesId. Any species not listed here
-// falls back to the element emoji-circle placeholder below.
-const SPRITE_BY_SPECIES: Record<string, string> = {
-  'marina-mist':  marinaMist,
-  'ember-spark':  emberSpark,
-  'sky-dancer':   skyDancer,
-  'stella-dream': stellaDream,
-  'meadow-bloom': meadowBloom,
-}
+// Real pony art, keyed by speciesId (= PNG filename without extension). Sprites
+// are discovered at build time from src/assets/ponies/, so adding a new pony is
+// just dropping a correctly-named PNG in that folder — no code change here. Any
+// speciesId without a matching file falls back to the element emoji-circle.
+const spriteModules = import.meta.glob<string>('/src/assets/ponies/*.png', {
+  eager: true,
+  import: 'default',
+})
+const SPRITE_BY_SPECIES: Record<string, string> = Object.fromEntries(
+  Object.entries(spriteModules).map(([path, url]) => [
+    path.split('/').pop()!.replace(/\.png$/, ''),
+    url,
+  ]),
+)
 
 const ELEMENT_EMOJI: Record<Element, string> = {
   water:  '💧',
@@ -46,8 +46,11 @@ export default function CreatureSprite({ element, color, size = 64, speciesId }:
       <img
         src={sprite}
         alt={`${element} unicorn`}
-        style={{ width: size, height: size, objectFit: 'contain' }}
-        className="flex-shrink-0"
+        draggable={false}
+        // pointer-events:none so the native image drag can't hijack the wrapper's
+        // custom drag-to-target gesture — the wrapper <div> owns all pointer input.
+        style={{ width: size, height: size, objectFit: 'contain', pointerEvents: 'none' }}
+        className="flex-shrink-0 select-none"
       />
     )
   }
