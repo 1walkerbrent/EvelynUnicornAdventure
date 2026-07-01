@@ -55,8 +55,8 @@ describe('getTypeMultiplier', () => {
   it('earth vs water → ×2 (advantage)', () => {
     expect(getTypeMultiplier('earth', 'water')).toBe(2)
   })
-  it('water vs earth → ×0.5 (disadvantage)', () => {
-    expect(getTypeMultiplier('water', 'earth')).toBe(0.5)
+  it('water vs earth → ×1.0 neutral (asymmetric matrix — offense and defense wheels differ)', () => {
+    expect(getTypeMultiplier('water', 'earth')).toBe(1)
   })
 
   // Full wheel (§3): water→fire→air→spirit→earth→water

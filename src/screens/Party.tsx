@@ -170,18 +170,38 @@ export default function Party() {
               <span className="text-purple-400 text-xs">{typeChartOpen ? '▲ hide' : '▼ show'}</span>
             </button>
             {typeChartOpen && (
-              <div className="px-4 pb-4 space-y-2">
-                <div className="flex flex-wrap items-center gap-x-1 gap-y-1 text-sm">
-                  {[...TYPE_CYCLE, TYPE_CYCLE[0]].map((el, i) => (
-                    <span key={i} className="flex items-center gap-1">
-                      {i > 0 && <span className="text-purple-400">→</span>}
-                      <span className="font-bold capitalize" style={{ color: ELEMENT_COLORS[el] }}>
-                        {el}
+              <div className="px-4 pb-4 space-y-3">
+                <div>
+                  <p className="text-purple-300 text-xs font-semibold mb-1">⚔️ Offense (deals ×2 to next)</p>
+                  <div className="flex flex-wrap items-center gap-x-1 gap-y-1 text-sm">
+                    {[...TYPE_CYCLE, TYPE_CYCLE[0]].map((el, i) => (
+                      <span key={i} className="flex items-center gap-1">
+                        {i > 0 && <span className="text-purple-400">→</span>}
+                        <span className="font-bold capitalize" style={{ color: ELEMENT_COLORS[el] }}>
+                          {el}
+                        </span>
                       </span>
-                    </span>
-                  ))}
+                    ))}
+                  </div>
                 </div>
-                <p className="text-purple-400 text-xs">→ means strong against · deals ×2 damage</p>
+                <div>
+                  <p className="text-purple-300 text-xs font-semibold mb-1">🛡️ Defense (resists attacks from)</p>
+                  <div className="space-y-0.5">
+                    {TYPE_CYCLE.map((el) => {
+                      // Each element resists the element 2 steps behind it on the attack wheel
+                      const resistsIdx = (TYPE_CYCLE.indexOf(el) + 3) % TYPE_CYCLE.length
+                      const resists = TYPE_CYCLE[resistsIdx]
+                      return (
+                        <div key={el} className="flex items-center gap-1 text-xs">
+                          <span className="font-bold capitalize w-12" style={{ color: ELEMENT_COLORS[el] }}>{el}</span>
+                          <span className="text-purple-400">resists</span>
+                          <span className="font-bold capitalize" style={{ color: ELEMENT_COLORS[resists] }}>{resists}</span>
+                        </div>
+                      )
+                    })}
+                  </div>
+                </div>
+                <p className="text-purple-500 text-xs">Offense and defense run on different axes — being strong against an element doesn't mean it's weak against you!</p>
               </div>
             )}
           </div>

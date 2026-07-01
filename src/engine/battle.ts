@@ -65,12 +65,26 @@ function findPony(
   return null
 }
 
-/** Alive ponies on the active team that still have their action this round (Speed order). */
+/**
+ * Alive ponies on the active team that still have their action this round.
+ * Enemy phase: Speed order (highest first). Player phase: slot order (the
+ * order the player set in TeamPicker — array index = slot 1, 2, 3).
+ */
 export function availableActors(state: BattleState): BattlePony[] {
   const team = state.activePhase === 'player' ? state.playerPonies : state.enemyPonies
-  return team
-    .filter(p => p.currentHp > 0 && !state.actedIds.includes(p.id))
-    .sort((a, b) => b.speed - a.speed)
+  const alive = team.filter(p => p.currentHp > 0 && !state.actedIds.includes(p.id))
+  return state.activePhase === 'enemy' ? alive.sort((a, b) => b.speed - a.speed) : alive
+}
+
+/**
+ * Pick a uniformly random living pony from `ponies`.
+ * Used for enemy targeting so every player pony has an equal chance of being hit.
+ * Returns null only when every pony has fainted.
+ */
+export function pickRandomTarget(ponies: BattlePony[]): BattlePony | null {
+  const alive = ponies.filter(p => p.currentHp > 0)
+  if (alive.length === 0) return null
+  return alive[Math.floor(Math.random() * alive.length)]
 }
 
 /**

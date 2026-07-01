@@ -78,8 +78,9 @@ describe('benched ponies still gain XP (benching is never a punishment)', () => 
 describe('matchup badges mirror the existing type multiplier', () => {
   it('Strong on ×2, Weak on ×0.5, neutral otherwise', () => {
     expect(matchupVsElement('earth', 'water')).toBe('strong') // ×2
-    expect(matchupVsElement('water', 'earth')).toBe('weak')   // ×0.5
-    expect(matchupVsElement('earth', 'fire')).toBe('neutral') // ×1
+    expect(matchupVsElement('water', 'earth')).toBe('neutral') // ×1.0 in asymmetric matrix (not ×0.5)
+    expect(matchupVsElement('spirit', 'water')).toBe('weak')   // ×0.5 — Water resists Spirit
+    expect(matchupVsElement('earth', 'air')).toBe('neutral') // ×1 (earth→air is neutral)
 
     // Cross-check every pairing against getTypeMultiplier directly.
     const els = ['water', 'fire', 'air', 'spirit', 'earth'] as const
@@ -92,7 +93,7 @@ describe('matchup badges mirror the existing type multiplier', () => {
 
   it('matchupForCreature reads the creature element', () => {
     expect(matchupForCreature(mk('meadow-bloom', 1), 'water')).toBe('strong')
-    expect(matchupForCreature(mk('marina-mist', 1), 'earth')).toBe('weak')
+    expect(matchupForCreature(mk('sky-dancer',  1), 'earth')).toBe('weak') // air→earth ×0.5
   })
 })
 
@@ -122,7 +123,7 @@ describe('recommended team (3-loss safety net)', () => {
       mk('marina-mist', 10), // water — neutral vs water, high level
       mk('meadow-bloom', 4), // earth — STRONG vs water
       mk('boulderhoof', 3),  // earth — STRONG vs water
-      mk('ember-spark', 8),  // fire — weak vs water
+      mk('ember-spark', 8),  // fire — neutral vs water (asymmetric matrix)
     ]
     const rec = recommendTeamVsElement(party, 'water')
     expect(rec.kind).toBe('recommend')

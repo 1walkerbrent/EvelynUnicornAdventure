@@ -32,19 +32,49 @@ Phase 2 is intentionally excluded from the initial build. See §17.
 
 ## 3. Elements & the type wheel
 
-Five classic elements. Each beats exactly one and loses to exactly one — no element is safe, so a balanced team always beats a one-note team.
+Five classic elements with an **asymmetric** type system: offense and defense run on different wheels, so the element you attack with is not the same as the element you must *resist*. This breaks the "one right answer" lock and makes team-building genuinely two-dimensional.
 
-**The wheel (each beats the next):**
+**Offense wheel — deals ×2 damage TO the next element:**
 
 `Water → Fire → Air → Spirit → Earth → (back to Water)`
 
-| Element | Beats | Loses to |
+**Defense wheel — takes ×0.5 damage FROM (resists):**
+
+Each element resists the element **two steps behind it** on the attack wheel.
+
+| Element | Hits hard (×2) | Resists (×0.5 from) |
 |---|---|---|
-| Water | Fire | Earth |
-| Fire | Air | Water |
-| Air | Spirit | Fire |
-| Spirit | Earth | Air |
-| Earth | Water | Spirit |
+| Water | Fire | Spirit |
+| Fire | Air | Earth |
+| Air | Spirit | Water |
+| Spirit | Earth | Fire |
+| Earth | Water | Air |
+
+**Full 5×5 multiplier matrix — look up as matrix[attacker][defender]:**
+
+```
+                Defender:
+Attacker:    Water  Fire   Air    Spirit  Earth
+Water        1.0    2.0    0.5    1.0     1.0
+Fire         1.0    1.0    2.0    0.5     1.0
+Air          1.0    1.0    1.0    2.0     0.5
+Spirit       0.5    1.0    1.0    1.0     2.0
+Earth        2.0    0.5    1.0    1.0     1.0
+```
+
+Every row and column has exactly one ×2 and one ×0.5; all others are ×1. The key asymmetry: **hitting an element with its weakness deals ×2, but the reverse matchup is ×1 (not ×0.5).** Resistance comes from a different pair entirely.
+
+**Team building note:** Because offense and defense wheels are different, each Trial demands two counters — an *offensive* counter (to deal ×2) and a *defensive* counter (to tank ×0.5). These are different elements, so a one-type team is never the full answer.
+
+**Recommended team comp by zone:**
+
+| Facing | Offensive counter (deals ×2) | Defensive counter (resists) |
+|---|---|---|
+| Earth zone | Spirit | Fire |
+| Water zone | Earth | Air |
+| Fire zone | Water | Spirit |
+| Air zone | Fire | Earth |
+| Spirit zone | Air | Water |
 
 **Flavor (lore only — not a mechanic in v1):** Fire reads aggressive, Air swift, Earth sturdy, Water calm, Spirit mysterious. In v1 these are personality/theming; combat is pure stats + the type multiplier (see §4). Role-based powers (heals, shields, buffs) are a possible later enhancement, not part of v1.
 
@@ -56,15 +86,13 @@ Deliberately simple and readable: a single attack, an HP pool, and speed for tur
 
 - **Format:** 3-on-3, turn-based.
 - **Stats per creature:** Heart (HP pool), Power (attack), Speed (turn order).
-- **Turn order:** higher Speed acts first each round.
+- **Turn order:** Phase order between teams is Speed-based (faster team's phase goes first, player wins ties). Within the *enemy* phase, each enemy acts in Speed order. Within the *player* phase, her ponies act in the **slot order she chose** in TeamPicker (slot 1 first, slot 2 second, slot 3 third) — not Speed-based for her team.
 - **Damage:** `round(attacker Power × type multiplier)`, minimum 1.
-- **Type multiplier** (based on attacker's element vs defender's element):
-  - Advantage: **×2**
-  - Disadvantage: **×0.5** (halved)
-  - Neutral: **×1.0**
-- Because the wheel is one-directional, an advantaged matchup automatically cuts both ways: you hit for ×2 while their hits into you land at ×0.5.
+- **Type multiplier** (asymmetric 5×5 matrix, §3): ×2 on offense, ×0.5 when the defender resists, ×1.0 otherwise. Offense and defense wheels differ — see §3 for the full table.
+- **Enemy targeting:** each enemy attack targets a **uniformly random living** player pony. Every alive pony has an equal chance of being hit on each individual attack. (Player attacks still target whichever enemy pony the player chooses by drag or tap.)
+- **Player attack order:** the player sets a preferred slot order (1, 2, 3) in the TeamPicker before the battle. Slot 1 acts first each round, slot 2 second, slot 3 third. The order persists across battles so she doesn't have to re-set it every time.
 
-**The ×2 / halve pair is the master balance dial.** It keeps the combat arithmetic clean — doubling and halving are easy mental math — and leans hard into type-is-king. Nudge toward ×1.5 / ×0.5 later if you want stats to matter more in advantaged fights.
+**The ×2 / ×0.5 pair is the master balance dial.** It keeps the combat arithmetic clean — doubling and halving are easy mental math — and leans hard into type-is-king. Nudge toward ×1.5 / ×0.5 later if you want stats to matter more in advantaged fights.
 
 Battles happen at **Trials**, the **Champion** fight, and the ~25% of Explore encounters that are wild battles (§8). Quest rewards and the other ~75% of Explore use problem-solving, not battles.
 
@@ -94,7 +122,7 @@ This screen is the template for **every** battle — Proving Glade now, and all 
 A **hybrid** model: a persistent active team for everything, a swap nudge where it teaches, and a recommended-team safety net when she's stuck. None of this touches combat math, turn order, or the XP/cap systems — it only chooses *which* 3 ponies enter the existing `<BattleScreen>`.
 
 - **Active team (persistent).** The party keeps an **active team of up to 3 ponies** (persisted in the save as a list of speciesIds). It's who fights **every** battle — Trials, the Champion, and Explore Hunts. The default is her **3 highest-level ponies**, so it's never empty. **Benched ponies still receive shared XP** — benching is never a punishment. Team-picking is only surfaced when she has **more than 3** ponies; with 3 or fewer, everyone fights and there's no picker. The effective fighters are derived by `resolveBattleTeam(party, activeTeam)` (≤3 → everyone; else the stored set, falling back to the default top-3 if unusable).
-- **Picker (select exactly 3).** Each pony row shows element, level, HP/Pwr/Spd, and selected state. When the opponent's element is known (a Trial) each row also shows a **matchup badge** from the existing type multiplier — **×2 = "Strong" (green), ×0.5 = "Weak" (red), ×1 = no badge**. Because turn order is Speed-driven, the team is a **set, not an order** — the picker never implies pick-order matters.
+- **Picker (select + reorder).** Each pony row shows element, level, HP/Pwr/Spd, and selected state. When the opponent's element is known (a Trial) each row also shows a **matchup badge** from the existing type multiplier — **×2 = "Strong" (green), ×0.5 = "Weak" (red), ×1 = no badge**. The picker shows an **Attack Order** section with ▲▼ buttons to reorder the three chosen ponies — slot 1 attacks first each round, slot 2 second, slot 3 third. The order is persisted in `activeTeam` so it's remembered between battles.
 - **Trial entry nudge.** Entering a Trial shows the Guardian's **element** and a *"keep team or swap?"* beat with the picker one tap away: she can proceed with her active team or open the picker. **Hunts use the active team as-is with no nudge** (the wild element is unknown until battle).
 - **Recommended team (3-loss safety net, Trials only).** A **loss streak is tracked per Guardian** (persisted; incremented on each loss to that Guardian, reset to 0 only on a win against it — *not* on navigating away). At **streak ≥ 3**, on the defeat screen and on subsequent entries to that Trial until she wins, a recommendation appears:
   - **Counter exists** — if her roster has ponies that are ×2 ("Strong") vs the Guardian's element, recommend the **best 3** (Strong matchups first, then highest level). One tap fills the active team with them, with a kid-terms reason, e.g. *"Earth beats Water!"*.
@@ -129,10 +157,10 @@ Only the **base** scales by tier. Because growth is shared, a higher-tier creatu
 
 **XP is granted from both winning battles AND solving Explore/quest problems correctly** — so doing the math literally levels her team. `XP_PER_CORRECT_ANSWER = 20`, `XP_PER_BATTLE_WIN = 50`. **Flat 200 XP to advance every level** (≈ 10 correct-answer encounters per level-up at any level — not a runaway curve).
 
-**Worked example (both at level cap 8, entering Fire zone):** A tier-1 Earth starter vs a tier-2 Water creature, with Earth-beats-Water advantage:
+**Worked example (both at level cap 8, entering Fire zone):** A tier-1 Earth starter vs a tier-2 Water creature. Earth is on offense (earth→water = ×2); Water's return fire is neutral (water→earth = ×1.0 in the asymmetric matrix — Water's resistance is against Spirit, not Earth):
 - Earth at L8: Power 2+7=9, Heart 5+21=26 → hits for 9×2 = **18**
-- Water at L8: Power 3+7=10, Heart 7+21=28 → hits for 10×0.5 = **5**
-- Earth wins in 2 hits (18+18=36) despite being the lower tier; the Water would need 6 hits to grind through 26. In a *neutral* matchup the tier-2 would win on raw stats. **Element decides advantaged fights; stats decide neutral ones.**
+- Water at L8: Power 3+7=10, Heart 7+21=28 → hits for 10×1.0 = **10**
+- Earth wins in 2 hits (18+18=36) comfortably; Water needs 3 hits (10×3=30 > 26). In a *neutral* matchup the tier-2 would win on raw stats. **Offense wheel decides who hits hard; defense wheel decides who tanks.**
 
 ---
 

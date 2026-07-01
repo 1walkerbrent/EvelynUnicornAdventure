@@ -5,9 +5,10 @@ import { getStats } from '../engine/stats'
 import { matchupVsElement, MAX_ACTIVE_TEAM } from '../engine/team'
 import CreatureSprite from './CreatureSprite'
 
-// Team picker (M2e): choose exactly 3 ponies for the active team. Selection is a
-// SET — turn order is Speed-driven, so pick order never matters. When the
-// opponent's element is known (a Trial) each row shows a type matchup badge.
+// Team picker (M2e + ordering): choose exactly 3 ponies and arrange their
+// attack order. Slot 1 attacks first each round, slot 2 second, slot 3 third.
+// The player can tap a pony to add/remove it from the team, then use ▲▼ buttons
+// in the "Attack Order" section to reorder the three chosen ponies.
 interface Props {
   party: Creature[]
   initialSelection: string[]
@@ -24,8 +25,26 @@ export default function TeamPicker({ party, initialSelection, opponentElement, o
   function toggle(speciesId: string) {
     setSelected((prev) => {
       if (prev.includes(speciesId)) return prev.filter((id) => id !== speciesId)
-      if (prev.length >= MAX_ACTIVE_TEAM) return prev // already full — tap a selected one to swap
+      if (prev.length >= MAX_ACTIVE_TEAM) return prev
       return [...prev, speciesId]
+    })
+  }
+
+  function moveUp(index: number) {
+    if (index <= 0) return
+    setSelected((prev) => {
+      const next = [...prev]
+      ;[next[index - 1], next[index]] = [next[index], next[index - 1]]
+      return next
+    })
+  }
+
+  function moveDown(index: number) {
+    setSelected((prev) => {
+      if (index >= prev.length - 1) return prev
+      const next = [...prev]
+      ;[next[index], next[index + 1]] = [next[index + 1], next[index]]
+      return next
     })
   }
 
@@ -37,17 +56,83 @@ export default function TeamPicker({ party, initialSelection, opponentElement, o
         <div className="p-4 pb-2">
           <h2 className="text-xl font-bold text-yellow-300">Choose your team</h2>
           <p className="text-purple-300 text-sm">
-            Pick {MAX_ACTIVE_TEAM} ponies to battle.{' '}
-            <span className="text-purple-400">Order doesn’t matter — Speed decides who goes first.</span>
+            Pick {MAX_ACTIVE_TEAM} ponies.{' '}
+            <span className="text-purple-400">Attack order matters — slot 1 attacks first!</span>
           </p>
         </div>
 
+        {/* Attack order — shown when at least one pony is selected */}
+        {selected.length > 0 && (
+          <div className="mx-4 mb-2 bg-purple-900/60 rounded-2xl p-3">
+            <p className="text-xs font-semibold text-yellow-300 mb-2 uppercase tracking-wide">
+              ⚔️ Attack Order
+            </p>
+            <div className="space-y-1.5">
+              {selected.map((id, i) => {
+                const c = party.find((p) => p.speciesId === id)
+                const sp = c ? SPECIES_BY_ID[c.speciesId] : null
+                if (!c || !sp) return null
+                return (
+                  <div key={id} className="flex items-center gap-2">
+                    <span className="w-5 h-5 rounded-full bg-yellow-400 text-purple-950 text-[10px] font-bold flex items-center justify-center shrink-0">
+                      {i + 1}
+                    </span>
+                    <CreatureSprite
+                      element={sp.element}
+                      color={c.accentColor ?? sp.spritePlaceholderColor}
+                      size={28}
+                    />
+                    <span className="flex-1 text-sm font-semibold text-white truncate">
+                      {c.nickname || sp.name}
+                    </span>
+                    <div className="flex gap-1">
+                      <button
+                        onClick={() => moveUp(i)}
+                        disabled={i === 0}
+                        aria-label="Move up"
+                        className={
+                          'w-7 h-7 rounded-lg text-sm font-bold flex items-center justify-center transition-colors ' +
+                          (i === 0
+                            ? 'text-purple-700 bg-purple-900/30'
+                            : 'text-white bg-purple-700 hover:bg-purple-600')
+                        }
+                      >
+                        ▲
+                      </button>
+                      <button
+                        onClick={() => moveDown(i)}
+                        disabled={i === selected.length - 1}
+                        aria-label="Move down"
+                        className={
+                          'w-7 h-7 rounded-lg text-sm font-bold flex items-center justify-center transition-colors ' +
+                          (i === selected.length - 1
+                            ? 'text-purple-700 bg-purple-900/30'
+                            : 'text-white bg-purple-700 hover:bg-purple-600')
+                        }
+                      >
+                        ▼
+                      </button>
+                    </div>
+                  </div>
+                )
+              })}
+              {selected.length < MAX_ACTIVE_TEAM && (
+                <p className="text-purple-500 text-xs italic pl-7">
+                  Pick {MAX_ACTIVE_TEAM - selected.length} more below…
+                </p>
+              )}
+            </div>
+          </div>
+        )}
+
+        {/* Full party list — tap to add / remove */}
         <div className="flex-1 overflow-y-auto px-4 space-y-2">
           {party.map((c) => {
             const sp = SPECIES_BY_ID[c.speciesId]
             if (!sp) return null
             const stats = getStats(sp.tier, c.level, c.ivs)
             const isSel = selected.includes(c.speciesId)
+            const slotNum = selected.indexOf(c.speciesId) + 1
             const matchup = opponentElement ? matchupVsElement(sp.element, opponentElement) : null
 
             return (
@@ -89,7 +174,7 @@ export default function TeamPicker({ party, initialSelection, opponentElement, o
                     (isSel ? 'bg-yellow-400 border-yellow-400 text-purple-950' : 'border-purple-500 text-transparent')
                   }
                 >
-                  ✓
+                  {isSel ? slotNum : '✓'}
                 </div>
               </button>
             )

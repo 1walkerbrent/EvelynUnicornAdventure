@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
 import {
   createBattleState, nextActor, availableActors, applyAttack, isBattleOver, calcDamage,
+  pickRandomTarget,
 } from '../engine/battle'
 import type { BattlePony, BattleState } from '../engine/battle'
 import { getTypeMultiplier } from '../engine/combat'
@@ -189,7 +190,7 @@ export default function BattleScreen({
     const snap = battleState
     const t = setTimeout(() => {
       setPhase('animating')
-      const targetId = snap.playerPonies.find(p => p.currentHp > 0)?.id
+      const targetId = pickRandomTarget(snap.playerPonies)?.id
       if (targetId) executeAttack(snap, actor.pony.id, targetId)
     }, 700)
     return () => clearTimeout(t)

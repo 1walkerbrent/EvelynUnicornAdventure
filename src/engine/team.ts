@@ -2,13 +2,16 @@ import type { Creature, Element } from './types'
 import { getTypeMultiplier, getCounterElement } from './combat'
 import { SPECIES_BY_ID } from '../content/creatures'
 
-// ── Hybrid active-team model (M2e) ───────────────────────────────────────────
+// ── Hybrid active-team model (M2e + ordering) ────────────────────────────────
 //
 // The party keeps a persistent "active team" of up to 3 ponies that fight every
 // battle (Trials and Hunts). Benched ponies still share XP — benching is never a
 // punishment. Team-picking is only surfaced when she has MORE than 3 ponies; with
-// 3 or fewer everyone fights. Turn order stays Speed-driven, so the active team is
-// a SET, not an ordered list — pick order never matters.
+// 3 or fewer everyone fights.
+//
+// The active team IS AN ORDERED LIST — the player sets a preferred attack order
+// in TeamPicker (slot 1, 2, 3) that determines which of her ponies acts first,
+// second, and third within each player phase. Enemy turn order remains Speed-based.
 
 export const MAX_ACTIVE_TEAM = 3
 /** Losses to one Guardian before the recommended-team safety net appears (Trials). */
