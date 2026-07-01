@@ -443,7 +443,7 @@ The creatures are all *different* creatures that must share one *art style* — 
   - **Hunt scenes** (`hunt-z1` … `hunt-z6`) — one per zone. Explore/Hunt passes `hunt-${zoneId}`.
   - The **Champion** battle passes the exact stem `champion-arena`.
   - **World map** (`src/assets/backgrounds/world-map.jpg`) — see below.
-  - **Character creation** (`character-creation.jpg`) — full-bleed background on `CharacterCreation.tsx` (both pick and customize steps), with a `bg-black/50` overlay for form readability.
+  - **Character creation** (`character-creation.jpg`) — full-bleed background on `CharacterCreation.tsx` (both pick and customize steps), with a `bg-black/50` overlay for form readability. Both the starter-selection list (step 1) and the customization preview (step 2) now render real pony art via `<CreatureSprite speciesId={...} />`, falling back to the element emoji-circle for any species without a PNG.
   - **Game complete** (`game-complete.jpg`) — full-bleed background on `GameComplete.tsx`, with a `bg-black/50` overlay for text readability.
   - **Zone view** — `ZoneView.tsx` reuses the Hunt backgrounds (`hunt-z1` … `hunt-z6`) mapped from `selectedZoneId` (`hunt-${zoneId}`), with a `bg-black/40` overlay. Uses the same `import.meta.glob` pattern as `BattleScreen`; no new image files needed.
 

@@ -101,13 +101,7 @@ export default function CharacterCreation() {
                 onClick={() => handlePick(species.id)}
                 className="w-full bg-purple-900/70 hover:bg-purple-800 active:bg-purple-700 rounded-2xl p-4 flex items-center gap-4 transition-colors text-left"
               >
-                {/* Mystery sprite — neutral color until element is revealed */}
-                <div
-                  style={{ width: 56, height: 56, backgroundColor: '#6b7280' }}
-                  className="rounded-full flex items-center justify-center text-2xl flex-shrink-0 shadow-lg"
-                >
-                  ⭐
-                </div>
+                <CreatureSprite element={species.element} speciesId={species.id} size={56} />
                 <div className="flex-1 min-w-0">
                   <div className="text-white font-bold">{species.name}</div>
                   <div className="text-purple-300 text-sm">
@@ -144,7 +138,7 @@ export default function CharacterCreation() {
 
         {/* Live preview sprite with accent color */}
         <div className="flex justify-center">
-          <CreatureSprite element={picked.element} color={accentColor} size={100} />
+          <CreatureSprite element={picked.element} speciesId={pickedId} size={100} />
         </div>
 
         {/* Stats preview */}
