@@ -38,6 +38,7 @@ export default function ProvingGlade() {
       playerPonies={playerPonies}
       enemyPonies={enemyPonies}
       enemyLabel="Pip"
+      backgroundId="proving-glade"
       victoryTitle="You won!"
       victoryMessage="“Your bond with your ponies is real — and you used the type wheel perfectly! Zone 2 is now open to you!” — Pip"
       victoryButtonLabel="Continue to the World Map 🗺️"

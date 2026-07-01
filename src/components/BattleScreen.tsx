@@ -6,6 +6,31 @@ import type { BattlePony, BattleState } from '../engine/battle'
 import { getTypeMultiplier } from '../engine/combat'
 import CreatureSprite from './CreatureSprite'
 
+// Arena/hunt backdrops, keyed by filename without extension (same build-time
+// discovery pattern as CreatureSprite). Drop a correctly-named PNG in
+// src/assets/backgrounds/ and it's picked up — no code change here.
+const backgroundModules = import.meta.glob<string>('/src/assets/backgrounds/*.{png,jpg,jpeg}', {
+  eager: true,
+  import: 'default',
+})
+const BACKGROUND_BY_ID: Record<string, string> = Object.fromEntries(
+  Object.entries(backgroundModules).map(([path, url]) => [
+    path.split('/').pop()!.replace(/\.(png|jpe?g)$/, ''),
+    url,
+  ]),
+)
+
+// Resolve a backgroundId to an image URL. Trial callers pass the zone area id
+// (e.g. "granite"); match the themed file whose name starts with it
+// ("granite-hall"). Hunt/Proving callers pass the exact filename stem
+// ("hunt-z1", "proving-glade"). Returns undefined → caller keeps the gradient.
+function resolveBackground(id: string | undefined): string | undefined {
+  if (!id) return undefined
+  if (BACKGROUND_BY_ID[id]) return BACKGROUND_BY_ID[id]
+  const key = Object.keys(BACKGROUND_BY_ID).find(k => k.startsWith(`${id}-`))
+  return key ? BACKGROUND_BY_ID[key] : undefined
+}
+
 // ── Layout constants ──────────────────────────────────────────────────────────
 // Staggered arena positions matching the design mockup (% of viewport).
 // Index 0 = back/top, 2 = front/bottom.
@@ -41,6 +66,9 @@ interface Props {
   playerPonies: BattlePony[]
   enemyPonies: BattlePony[]
   enemyLabel?: string
+  // Arena/hunt backdrop. Trials pass the zone area id ("granite"), hunts pass
+  // "hunt-z1"…, Proving Glade passes "proving-glade". Unmatched → green gradient.
+  backgroundId?: string
   onVictory: () => void
   onDefeat: () => void
   // Optional overlay flavor (defaults are generic so any battle reads correctly).
@@ -55,6 +83,7 @@ export default function BattleScreen({
   playerPonies: initPlayers,
   enemyPonies:  initEnemies,
   enemyLabel = 'Opponent',
+  backgroundId,
   onVictory,
   onDefeat,
   victoryTitle = 'You won! 🏆',
@@ -290,11 +319,20 @@ export default function BattleScreen({
   }
 
   // ── Render ────────────────────────────────────────────────────────────────
+  const backgroundUrl = resolveBackground(backgroundId)
   return (
     <div
       className="relative h-screen w-screen overflow-hidden select-none"
       style={{
-        background: 'linear-gradient(160deg, #d8edda 0%, #c4dfc6 45%, #b0d0b3 100%)',
+        // A matched backdrop covers the stage full-bleed; otherwise fall back to
+        // the original green gradient so battles without art still read cleanly.
+        ...(backgroundUrl
+          ? {
+              backgroundImage:    `url(${backgroundUrl})`,
+              backgroundSize:     'cover',
+              backgroundPosition: 'center',
+            }
+          : { background: 'linear-gradient(160deg, #d8edda 0%, #c4dfc6 45%, #b0d0b3 100%)' }),
         touchAction: 'none',
       }}
       onPointerMove={handleStagePointerMove}

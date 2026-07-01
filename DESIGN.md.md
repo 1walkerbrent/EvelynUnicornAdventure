@@ -375,6 +375,20 @@ The creatures are all *different* creatures that must share one *art style* — 
 - **Hosting:** free Vercel or GitHub Pages.
 - **Art:** Leonardo → transparent PNGs on a fixed canvas → referenced by creature id from `/public` or `/src/assets`.
 
+**Art asset conventions — filename-keyed, build-time discovery.** Both pony sprites and battle backdrops are auto-discovered via `import.meta.glob(..., { eager: true, import: 'default' })`, keyed by the PNG filename without extension. Adding art is just dropping a correctly-named file in the right folder — no code change:
+- **Pony sprites** (`src/assets/ponies/*.png`, keyed by `speciesId`) — see `CreatureSprite`. A missing sprite falls back to the element emoji-circle.
+- **Battle backgrounds** (`src/assets/backgrounds/*.{png,jpg,jpeg}`) — see `BattleScreen`, which takes an optional `backgroundId` prop. A matched image renders full-bleed (`background-size: cover`, `background-position: center`); an unmatched/omitted id falls back to the original green gradient so nothing breaks. Two categories:
+  - **Trial arenas** (`proving-glade`, `granite-hall`, `coral-sanctum`, `magma-forge`, `galecrest-spire`, `starfall-temple`) — one per Trial. Trial callers pass the zone's trial **area id** (`granite`, `coral`, …); the resolver matches the file whose stem starts with that id (`granite` → `granite-hall`). Proving Glade passes the exact stem `proving-glade`.
+  - **Hunt scenes** (`hunt-z1` … `hunt-z6`) — one per zone. Explore/Hunt passes `hunt-${zoneId}`.
+  - The **Champion** battle passes the exact stem `champion-arena`.
+  - **World map** (`src/assets/backgrounds/world-map.jpg`) — see below.
+
+**Visual world map (`WorldMap.tsx`).** The World Map is a single tall portrait image (`world-map.jpg`, ~9:16) with a golden path winding through biome regions, rendered full-bleed and scrolled vertically. It replaced the earlier list layout; it's purely a presentation change — all progression logic still comes from `engine/progression` (`isZoneUnlocked`, `isZoneComplete`, `isChampionUnlocked`) and the store (`openZone`, `openExplore`, `setScreen('champion')`).
+- **Structure:** an `<img width:100% height:auto>` inside a `relative` wrapper preserves the image's natural aspect ratio (no crop/letterbox); a scroll container holds it, and zone nodes are **absolutely positioned on top** at hand-tuned `%` coordinates (`NODE_LAYOUT`) so each rests on the baked-in path. No SVG connector is drawn — the path is in the artwork.
+- **Nodes:** one tappable circle per zone (56px mobile / 64px `sm+`) showing the element emoji, tapping it calls `openZone` (or `setScreen('champion')` for the Champion). A floating name/status label sits beside each node, alternating left/right to avoid the path. Unlocked zones also show a compact **Explore** pill below the circle → `openExplore(zone.id)`.
+- **States:** *cleared* = gold `#ffd700` ring + dark fill + ✓ badge; *current* (unlocked, not cleared) = white ring + element-colored fill + a gentle `world-node-pulse` (scale 1.0–1.08, 2s) defined in `index.css`; *locked* = 50% opacity + 🔒 overlay.
+- **Chrome & behavior:** the `🏅 N/5` badge count is pinned (absolute, outside the scroller) so it stays visible while scrolling; on mount the map auto-scrolls to center the furthest unlocked incomplete zone (the frontier). Tuned for a tablet in portrait; degrades gracefully on desktop.
+
 **Architectural rule — separate content from engine:**
 - **Content as typed data files:** `creatures.ts`, `zones.ts`, problem rules/templates. Math problems can be procedurally generated from per-zone difficulty parameters plus a bank of story/logic templates.
 - **Engine as pure functions:** battle damage/turn-order and the problem/retry logic are pure, unit-testable functions matching the formulas in §4–§5.

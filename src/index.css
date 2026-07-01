@@ -73,3 +73,14 @@
 .level-pulse {
   animation: levelPulse 0.6s ease-out;
 }
+
+/* ── World map: gentle pulse on the current (unlocked, not-yet-cleared) zone ── */
+
+@keyframes worldNodePulse {
+  0%, 100% { transform: scale(1); }
+  50%      { transform: scale(1.08); }
+}
+
+.world-node-pulse {
+  animation: worldNodePulse 2s ease-in-out infinite;
+}

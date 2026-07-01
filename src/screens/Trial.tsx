@@ -56,6 +56,8 @@ export default function Trial() {
         playerPonies={playerPonies}
         enemyPonies={enemyPonies}
         enemyLabel={guardian.name}
+        // The trial arena's area id ("granite", "coral", …) → themed backdrop.
+        backgroundId={zone.areas.find((a) => a.kind === 'trial')?.id}
         victoryTitle="Trial won! 🏅"
         victoryMessage={`You earned a badge and ${zone.signatureSpeciesId ? SPECIES_BY_ID[zone.signatureSpeciesId].name : 'a signature pony'} joins your party! A new region is open.`}
         victoryButtonLabel="Continue to the World Map 🗺️"

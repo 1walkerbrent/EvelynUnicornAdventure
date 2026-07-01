@@ -24,6 +24,7 @@ export default function Champion() {
       playerPonies={playerPonies}
       enemyPonies={enemyPonies}
       enemyLabel={CHAMPION.name}
+      backgroundId="champion-arena"
       victoryTitle="Champion! 👑"
       victoryMessage="You bested Grand Champion Vesper — the legendary Aurelune joins your party!"
       victoryButtonLabel="See your victory 🎉"

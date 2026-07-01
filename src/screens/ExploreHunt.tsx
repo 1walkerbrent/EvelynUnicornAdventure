@@ -89,6 +89,8 @@ export default function ExploreHunt() {
       playerPonies={playerPonies}
       enemyPonies={enemyPonies}
       enemyLabel={encounter.rare ? `Rare ${species.name}!` : `Wild ${species.name}`}
+      // Per-zone hunt scene ("hunt-z1"…"hunt-z6").
+      backgroundId={selectedZoneId ? `hunt-${selectedZoneId}` : undefined}
       victoryTitle={`You tamed ${species.name}! 🦄`}
       victoryMessage={
         encounter.rare
