@@ -29,10 +29,10 @@ export interface BossMod {
 //   guardian  → zone level cap + 1
 //   champion  → 15
 export const BOSS_MODS: Record<BossTier, BossMod> = {
-  hunt:      { heart: 2.0, power: 1.2, speed: 1.0 },
-  trialTeam: { heart: 1.5, power: 1.3, speed: 1.1 },
-  guardian:  { heart: 2.5, power: 1.5, speed: 1.2 },
-  champion:  { heart: 3.0, power: 1.6, speed: 1.3 },
+  hunt:      { heart: 1.0, power: 1.0, speed: 1.0 },
+  trialTeam: { heart: 1.0, power: 1.0, speed: 1.0 },
+  guardian:  { heart: 1.0, power: 1.0, speed: 1.0 },
+  champion:  { heart: 1.0, power: 1.0, speed: 1.0 },
 }
 
 /** Hunt mini-boss level bonus over the party's top level (§8). */

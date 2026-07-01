@@ -226,14 +226,14 @@ Enemy ponies in the "earned" battles (Hunt mini-boss, Trials, Champion) are **bo
 
 | Boss tier | Level | Heart × | Power × | Speed × |
 |---|---|---|---|---|
-| **hunt** | party top + 2 | 2.0 | 1.2 | 1.0 |
-| **trialTeam** | zone level cap | 1.5 | 1.3 | 1.1 |
-| **guardian** | zone level cap + 1 | 2.5 | 1.5 | 1.2 |
-| **champion** | 15 | 3.0 | 1.6 | 1.3 |
+| **hunt** | party top + 2 | 1.0 | 1.0 | 1.0 |
+| **trialTeam** | zone level cap | 1.0 | 1.0 | 1.0 |
+| **guardian** | zone level cap + 1 | 1.0 | 1.0 | 1.0 |
+| **champion** | 15 | 1.0 | 1.0 | 1.0 |
 
-**All bosses use max IVs (3/3/3)** before the multipliers. The pipeline (`bossStats`): (1) look up base stats for the pony's tier/zone, (2) set IVs to 3/3/3, (3) compute raw `(base + 3) + growth × (level − 1)`, (4) apply the tier multiplier `round(raw × mult)`.
+**All bosses use max IVs (3/3/3)** before the multipliers. The pipeline (`bossStats`): (1) look up base stats for the pony's tier/zone, (2) set IVs to 3/3/3, (3) compute raw `(base + 3) + growth × (level − 1)`, (4) apply the tier multiplier `round(raw × mult)`. **All tiers currently use ×1.0 across Heart/Power/Speed**, so a boss's edge comes purely from its level rule and max IVs — the multipliers are neutral dials left in place for future tuning.
 
-- **Hunt** uses the `hunt` tier (level = party top + 2). Equivalent to the previous mini-boss (Heart ×2 / Power ×1.2 / Speed ×1.0) — the only change is the max-IV base, a slight buff.
+- **Hunt** uses the `hunt` tier (level = party top + 2). At the current ×1.0 multipliers a hunt boss is a max-IV pony at party-top + 2.
 - **Trials:** the Guardian's two teammates use `trialTeam`; the **Guardian's ace** uses `guardian` (a level higher). The **Champion's** ace uses `champion` (its teammates stay `trialTeam`), all at the fixed Champion level 15.
 - **Combat-only:** these multipliers never carry to a *tamed* copy's stats — a caught wild pony joins as a normal roster pony (see tame-at-cap below). The exception is a **Guardian-signature** trophy, which joins the roster keeping its **max IVs** (but no multipliers). *(`applyBossMod` / `bossStats` / `buildBossBattlePony` in `engine/boss.ts`; wired via `screens/teams.ts` and `engine/explore.ts`.)*
 

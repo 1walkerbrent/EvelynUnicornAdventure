@@ -8,10 +8,10 @@ import type { Stats } from './types'
 
 describe('BOSS_MODS — §8 tiered multipliers (the tuning dials)', () => {
   it('matches the documented table', () => {
-    expect(BOSS_MODS.hunt).toEqual({ heart: 2.0, power: 1.2, speed: 1.0 })
-    expect(BOSS_MODS.trialTeam).toEqual({ heart: 1.5, power: 1.3, speed: 1.1 })
-    expect(BOSS_MODS.guardian).toEqual({ heart: 2.5, power: 1.5, speed: 1.2 })
-    expect(BOSS_MODS.champion).toEqual({ heart: 3.0, power: 1.6, speed: 1.3 })
+    expect(BOSS_MODS.hunt).toEqual({ heart: 1.0, power: 1.0, speed: 1.0 })
+    expect(BOSS_MODS.trialTeam).toEqual({ heart: 1.0, power: 1.0, speed: 1.0 })
+    expect(BOSS_MODS.guardian).toEqual({ heart: 1.0, power: 1.0, speed: 1.0 })
+    expect(BOSS_MODS.champion).toEqual({ heart: 1.0, power: 1.0, speed: 1.0 })
   })
 })
 
@@ -19,15 +19,16 @@ describe('applyBossMod — round(raw × multiplier) per tier', () => {
   const raw: Stats = { heart: 100, power: 100, speed: 100 }
 
   it('scales a clean 100/100/100 block by each tier', () => {
-    expect(applyBossMod(raw, 'hunt')).toEqual({ heart: 200, power: 120, speed: 100 })
-    expect(applyBossMod(raw, 'trialTeam')).toEqual({ heart: 150, power: 130, speed: 110 })
-    expect(applyBossMod(raw, 'guardian')).toEqual({ heart: 250, power: 150, speed: 120 })
-    expect(applyBossMod(raw, 'champion')).toEqual({ heart: 300, power: 160, speed: 130 })
+    // All tiers currently use ×1.0, so a clean block passes through unchanged.
+    expect(applyBossMod(raw, 'hunt')).toEqual({ heart: 100, power: 100, speed: 100 })
+    expect(applyBossMod(raw, 'trialTeam')).toEqual({ heart: 100, power: 100, speed: 100 })
+    expect(applyBossMod(raw, 'guardian')).toEqual({ heart: 100, power: 100, speed: 100 })
+    expect(applyBossMod(raw, 'champion')).toEqual({ heart: 100, power: 100, speed: 100 })
   })
 
-  it('rounds fractional results (round-half-up)', () => {
-    // trialTeam on 5/5/5: heart 7.5→8, power 6.5→7, speed 5.5→6
-    expect(applyBossMod({ heart: 5, power: 5, speed: 5 }, 'trialTeam')).toEqual({ heart: 8, power: 7, speed: 6 })
+  it('leaves an odd block unchanged at ×1.0', () => {
+    // With every multiplier at 1.0, round(raw × 1) is the raw value.
+    expect(applyBossMod({ heart: 5, power: 5, speed: 5 }, 'trialTeam')).toEqual({ heart: 5, power: 5, speed: 5 })
   })
 
   it('is exactly round(raw × mult) for every tier and stat', () => {
