@@ -10,6 +10,8 @@ import { MAX_IVS } from '../engine/ivs'
 import type { Ivs } from '../engine/types'
 import { finalAreaId, badgeCount } from '../engine/progression'
 import { bumpStreak, clearStreak } from '../engine/team'
+import { updatePuzzleAttempts } from '../engine/puzzleSelector'
+import type { PuzzleAttempt } from '../engine/puzzleSelector'
 
 export type Screen =
   | 'worldMap'
@@ -34,6 +36,8 @@ interface GameStore {
   activeTeam: string[]
   /** Per-Guardian loss streaks (M2e): guardianId → consecutive losses. */
   trialLossStreaks: Record<string, number>
+  /** Rolling 10-attempt puzzle history for reinforcement weighting. */
+  recentPuzzleAttempts: PuzzleAttempt[]
   // derived from areasDone — not persisted
   badges: number
   levelCap: number
@@ -47,6 +51,7 @@ interface GameStore {
   awardXpToParty: (amount: number) => void
   setActiveTeam: (speciesIds: string[]) => void
   recordTrialLoss: (guardianId: string) => void
+  recordPuzzleAttempt: (category: PuzzleAttempt['category'], correct: boolean) => void
   completeArea: (areaId: string) => void
   winTrial: (zoneId: string) => void
   winChampion: () => void
@@ -63,13 +68,14 @@ export const useGameStore = create<GameStore>()((set, get) => {
   function persist() {
     const s = get()
     saveGame({
-      playerName:       s.playerName,
-      party:            s.party,
-      areasDone:        s.areasDone,
-      championDefeated: s.championDefeated,
-      activeTeam:       s.activeTeam,
-      trialLossStreaks: s.trialLossStreaks,
-      lastZoneId:       s.selectedZoneId ?? undefined,
+      playerName:           s.playerName,
+      party:                s.party,
+      areasDone:            s.areasDone,
+      championDefeated:     s.championDefeated,
+      activeTeam:           s.activeTeam,
+      trialLossStreaks:     s.trialLossStreaks,
+      recentPuzzleAttempts: s.recentPuzzleAttempts,
+      lastZoneId:           s.selectedZoneId ?? undefined,
     })
   }
 
@@ -97,13 +103,14 @@ export const useGameStore = create<GameStore>()((set, get) => {
   }
 
   return {
-    playerName:       '',
-    party:            [],
-    areasDone:        [],
-    championDefeated: false,
-    activeTeam:       [],
-    trialLossStreaks: {},
-    badges:           0,
+    playerName:            '',
+    party:                 [],
+    areasDone:             [],
+    championDefeated:      false,
+    activeTeam:            [],
+    trialLossStreaks:       {},
+    recentPuzzleAttempts:  [],
+    badges:                0,
     levelCap:         levelCapForBadges(0),
     currentScreen:    'worldMap',
     selectedZoneId:   null,
@@ -130,6 +137,13 @@ export const useGameStore = create<GameStore>()((set, get) => {
     // Record a Trial loss vs a Guardian (M2e) — drives the 3-loss safety net.
     recordTrialLoss: (guardianId) => {
       set({ trialLossStreaks: bumpStreak(get().trialLossStreaks, guardianId) })
+      persist()
+    },
+
+    // Record a puzzle attempt for the reinforcement weighting system.
+    recordPuzzleAttempt: (category, correct) => {
+      const updated = updatePuzzleAttempts(get().recentPuzzleAttempts, category, correct)
+      set({ recentPuzzleAttempts: updated })
       persist()
     },
 
@@ -203,17 +217,18 @@ export const useGameStore = create<GameStore>()((set, get) => {
     resetGame: () => {
       clearSave()
       set({
-        playerName:       '',
-        party:            [],
-        areasDone:        [],
-        championDefeated: false,
-        activeTeam:       [],
-        trialLossStreaks: {},
-        badges:           0,
-        levelCap:         levelCapForBadges(0),
-        currentScreen:    'worldMap',
-        selectedZoneId:   null,
-        selectedAreaId:   null,
+        playerName:           '',
+        party:                [],
+        areasDone:            [],
+        championDefeated:     false,
+        activeTeam:           [],
+        trialLossStreaks:     {},
+        recentPuzzleAttempts: [],
+        badges:               0,
+        levelCap:             levelCapForBadges(0),
+        currentScreen:        'worldMap',
+        selectedZoneId:       null,
+        selectedAreaId:       null,
       })
     },
 
@@ -225,10 +240,11 @@ export const useGameStore = create<GameStore>()((set, get) => {
           party:            saved.party,
           areasDone:        saved.areasDone,
           championDefeated: saved.championDefeated,
-          activeTeam:       saved.activeTeam ?? [],
-          trialLossStreaks: saved.trialLossStreaks ?? {},
-          selectedZoneId:   saved.lastZoneId ?? null,
-          currentScreen:    'worldMap',
+          activeTeam:            saved.activeTeam ?? [],
+          trialLossStreaks:      saved.trialLossStreaks ?? {},
+          recentPuzzleAttempts:  saved.recentPuzzleAttempts ?? [],
+          selectedZoneId:        saved.lastZoneId ?? null,
+          currentScreen:         'worldMap',
           ...derive(saved.areasDone),
         })
       }

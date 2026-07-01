@@ -30,10 +30,12 @@ describe('levelCapForBadges — §6 caps', () => {
 })
 
 describe('xpForNextLevel', () => {
-  it('is a positive increasing curve', () => {
-    expect(xpForNextLevel(1)).toBe(100)
+  it('is flat 200 XP at every level (10 encounters per level-up)', () => {
+    expect(xpForNextLevel(1)).toBe(200)
     expect(xpForNextLevel(2)).toBe(200)
-    expect(xpForNextLevel(3)).toBeGreaterThan(xpForNextLevel(2))
+    expect(xpForNextLevel(5)).toBe(200)
+    expect(xpForNextLevel(10)).toBe(200)
+    expect(xpForNextLevel(15)).toBe(200)
   })
 })
 
@@ -46,7 +48,7 @@ describe('addXp — leveling math', () => {
   })
 
   it('exactly enough XP levels up once and carries no remainder', () => {
-    const r = addXp(mkCreature(1, 0), 1, 100, 4)   // L1→2 needs 100
+    const r = addXp(mkCreature(1, 0), 1, 200, 4)   // L1→2 needs 200 (flat)
     expect(r.leveledUp).toBe(true)
     expect(r.levelsGained).toBe(1)
     expect(r.creature.level).toBe(2)
@@ -54,15 +56,15 @@ describe('addXp — leveling math', () => {
   })
 
   it('rolls over multiple levels in one award', () => {
-    // L1→2 = 100, L2→3 = 200; 300 total reaches level 3 exactly.
-    const r = addXp(mkCreature(1, 0), 1, 300, 8)
+    // L1→2 = 200, L2→3 = 200 (flat); 400 total reaches level 3 exactly.
+    const r = addXp(mkCreature(1, 0), 1, 400, 8)
     expect(r.creature.level).toBe(3)
     expect(r.creature.xp).toBe(0)
     expect(r.levelsGained).toBe(2)
   })
 
   it('keeps leftover XP after leveling', () => {
-    const r = addXp(mkCreature(1, 0), 1, 150, 8)   // level 2, 50 left over
+    const r = addXp(mkCreature(1, 0), 1, 250, 8)   // level 2, 50 left over (200 consumed)
     expect(r.creature.level).toBe(2)
     expect(r.creature.xp).toBe(50)
   })
@@ -73,7 +75,7 @@ describe('addXp — §6 cap enforcement', () => {
     // Cap 4 (0 badges). Dump a huge amount of XP.
     const r = addXp(mkCreature(1, 0), 1, 100_000, 4)
     expect(r.creature.level).toBe(4)
-    // XP consumed for L1→2 (100), L2→3 (200), L3→4 (300) = 600; rest accumulates.
+    // XP consumed for L1→2 (200), L2→3 (200), L3→4 (200) = 600; rest accumulates.
     expect(r.creature.xp).toBe(100_000 - 600)
   })
 
@@ -113,22 +115,22 @@ describe('addXp — recomputes §5 stats on level-up', () => {
 
 describe('xpProgress — M2f display derive', () => {
   it('a mid-level pony reports into/needed and a fractional fill', () => {
-    // Level 3 with 50 XP banked toward the next level (needs 300 at L3).
+    // Level 3 with 50 XP banked toward the next level (needs 200, flat).
     const p = xpProgress(mkCreature(3, 50), 8)
     expect(p.level).toBe(3)
     expect(p.xpIntoLevel).toBe(50)
-    expect(p.xpForNextLevel).toBe(xpForNextLevel(3)) // 300, from the existing curve
+    expect(p.xpForNextLevel).toBe(200) // flat 200 per level
     expect(p.atCap).toBe(false)
     // Fractional fill: strictly between empty and full.
     const fill = p.xpIntoLevel / p.xpForNextLevel
-    expect(fill).toBeCloseTo(50 / 300)
+    expect(fill).toBeCloseTo(50 / 200)
     expect(fill).toBeGreaterThan(0)
     expect(fill).toBeLessThan(1)
   })
 
-  it('xpForNextLevel matches the existing curve at a couple of levels', () => {
-    expect(xpProgress(mkCreature(1, 0), 8).xpForNextLevel).toBe(xpForNextLevel(1)) // 100
-    expect(xpProgress(mkCreature(5, 0), 8).xpForNextLevel).toBe(xpForNextLevel(5)) // 500
+  it('xpForNextLevel is always 200 (flat curve)', () => {
+    expect(xpProgress(mkCreature(1, 0), 8).xpForNextLevel).toBe(200)
+    expect(xpProgress(mkCreature(5, 0), 8).xpForNextLevel).toBe(200)
   })
 
   it('a pony at the badge cap reports atCap (drives the MAX state, not a normal bar)', () => {

@@ -13,4 +13,13 @@ export interface LogicProblem {
   hint: string
 }
 
-export type Problem = MathProblem | LogicProblem
+export interface ComprehensionProblem {
+  type: 'comprehension'
+  passage: string
+  question: string
+  choices: string[]
+  correctIndex: number
+  hint: string
+}
+
+export type Problem = MathProblem | LogicProblem | ComprehensionProblem

@@ -3,27 +3,34 @@ import { useGameStore } from '../state/store'
 import { ZONE_BY_ID } from '../content/zones'
 import { generateMathProblem } from '../engine/mathGenerator'
 import { generateLogicProblem } from '../engine/logicGenerator'
+import { generateComprehensionProblem } from '../engine/comprehensionGenerator'
+import { selectProblemCategory } from '../engine/puzzleSelector'
 import { effectiveDifficulty } from '../engine/difficulty'
 import { zoneNumber } from '../engine/progression'
 import { XP_PER_CORRECT_ANSWER } from '../engine/leveling'
 import type { Problem } from '../engine/problems'
 import ProblemCard from '../components/ProblemCard'
 
-// Explore → Practice (§8): pure learning/leveling. Always a generated Math or
-// Story/Logic problem (mixed), solving grants party XP. Loops freely; never a pony.
+// Explore → Practice (§8): pure learning/leveling. Weighted category selection
+// (math/logic/comprehension) with reinforcement doubling for weak categories.
 export default function ExplorePractice() {
-  const party          = useGameStore((s) => s.party)
-  const awardXpToParty = useGameStore((s) => s.awardXpToParty)
-  const setScreen      = useGameStore((s) => s.setScreen)
-  const selectedZoneId = useGameStore((s) => s.selectedZoneId)
+  const party                = useGameStore((s) => s.party)
+  const awardXpToParty       = useGameStore((s) => s.awardXpToParty)
+  const setScreen            = useGameStore((s) => s.setScreen)
+  const selectedZoneId       = useGameStore((s) => s.selectedZoneId)
+  const recentPuzzleAttempts = useGameStore((s) => s.recentPuzzleAttempts)
+  const recordPuzzleAttempt  = useGameStore((s) => s.recordPuzzleAttempt)
 
   const zone = selectedZoneId ? ZONE_BY_ID[selectedZoneId] : undefined
   const num  = zone ? zoneNumber(zone.id) : 1
   const partyLevel = party.reduce((m, c) => Math.max(m, c.level), 1)
 
   function makeProblem(): Problem {
-    const diff = effectiveDifficulty(num, partyLevel)
-    return Math.random() < 0.5 ? generateMathProblem(diff) : generateLogicProblem(diff)
+    const diff     = effectiveDifficulty(num, partyLevel)
+    const category = selectProblemCategory(recentPuzzleAttempts)
+    if (category === 'math')  return generateMathProblem(diff)
+    if (category === 'logic') return generateLogicProblem(diff)
+    return generateComprehensionProblem(diff)
   }
 
   const [round, setRound]     = useState(0)
@@ -41,12 +48,17 @@ export default function ExplorePractice() {
     setRound((r) => r + 1)
   }
 
+  const typeLabel =
+    problem.type === 'math'          ? 'A number problem' :
+    problem.type === 'logic'         ? 'A story puzzle'   :
+                                       'A reading passage'
+
   return (
     <div className="p-4 space-y-4">
       <div>
         <h2 className="text-2xl font-bold text-yellow-300">Practice</h2>
         <p className="text-purple-400 text-sm mt-1">
-          {problem.type === 'math' ? 'A number problem' : 'A story puzzle'} · solving earns your team XP
+          {typeLabel} · solving earns your team XP
         </p>
       </div>
 
@@ -70,7 +82,12 @@ export default function ExplorePractice() {
         </div>
       ) : (
         <>
-          <ProblemCard key={round} problem={problem} onSolve={handleSolve} />
+          <ProblemCard
+            key={round}
+            problem={problem}
+            onSolve={handleSolve}
+            onAttempt={(correct) => recordPuzzleAttempt(problem.type, correct)}
+          />
           <button
             onClick={() => setScreen('exploreHub')}
             className="w-full text-purple-400 hover:text-purple-300 text-sm py-2"

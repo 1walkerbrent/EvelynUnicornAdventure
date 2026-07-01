@@ -73,7 +73,7 @@ describe('generateMathProblem — hard invariants over 200 samples', () => {
       const p = generateMathProblem(2)
       // Hint always contains the operand numbers in the format "... X ... Y ..."
       expect(p.hint.length).toBeGreaterThan(10)
-      expect(p.prompt.length).toBeGreaterThan(20)
+      expect(p.prompt).toContain('__')   // bare-equation format: "a + b = __"
       expect(p.type).toBe('math')
     }
   })

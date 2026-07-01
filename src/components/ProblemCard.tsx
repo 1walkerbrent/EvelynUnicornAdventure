@@ -10,9 +10,11 @@ const ENCOURAGEMENT = [
 interface Props {
   problem: Problem
   onSolve: () => void
+  /** Called after every attempt (right or wrong) so the parent can record it. */
+  onAttempt?: (correct: boolean) => void
 }
 
-export default function ProblemCard({ problem, onSolve }: Props) {
+export default function ProblemCard({ problem, onSolve, onAttempt }: Props) {
   const [attempts, setAttempts] = useState(0)
   const [input, setInput]       = useState('')
   const [feedback, setFeedback] = useState<string | null>(null)
@@ -24,41 +26,58 @@ export default function ProblemCard({ problem, onSolve }: Props) {
     setAttempts(next)
     setFeedback(ENCOURAGEMENT[(next - 1) % ENCOURAGEMENT.length])
     setInput('')
+    onAttempt?.(false)
+  }
+
+  function handleCorrect() {
+    onAttempt?.(true)
+    onSolve()
   }
 
   function handleMathSubmit() {
     if (problem.type !== 'math') return
     const answer = parseInt(input.trim(), 10)
     if (!isNaN(answer) && answer === problem.correctAnswer) {
-      onSolve()
+      handleCorrect()
     } else {
       recordWrong()
     }
   }
 
-  function handleLogicChoice(idx: number) {
-    if (problem.type !== 'logic') return
+  // Unified handler for logic + comprehension (both use choices[] + correctIndex)
+  function handleChoice(idx: number) {
+    if (problem.type !== 'logic' && problem.type !== 'comprehension') return
     if (idx === problem.correctIndex) {
-      onSolve()
+      handleCorrect()
     } else {
       recordWrong()
     }
   }
-
-  const promptLines = problem.prompt.split('\n')
 
   return (
     <div className="space-y-4">
-      {/* Problem prompt */}
-      <div className="bg-purple-900/60 rounded-2xl p-4 space-y-1">
-        {promptLines.map((line, i) => (
-          <p key={i} className={`${line === '' ? 'h-2' : 'text-white leading-relaxed'}`}>
-            {line}
-          </p>
-        ))}
-      </div>
+      {/* Prompt block — math and logic only */}
+      {problem.type !== 'comprehension' && (
+        <div className="bg-purple-900/60 rounded-2xl p-4 space-y-1">
+          {problem.prompt.split('\n').map((line, i) => (
+            <p key={i} className={`${line === '' ? 'h-2' : 'text-white leading-relaxed'}`}>
+              {line}
+            </p>
+          ))}
+        </div>
+      )}
 
-      {/* Input */}
+      {/* Comprehension: passage then question */}
+      {problem.type === 'comprehension' && (
+        <div className="space-y-3">
+          <div className="bg-purple-900/60 rounded-2xl p-4 text-white leading-relaxed text-sm">
+            {problem.passage}
+          </div>
+          <p className="text-yellow-200 font-semibold leading-snug">{problem.question}</p>
+        </div>
+      )}
+
+      {/* Math input */}
       {problem.type === 'math' && (
         <div className="flex gap-2">
           <input
@@ -80,12 +99,13 @@ export default function ProblemCard({ problem, onSolve }: Props) {
         </div>
       )}
 
-      {problem.type === 'logic' && (
+      {/* Logic / comprehension choices */}
+      {(problem.type === 'logic' || problem.type === 'comprehension') && (
         <div className="space-y-2">
           {problem.choices.map((choice, i) => (
             <button
               key={i}
-              onClick={() => handleLogicChoice(i)}
+              onClick={() => handleChoice(i)}
               className="w-full bg-purple-800 hover:bg-purple-700 active:bg-purple-600 text-white text-left px-4 py-3 rounded-xl transition-colors"
             >
               {choice}

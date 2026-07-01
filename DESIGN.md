@@ -81,6 +81,12 @@ The combat *math* above is unchanged — this is how a battle looks and plays. R
 
 This screen is the template for **every** battle — Proving Glade now, and all Zone 2–6 Trials, the Champion, and Explore wild battles later.
 
+**Visual polish (implemented):**
+- **Enemy sprites are horizontally flipped** (`scaleX(-1)`) so they face left, toward the player's team. Click/tap targets are unaffected — the flip is on an inner wrapper inside the ref div.
+- **Sprites are scaled up to 134 px** (from 96 px, ≈ 1.4×) so ponies read prominently against detailed battle backdrops.
+- **Pony names and "Ready!" badges use white text + text-shadow** (`0 1px 3px rgba(0,0,0,0.8), 0 0 6px rgba(0,0,0,0.5)`) so they pop over any background art without adding panels or backdrops.
+- **HP bar containers have a dark border and drop shadow** (`border: 1px solid rgba(0,0,0,0.5)`, `boxShadow`) and bars are 10 px tall (`h-2.5`) for easier reading at a glance. HP text is white with a matching shadow.
+
 **Engine note:** this requires exposing combat **step-wise** (next actor → apply one attack → event for animation) rather than resolving a whole round in a batch, so the UI can pause for her to choose. The damage/type rules stay identical; Speed now decides **phase order between teams** (not a per-pony interleave), which is what lets her sequence her own ponies freely.
 
 ### Active team, swap nudge & recommended team (M2e)
@@ -121,7 +127,7 @@ Only the **base** scales by tier. Because growth is shared, a higher-tier creatu
 | 4 — Z5 Air | 11 | 5 | 6 |
 | 5 — Z6 Spirit | 13 | 6 | 7 |
 
-**XP is granted from both winning battles AND solving Explore/quest problems correctly** — so doing the math literally levels her team.
+**XP is granted from both winning battles AND solving Explore/quest problems correctly** — so doing the math literally levels her team. `XP_PER_CORRECT_ANSWER = 20`, `XP_PER_BATTLE_WIN = 50`. **Flat 200 XP to advance every level** (≈ 10 correct-answer encounters per level-up at any level — not a runaway curve).
 
 **Worked example (both at level cap 8, entering Fire zone):** A tier-1 Earth starter vs a tier-2 Water creature, with Earth-beats-Water advantage:
 - Earth at L8: Power 2+7=9, Heart 5+21=26 → hits for 9×2 = **18**
@@ -245,13 +251,25 @@ Enemy ponies in the "earned" battles (Hunt mini-boss, Trials, Champion) are **bo
 
 ## 9. Quests & problem types
 
-Problems are **generated from rules, never stored as a fixed list** — a hand-written bank runs dry and kills replay value. Each encounter rolls a fresh problem, which is what keeps the learning loop alive across many play sessions. Three types, divided by where they live:
+Problems are **generated from rules, never stored as a fixed list** — a hand-written bank runs dry and kills replay value. Each encounter rolls a fresh problem from one of **three categories**, which keeps the learning loop alive across many play sessions.
 
-- **Worksheet-style equations** — used in **Explore** encounters. Fast fluency drills, high volume.
-- **Story problems** — used in **zone quests**. An equation wrapped in narrative.
-- **Logic / reading-comprehension problems** — also in quests. She must *read carefully and pick the correct answer*, no arithmetic.
+### Three categories
 
-Each zone pairs one **Math** problem with one **Story** problem (a reading/logic puzzle).
+- **Math** — bare equations only ("56 + 43 = __ ", "__ − 28 = 45"). No story wrappers. Player types the missing number. All three modes (Practice, Hunt, Quest) use math. *Two distinct difficulty bands*: Quest/Practice use zone-progression bands (harder); Hunt uses simpler per-zone bands so early zones are faster confidence-builders.
+- **Logic** — varied-format multiple-choice puzzles. Each band group has ≥8 templates (not all elimination-style): Z1–Z2 = comparison, pattern continuation, odd-one-out, categorization, if/then (3 choices); Z3–Z4 = two-attribute filter, ordering, chain reasoning, must-be-true (4 choices); Z5–Z6 = three-attribute deduction, impossibility detection, seating constraints (5 choices). Templates mix freely so the same format rarely appears twice in a row.
+- **Comprehension** — read a short passage then answer a multiple-choice question (4 choices, 3 plausible distractors). Static bank of **90 passages** (15 per zone, `src/content/comprehensionBank.ts`) — passages are zone-themed (Zone 1 = Brindlewood ponies, Zone 6 = Starfall Temple lore). Because the bank is finite, anti-repeat cycling ensures each zone's pool cycles before repeating.
+
+### Where each category appears
+
+| Mode | Math bands | Logic | Comprehension |
+|---|---|---|---|
+| **Quest** (Areas 1 & 2) | Zone-progression bands | Zone-progression bands | — (quests are math or logic only) |
+| **Practice** (Explore) | Zone-progression bands | Zone-progression bands | ✓ weighted |
+| **Hunt** (pre-battle puzzle) | Hunt bands (simpler) | Zone-progression bands | ✓ weighted |
+
+### Reinforcement weighting
+
+A **rolling window of the last 10 puzzle attempts** (category + correct/wrong) is stored in the save and used to weight category selection in Practice and Hunt. Any category with **< 60% accuracy AND ≥ 3 attempts** gets **weight 2** (doubled); categories with fewer than 3 attempts are neutral (weight 1). This means if she keeps missing math, the game surfaces more math problems without any explicit mode change — the difficulty adapts to her.
 
 ### Difficulty: one knob, fed by two dials
 
@@ -263,11 +281,11 @@ Difficulty is a single **effective-difficulty number** the generators read. It i
 
 This is the seam the future **New Game+** plugs into (see §15): a leveled-up restart just applies a global level offset, every generator reads a higher number, and the whole game's math shifts up — no new content required.
 
-### Math generator
+### Math generator (zone-progression bands)
 
-Takes the zone's parameters — digit count, regrouping allowed (y/n), one-step vs two-step, operations (+/−) — and rolls fresh numbers within those bounds each encounter, then wraps them in a **rotating set of story templates** (e.g. "Clover needs ___ clovers, you have ___…", "the basket holds ___, ___ fell out…"). The math is always new and the flavor varies. **Must guarantee clean answers:** no negative results, subtraction is always larger − smaller, results land in-range.
+Bare equations with no story wrapper. All answers are positive integers; subtraction is always larger − smaller. A `__` marks the blank: usually at the end ("47 + 36 = __"), occasionally at the start for Zone 3 Hunt ("__ − 28 = 45"). Must guarantee clean answers, no negative results, results land in-range.
 
-Per-zone math bands (matching the §7 ramp):
+**Quest / Practice bands** (harder, zone-progression):
 
 | Zone | Digits | Regrouping | Steps |
 |---|---|---|---|
@@ -278,9 +296,24 @@ Per-zone math bands (matching the §7 ramp):
 | 5 | 3-digit | yes | multi-step |
 | 6 | 3-digit | yes | multi-step + extraneous info to filter |
 
-### Story / logic generator
+**Hunt bands** (simpler, per-zone — `src/engine/huntMathGenerator.ts`):
 
-Genuine reasoning puzzles can't be infinitely generated as cleanly, so use a **pool of templates with swappable variables** — a deduction like "the pony is behind one of three flowers; not the tallest, not the leftmost" shuffles which attributes and which answer each time, yielding dozens of variations from a handful of templates. Build ~8–12 logic templates per difficulty band and shuffle through them.
+| Zone | Format |
+|---|---|
+| 1 | 2-digit, no regrouping, blank at end, result [10, 49] |
+| 2 | 2-digit, with regrouping, blank at end |
+| 3 | 2-digit, blank at start ("__ − b = c") OR blank at end addition |
+| 4 | two 2-digit operations, blank at end |
+| 5 | 3-digit, one operation, blank at end |
+| 6 | two 3-digit operations, blank at end |
+
+### Logic generator
+
+A **pool of templates with swappable variables** per band group — a deduction like "the pony is behind one of three flowers; not the tallest, not the leftmost" shuffles which attributes and which answer each time, yielding dozens of variations from a handful of templates. ≥8 templates per band group (not all position-elimination style), shuffled by the anti-repeat tracker. Bands route: difficulty ≤3 → band12 (3 choices), ≤7 → band34 (4 choices), else → band56 (5 choices).
+
+### Comprehension generator
+
+Picks from the 90-entry static bank keyed by zone (band 1–6 maps to zone 1–6). An anti-repeat tracker per zone prevents the same passage repeating until the zone's pool of 15 cycles.
 
 ### Anti-repetition
 
@@ -382,6 +415,9 @@ The creatures are all *different* creatures that must share one *art style* — 
   - **Hunt scenes** (`hunt-z1` … `hunt-z6`) — one per zone. Explore/Hunt passes `hunt-${zoneId}`.
   - The **Champion** battle passes the exact stem `champion-arena`.
   - **World map** (`src/assets/backgrounds/world-map.jpg`) — see below.
+  - **Character creation** (`character-creation.jpg`) — full-bleed background on `CharacterCreation.tsx` (both pick and customize steps), with a `bg-black/50` overlay for form readability.
+  - **Game complete** (`game-complete.jpg`) — full-bleed background on `GameComplete.tsx`, with a `bg-black/50` overlay for text readability.
+  - **Zone view** — `ZoneView.tsx` reuses the Hunt backgrounds (`hunt-z1` … `hunt-z6`) mapped from `selectedZoneId` (`hunt-${zoneId}`), with a `bg-black/40` overlay. Uses the same `import.meta.glob` pattern as `BattleScreen`; no new image files needed.
 
 **Visual world map (`WorldMap.tsx`).** The World Map is a single tall portrait image (`world-map.jpg`, ~9:16) with a golden path winding through biome regions, rendered full-bleed and scrolled vertically. It replaced the earlier list layout; it's purely a presentation change — all progression logic still comes from `engine/progression` (`isZoneUnlocked`, `isZoneComplete`, `isChampionUnlocked`) and the store (`openZone`, `openExplore`, `setScreen('champion')`).
 - **Structure:** an `<img width:100% height:auto>` inside a `relative` wrapper preserves the image's natural aspect ratio (no crop/letterbox); a scroll container holds it, and zone nodes are **absolutely positioned on top** at hand-tuned `%` coordinates (`NODE_LAYOUT`) so each rests on the baked-in path. No SVG connector is drawn — the path is in the artwork.
@@ -416,6 +452,20 @@ Build Zone 1 end-to-end before anything else, with placeholder art (colored shap
   - **M2e — Team picker + recommended team ✅ DONE:** the **hybrid active-team** model (see §4's *Active team, swap nudge & recommended team* subsection) — presentation + team-selection only, no change to combat math, turn order, or the XP/cap systems. A persistent **active team** of ≤3 ponies (default = top-3 by level) fights every battle; benched ponies still share XP; team-picking is surfaced only when the party exceeds 3. `engine/team.ts` (pure, tested) provides `defaultActiveTeam`/`resolveBattleTeam`, `matchupVsElement` (reuses `getTypeMultiplier`), `recommendTeamVsElement` (both branches: recommend-a-×2-counter vs suggest-hunting-the-counter-element), and per-Guardian loss-streak helpers; `combat.ts` gains `getCounterElement`. `components/TeamPicker.tsx` (select exactly 3, element/level/stats + Trial matchup badges) is reused by `screens/Trial.tsx` (a keep-or-swap entry nudge showing the Guardian element, plus the 3-loss recommendation) and the Party screen. Hunts use the active team with no nudge. Save bumped to **v4 (v3→v4 migration)** persisting `activeTeam` + `trialLossStreaks`. 148 tests passing, build clean.
   - **M2f — Party XP progress bars ✅ DONE:** presentation + small derive only — no change to the XP economy, growth curve, shared-XP award, or §6 cap rules. A pure `xpProgress(creature, levelCap)` helper in `leveling.ts` exposes the three per-pony display values — `xpIntoLevel` (the stored remainder toward the next level), `xpForNextLevel` (read straight from the existing `xpForNextLevel(level)` curve, not hardcoded), and `atCap` (reuses the store's §6-derived `levelCap`) — so the card stays dumb. `components/PartyCard.tsx` renders, per pony in the Party interface: the level number, an XP bar filled `xpIntoLevel / xpForNextLevel` with label *"{into} / {needed} XP to Lv {level+1}"* when below cap, and a **distinct gold "★ MAX" state** (full bar, amber/gold accent, *"Earn a badge to raise the cap"*) when `atCap` — deliberately *not* a nearly-full normal bar, so a maxed pony never looks like she just needs a little more. A one-shot CSS `levelPulse` (~600ms, `index.css`, no library, no blocking modal) flashes the bar when a pony's level increments. Tests in `leveling.test.ts` cover mid-level into/needed + fractional fill, curve match at a couple of levels, and `atCap`→MAX. 138 tests passing, build clean.
   - Then swap in real Leonardo art across the finished world.
+- **M3a — Puzzle system refactor ✅ DONE:** three problem categories (Math/Logic/Comprehension), reinforcement weighting, Hunt puzzle phase, flat XP curve. Key changes:
+  - **Three categories.** `ComprehensionProblem` type added (`problems.ts`). 90-entry static bank in `content/comprehensionBank.ts` (15/zone). `comprehensionGenerator.ts` picks by zone band with per-zone anti-repeat cycling.
+  - **Math → bare equations only.** Story wrappers removed; `mathGenerator.ts` now renders "47 + 36 = __" style. `huntMathGenerator.ts` adds simpler per-zone Hunt bands (Z3 supports blank-at-start "__ − b = c").
+  - **Logic → varied formats.** `logicGenerator.ts` rewritten with ≥8 templates per band group (not all position-elimination). Band 1–2 = 3 choices, 3–4 = 4 choices, 5–6 = 5 choices; templates mix comparison, pattern, odd-one-out, filtering, deduction chains.
+  - **Reinforcement weighting.** `puzzleSelector.ts`: rolling last-10 `PuzzleAttempt[]` stored in save (v6, migrated), per-category accuracy → weight 2 if < 60% and ≥3 attempts. Practice and Hunt use `selectProblemCategory(recentPuzzleAttempts)`.
+  - **Hunt puzzle phase.** `ExploreHunt.tsx` shows a warm-up puzzle (weighted category, Hunt math bands) before the battle screen. `ProblemCard.tsx` gains `onAttempt` callback to record correct/wrong into the rolling window.
+  - **Flat 200 XP per level.** `xpForNextLevel` now returns 200 at all levels (≈10 correct-answer encounters per level-up). Save bumped to **v6** (v5→v6 migration adds `recentPuzzleAttempts: []`). 222 tests passing, build clean.
+  - **M3b — Party screen enhancements ✅ DONE (current milestone):** filtering, sorting, a type-advantage quick reference, and a collection counter added to the Party screen. All interactive elements use minimum 44px tap targets for tablet play.
+    - **Collection counter.** "🦄 N ponies collected" line below the Trainer/Badges/Level-cap info; uses the live `party.length`.
+    - **Filter bar.** Horizontal pill row — All | Water | Fire | Air | Spirit | Earth | On Team — single-select; All is default. Element buttons use their theme color as background when active (white text); inactive buttons are semi-transparent/outlined. On Team filters to the active battle trio; element filters by `species.element`. Resets the view without touching the battle-team section.
+    - **Sort selector.** Pill toggles adjacent to the filter bar — Level ↓ (default, highest first) | Level ↑ | A→Z (display name) | Newest (reverse acquisition index). Filter and sort compose: e.g. Fire + Level ↓ shows only Fire ponies sorted by level. Implemented via `useMemo` over `party` + `activeTeam` + filter + sort deps.
+    - **Type advantage quick reference.** Collapsible section (collapsed by default, ▼ show / ▲ hide). When expanded shows the full cycle as element-colored names: `Water → Fire → Air → Spirit → Earth → Water`, plus helper text "→ means strong against · deals ×2 damage". Colors match `ELEMENT_COLORS` in `Party.tsx` (consistent with `CreatureSprite.tsx`).
+    - **Empty states.** Filter returns zero ponies → "No [Element] ponies yet — go explore!" or "No ponies on your team yet — go pick your battle team!" for the On Team case.
+    - **Preserved invariants.** Battle team header ("Battle team: N of 3 ponies") and Choose team button remain always visible above the pony list, unaffected by any filter. All existing card features (On Team badge, XP bar, MAX indicator, level-pulse) unchanged.
 - **M3 — Polish:** balance tuning (the 1.5/0.5 dial), audio, save backup UX, content top-ups to the Explore pool.
 
 ---

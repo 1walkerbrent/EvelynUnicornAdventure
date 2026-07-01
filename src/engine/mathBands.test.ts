@@ -57,7 +57,7 @@ describe('buildMathSpec — hard guarantees over 300 samples per band', () => {
         for (let i = 0; i < 300; i++) {
           const spec = buildMathSpec(Math.random, band)
           for (let s = 0; s < spec.ops.length; s++) {
-            if (spec.ops[s] === '-') {
+            if (spec.ops[s] === '−') {
               // minuend is the running total BEFORE this step
               expect(spec.numbers[s + 1]).toBeLessThanOrEqual(spec.runningTotals[s])
             }
@@ -127,7 +127,7 @@ describe('generateMathProblem — routing & rendered output', () => {
         expect(Number.isInteger(p.correctAnswer)).toBe(true)
         expect(p.correctAnswer).toBeGreaterThanOrEqual(lo)
         expect(p.correctAnswer).toBeLessThanOrEqual(hi)
-        expect(p.prompt.length).toBeGreaterThan(20)
+        expect(p.prompt).toContain('__')   // bare-equation format: "a + b = __"
         expect(p.hint.length).toBeGreaterThan(10)
       }
     })

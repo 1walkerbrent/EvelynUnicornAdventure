@@ -17,9 +17,9 @@ export function levelCapForBadges(badges: number): number {
   return BADGE_LEVEL_CAPS[clamped]
 }
 
-/** XP required to advance from `level` to `level + 1`. Gentle linear curve (tunable). */
-export function xpForNextLevel(level: number): number {
-  return level * 100
+/** XP required to advance from `level` to `level + 1`. Flat 200 XP per level (10 encounters). */
+export function xpForNextLevel(_level: number): number {
+  return 200
 }
 
 /**

@@ -46,7 +46,7 @@ const ENEMY_POS = [
   { top: '65%', right: '10%' },
 ] as const
 
-const SPRITE_SIZE = 96
+const SPRITE_SIZE = 134
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 // 'playerPhase' = her whole team's turn — every un-acted pony is selectable and
@@ -384,9 +384,12 @@ export default function BattleScreen({
           >
             {/* Badge: ready ponies invite a tap; the selected one is locked in */}
             {isReady && (
-              <div className={`absolute -top-8 left-1/2 -translate-x-1/2 z-20 text-xs font-bold
-                              px-3 py-0.5 rounded-full whitespace-nowrap shadow battle-pop-in
-                              ${isSelected ? 'bg-orange-500 text-white' : 'bg-yellow-400 text-yellow-900'}`}>
+              <div
+                className={`absolute -top-8 left-1/2 -translate-x-1/2 z-20 text-xs font-bold
+                            px-3 py-0.5 rounded-full whitespace-nowrap shadow battle-pop-in
+                            ${isSelected ? 'bg-orange-500 text-white' : 'bg-yellow-400 text-yellow-900'}`}
+                style={{ textShadow: '0 1px 3px rgba(0,0,0,0.8), 0 0 6px rgba(0,0,0,0.5)' }}
+              >
                 {isSelected ? 'Pick a target →' : 'Ready!'}
               </div>
             )}
@@ -411,7 +414,10 @@ export default function BattleScreen({
               <CreatureSprite element={pony.element} size={SPRITE_SIZE} speciesId={pony.speciesId} />
             </div>
 
-            <span className="text-xs font-bold text-green-900 drop-shadow-sm mt-0.5">
+            <span
+              className="text-xs font-bold text-white mt-0.5"
+              style={{ textShadow: '0 1px 3px rgba(0,0,0,0.8), 0 0 6px rgba(0,0,0,0.5)' }}
+            >
               {pony.name}
             </span>
             <HpBar current={pony.currentHp} max={pony.maxHp} color={hpColor} fainted={fainted} />
@@ -463,10 +469,15 @@ export default function BattleScreen({
                   style={{ borderRadius: '50%' }}
                 />
               )}
-              <CreatureSprite element={pony.element} size={SPRITE_SIZE} speciesId={pony.speciesId} />
+              <div style={{ transform: 'scaleX(-1)' }}>
+                <CreatureSprite element={pony.element} size={SPRITE_SIZE} speciesId={pony.speciesId} />
+              </div>
             </div>
 
-            <span className="text-xs font-bold text-green-900 drop-shadow-sm mt-0.5">
+            <span
+              className="text-xs font-bold text-white mt-0.5"
+              style={{ textShadow: '0 1px 3px rgba(0,0,0,0.8), 0 0 6px rgba(0,0,0,0.5)' }}
+            >
               {pony.name}
             </span>
             <HpBar current={pony.currentHp} max={pony.maxHp} color={hpColor} fainted={fainted} />
@@ -573,10 +584,16 @@ function HpBar({ current, max, color, fainted }: {
   const pct = max > 0 ? Math.max(0, current / max) * 100 : 0
   return (
     <div className="w-20 text-center">
-      <div className="text-xs text-green-900/70 font-medium mb-0.5">
+      <div
+        className="text-xs font-medium mb-0.5 text-white"
+        style={{ textShadow: '0 1px 3px rgba(0,0,0,0.8)' }}
+      >
         {fainted ? 'Fainted' : `${current}/${max}`}
       </div>
-      <div className="h-2 bg-black/20 rounded-full overflow-hidden">
+      <div
+        className="h-2.5 bg-black/30 rounded-full overflow-hidden"
+        style={{ border: '1px solid rgba(0,0,0,0.5)', boxShadow: '0 1px 3px rgba(0,0,0,0.4)' }}
+      >
         <div
           className="h-full rounded-full transition-all duration-500"
           style={{ width: `${pct}%`, backgroundColor: color }}

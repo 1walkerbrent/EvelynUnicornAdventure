@@ -3,6 +3,17 @@ import { ZONE_BY_ID, type ZoneArea } from '../content/zones'
 import { GUARDIAN_BY_ID } from '../content/guardians'
 import { isAreaAvailable } from '../engine/progression'
 
+const huntBgModules = import.meta.glob<string>('/src/assets/backgrounds/hunt-*.{png,jpg,jpeg}', {
+  eager: true,
+  import: 'default',
+})
+const HUNT_BG: Record<string, string> = Object.fromEntries(
+  Object.entries(huntBgModules).map(([path, url]) => [
+    path.split('/').pop()!.replace(/\.(png|jpe?g)$/, ''),
+    url,
+  ])
+)
+
 const ELEMENT_ICON: Record<string, string> = {
   neutral: '🏡', earth: '🪨', water: '💧', fire: '🔥', air: '💨', spirit: '✨',
 }
@@ -43,9 +54,17 @@ export default function ZoneView() {
   }
 
   const questAreas = zone.areas.filter((a) => a.kind === 'quest')
+  const huntBgUrl  = HUNT_BG[`hunt-${selectedZoneId}`]
 
   return (
-    <div className="p-4 space-y-5">
+    <div className="min-h-screen relative">
+      {huntBgUrl && (
+        <>
+          <img src={huntBgUrl} alt="" className="absolute inset-0 w-full h-full object-cover object-center" aria-hidden="true" />
+          <div className="absolute inset-0 bg-black/40" />
+        </>
+      )}
+      <div className="relative z-10 p-4 space-y-5">
       <div className="flex items-center gap-2">
         <span className="text-3xl">{ELEMENT_ICON[zone.element] ?? '🌍'}</span>
         <div>
@@ -93,6 +112,7 @@ export default function ZoneView() {
         className="w-full bg-purple-800 hover:bg-purple-700 text-white py-3 rounded-xl font-medium transition-colors">
         ← Back to World Map
       </button>
+    </div>
     </div>
   )
 }

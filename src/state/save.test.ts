@@ -76,4 +76,26 @@ describe('migrateSave — IV backfill (save v5)', () => {
     expect(migrateSave(null)).toBeNull()
     expect(migrateSave('nope')).toBeNull()
   })
+
+  it('v4 save gets recentPuzzleAttempts: [] (M3a puzzle defaults)', () => {
+    const state = migrateSave(v4Save([ponyNoIvs('marina-mist')]))
+    expect(state).not.toBeNull()
+    expect(state!.recentPuzzleAttempts).toEqual([])
+  })
+
+  it('v5 save gets recentPuzzleAttempts: [] (upgrade to v6)', () => {
+    const v5 = {
+      version: 5,
+      playerName: 'Evelyn',
+      party: [{ ...ponyNoIvs('ember-spark'), ivs: { heart: 2, power: 1, speed: 3 } }],
+      areasDone: ['brindlewood'],
+      championDefeated: false,
+      activeTeam: [],
+      trialLossStreaks: {},
+    }
+    const state = migrateSave(v5)
+    expect(state).not.toBeNull()
+    expect(state!.recentPuzzleAttempts).toEqual([])
+    expect(state!.party[0].ivs).toEqual({ heart: 2, power: 1, speed: 3 })
+  })
 })
