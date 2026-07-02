@@ -86,6 +86,9 @@ export default function Quest() {
         <h2 className="text-2xl font-bold text-yellow-300">{area.name}</h2>
         <div className="bg-green-900/40 border border-green-600/40 rounded-2xl p-4 text-center space-y-3">
           <div className="text-4xl">✅</div>
+          <div className="flex justify-center">
+            <CreatureSprite element={reward.element} color={reward.spritePlaceholderColor} size={72} speciesId={reward.id} />
+          </div>
           <p className="text-white font-semibold">Quest complete!</p>
           <p className="text-purple-300 text-sm">{reward.name} is already in your party.</p>
         </div>
@@ -106,7 +109,7 @@ export default function Quest() {
         <p className="text-purple-300">A new friend joins your party!</p>
 
         <div className="flex justify-center">
-          <CreatureSprite element={reward.element} color={reward.spritePlaceholderColor} size={96} />
+          <CreatureSprite element={reward.element} color={reward.spritePlaceholderColor} size={96} speciesId={reward.id} />
         </div>
 
         <div className="bg-purple-900/60 rounded-2xl p-4 inline-block text-left mx-auto">

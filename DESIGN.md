@@ -519,3 +519,7 @@ Framed as expansion / unlock-style content once v1 is proven and loved:
 - **Unpicked starters:** reappear as **rare Explore finds**.
 - **Starter choice:** she chooses from **all five elements**.
 - **Type multiplier:** **×2 / halve** (clean combat arithmetic, type-is-king); revisit toward ×1.5 / ×0.5 in playtest if stats should matter more in advantaged fights.
+
+## 17. Bug fixes
+
+- **Missing pony art on reward/display screens:** `CreatureSprite` only renders real PNG art when passed `speciesId`; three screens omitted it, so ponies appeared as element-colored placeholder circles despite art existing in `src/assets/ponies/`. Fixed by passing `speciesId` on: the Quest "You tamed …!" reward reveal, the completed-quest revisit view (which also now shows the earned pony's sprite instead of just ✅ + text), the GameComplete victory roster, and the pre-Trial "Your team" preview.

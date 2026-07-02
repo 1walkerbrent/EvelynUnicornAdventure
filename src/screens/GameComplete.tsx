@@ -26,7 +26,7 @@ export default function GameComplete() {
             if (!sp) return null
             return (
               <div key={`${c.speciesId}-${i}`} className="flex flex-col items-center gap-1">
-                <CreatureSprite element={sp.element} color={c.accentColor ?? sp.spritePlaceholderColor} size={56} />
+                <CreatureSprite element={sp.element} color={c.accentColor ?? sp.spritePlaceholderColor} size={56} speciesId={sp.id} />
                 <span className="text-purple-200 text-xs font-medium">{c.nickname}</span>
                 <span className="text-purple-400 text-[10px]">Lv.{c.level}</span>
               </div>

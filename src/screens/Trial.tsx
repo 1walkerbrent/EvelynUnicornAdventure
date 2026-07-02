@@ -93,7 +93,7 @@ export default function Trial() {
             const matchup = matchupVsElement(sp.element, oppEl)
             return (
               <div key={c.speciesId} className="flex items-center gap-2">
-                <CreatureSprite element={sp.element} color={c.accentColor ?? sp.spritePlaceholderColor} size={32} />
+                <CreatureSprite element={sp.element} color={c.accentColor ?? sp.spritePlaceholderColor} size={32} speciesId={sp.id} />
                 <span className="font-semibold text-white flex-1 truncate">{c.nickname || sp.name}</span>
                 <span className="text-purple-300 text-xs">Lv.{c.level}</span>
                 {matchup === 'strong' && (
