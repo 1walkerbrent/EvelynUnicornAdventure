@@ -4,6 +4,7 @@ import { STARTER_SPECIES, STARTER_VIBES, SPECIES_BY_ID } from '../content/creatu
 import CreatureSprite from '../components/CreatureSprite'
 import { getStats } from '../engine/stats'
 import { rollIvs } from '../engine/ivs'
+import { newCreatureId } from '../engine/creature'
 import type { Element, Ivs } from '../engine/types'
 import charCreationBg from '../assets/backgrounds/character-creation.jpg'
 
@@ -54,6 +55,7 @@ export default function CharacterCreation() {
     const species = SPECIES_BY_ID[pickedId]
     const stats   = getStats(species.tier, 3, starterIvs)  // all Zone 1 ponies start at level 3
     addToParty({
+      id:          newCreatureId(),
       speciesId:   pickedId,
       nickname:    nickname.trim() || species.name,
       level:       3,

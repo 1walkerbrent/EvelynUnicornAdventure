@@ -6,6 +6,7 @@ import { ZONE_BY_ID } from '../content/zones'
 import { GUARDIAN_BY_ID } from '../content/guardians'
 import { addXp, levelCapForBadges, XP_PER_BATTLE_WIN } from '../engine/leveling'
 import { getStats } from '../engine/stats'
+import { newCreatureId } from '../engine/creature'
 import { MAX_IVS } from '../engine/ivs'
 import type { Ivs } from '../engine/types'
 import { finalAreaId, badgeCount } from '../engine/progression'
@@ -32,7 +33,7 @@ interface GameStore {
   party: Creature[]
   areasDone: string[]
   championDefeated: boolean
-  /** Active team (M2e): speciesIds of the ≤3 ponies that fight; [] = default top-3. */
+  /** Active team (M2e): instance ids of the ≤3 ponies that fight; [] = default top-3. */
   activeTeam: string[]
   /** Per-Guardian loss streaks (M2e): guardianId → consecutive losses. */
   trialLossStreaks: Record<string, number>
@@ -49,7 +50,7 @@ interface GameStore {
   setPlayerName: (name: string) => void
   addToParty: (creature: Creature) => void
   awardXpToParty: (amount: number) => void
-  setActiveTeam: (speciesIds: string[]) => void
+  setActiveTeam: (ids: string[]) => void
   recordTrialLoss: (guardianId: string) => void
   recordPuzzleAttempt: (category: PuzzleAttempt['category'], correct: boolean) => void
   completeArea: (areaId: string) => void
@@ -93,7 +94,7 @@ export const useGameStore = create<GameStore>()((set, get) => {
   function makeCreature(speciesId: string, level: number, ivs: Ivs): Creature {
     const sp = SPECIES_BY_ID[speciesId]
     const stats = getStats(sp.tier, level, ivs)
-    return { speciesId, nickname: sp.name, level, currentHp: stats.heart, xp: 0, ivs }
+    return { id: newCreatureId(), speciesId, nickname: sp.name, level, currentHp: stats.heart, xp: 0, ivs }
   }
 
   // Recompute badges + cap from the completed-areas set (single source of truth).
@@ -128,9 +129,9 @@ export const useGameStore = create<GameStore>()((set, get) => {
       persist()
     },
 
-    // Persist her chosen active team (M2e). Empty resolves to the default top-3.
-    setActiveTeam: (speciesIds) => {
-      set({ activeTeam: speciesIds.slice(0, 3) })
+    // Persist her chosen active team (M2e), by instance id. Empty → default top-3.
+    setActiveTeam: (ids) => {
+      set({ activeTeam: ids.slice(0, 3) })
       persist()
     },
 

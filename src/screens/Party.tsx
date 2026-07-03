@@ -41,7 +41,7 @@ export default function Party() {
   const [sort,          setSort]          = useState<SortType>('level-desc')
   const [typeChartOpen, setTypeChartOpen] = useState(false)
 
-  const activeIds = new Set(resolveBattleTeam(party, activeTeam).map((c) => c.speciesId))
+  const activeIds = new Set(resolveBattleTeam(party, activeTeam).map((c) => c.id))
   const canPick   = shouldShowPicker(party)
 
   const handleImport = async (e: ChangeEvent<HTMLInputElement>) => {
@@ -53,11 +53,11 @@ export default function Party() {
   }
 
   const displayList = useMemo(() => {
-    const ids = new Set(resolveBattleTeam(party, activeTeam).map((c) => c.speciesId))
+    const ids = new Set(resolveBattleTeam(party, activeTeam).map((c) => c.id))
     let result = party.map((c, i) => ({ creature: c, idx: i }))
 
     if (filter === 'team') {
-      result = result.filter(({ creature }) => ids.has(creature.speciesId))
+      result = result.filter(({ creature }) => ids.has(creature.id))
     } else if (filter !== 'all') {
       result = result.filter(({ creature }) => SPECIES_BY_ID[creature.speciesId]?.element === filter)
     }
@@ -231,10 +231,10 @@ export default function Party() {
             <div className="space-y-3">
               {displayList.map(({ creature, idx }) => (
                 <PartyCard
-                  key={idx}
+                  key={creature.id ?? idx}
                   creature={creature}
                   levelCap={levelCap}
-                  active={canPick && activeIds.has(creature.speciesId)}
+                  active={canPick && activeIds.has(creature.id)}
                 />
               ))}
             </div>
@@ -245,7 +245,7 @@ export default function Party() {
       {pickerOpen && (
         <TeamPicker
           party={party}
-          initialSelection={[...activeIds]}
+          initialSelection={[...activeIds].filter((id): id is string => id !== undefined)}
           onConfirm={(ids) => { setActiveTeam(ids); setPickerOpen(false) }}
           onCancel={() => setPickerOpen(false)}
         />

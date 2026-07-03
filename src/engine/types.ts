@@ -24,6 +24,13 @@ export interface CreatureSpecies {
 }
 
 export interface Creature {
+  /**
+   * Stable per-creature instance id (§ instance IDs). Distinguishes individuals —
+   * two creatures of the same species have the same speciesId but different ids.
+   * Generated once at creation via newCreatureId(); permanent. Optional only for
+   * back-compat with pre-id saves; migration backfills it on load.
+   */
+  id?: string
   speciesId: string
   nickname: string
   level: number

@@ -11,22 +11,24 @@ import CreatureSprite from './CreatureSprite'
 // in the "Attack Order" section to reorder the three chosen ponies.
 interface Props {
   party: Creature[]
+  /** Instance ids of the currently selected team. */
   initialSelection: string[]
   opponentElement?: Element
-  onConfirm: (speciesIds: string[]) => void
+  /** Returns the chosen team as instance ids (in attack order). */
+  onConfirm: (ids: string[]) => void
   onCancel: () => void
 }
 
 export default function TeamPicker({ party, initialSelection, opponentElement, onConfirm, onCancel }: Props) {
   const [selected, setSelected] = useState<string[]>(
-    initialSelection.filter((id) => party.some((c) => c.speciesId === id)).slice(0, MAX_ACTIVE_TEAM),
+    initialSelection.filter((id) => party.some((c) => c.id === id)).slice(0, MAX_ACTIVE_TEAM),
   )
 
-  function toggle(speciesId: string) {
+  function toggle(creatureId: string) {
     setSelected((prev) => {
-      if (prev.includes(speciesId)) return prev.filter((id) => id !== speciesId)
+      if (prev.includes(creatureId)) return prev.filter((id) => id !== creatureId)
       if (prev.length >= MAX_ACTIVE_TEAM) return prev
-      return [...prev, speciesId]
+      return [...prev, creatureId]
     })
   }
 
@@ -69,7 +71,7 @@ export default function TeamPicker({ party, initialSelection, opponentElement, o
             </p>
             <div className="space-y-1.5">
               {selected.map((id, i) => {
-                const c = party.find((p) => p.speciesId === id)
+                const c = party.find((p) => p.id === id)
                 const sp = c ? SPECIES_BY_ID[c.speciesId] : null
                 if (!c || !sp) return null
                 return (
@@ -129,16 +131,17 @@ export default function TeamPicker({ party, initialSelection, opponentElement, o
         <div className="flex-1 overflow-y-auto px-4 space-y-2">
           {party.map((c) => {
             const sp = SPECIES_BY_ID[c.speciesId]
-            if (!sp) return null
+            if (!sp || !c.id) return null
+            const cid = c.id
             const stats = getStats(sp.tier, c.level, c.ivs)
-            const isSel = selected.includes(c.speciesId)
-            const slotNum = selected.indexOf(c.speciesId) + 1
+            const isSel = selected.includes(cid)
+            const slotNum = selected.indexOf(cid) + 1
             const matchup = opponentElement ? matchupVsElement(sp.element, opponentElement) : null
 
             return (
               <button
-                key={c.speciesId}
-                onClick={() => toggle(c.speciesId)}
+                key={cid}
+                onClick={() => toggle(cid)}
                 className={
                   'w-full flex items-center gap-3 rounded-2xl p-2.5 text-left transition-colors border-2 ' +
                   (isSel

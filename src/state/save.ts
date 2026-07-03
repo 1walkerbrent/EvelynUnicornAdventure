@@ -1,15 +1,16 @@
 import type { Creature } from '../engine/types'
 import { rollIvs } from '../engine/ivs'
+import { newCreatureId } from '../engine/creature'
 import type { PuzzleAttempt } from '../engine/puzzleSelector'
 
 export interface SaveData {
-  version: 6
+  version: 7
   playerName: string
   party: Creature[]
   /** Completed area ids — the single source of truth for progression. */
   areasDone: string[]
   championDefeated: boolean
-  /** Active team (M2e): speciesIds of the ≤3 ponies that fight. Empty = default top-3. */
+  /** Active team (M2e): instance ids of the ≤3 ponies that fight. Empty = default top-3. */
   activeTeam: string[]
   /** Per-Guardian loss streaks (M2e): guardianId → consecutive losses, reset on a win. */
   trialLossStreaks: Record<string, number>
@@ -20,10 +21,10 @@ export interface SaveData {
 }
 
 const SAVE_KEY = 'evelyn_unicorn_adventure'
-const VERSION = 6 as const
+const VERSION = 7 as const
 
 /** Save schema versions this build can read (current + migratable predecessors). */
-const READABLE_VERSIONS = [6, 5, 4, 3, 2]
+const READABLE_VERSIONS = [7, 6, 5, 4, 3, 2]
 
 export type PersistedState = Omit<SaveData, 'version'>
 
@@ -32,6 +33,25 @@ const PUZZLE_DEFAULTS = { recentPuzzleAttempts: [] as PuzzleAttempt[] }
 
 function withIvs(c: Creature): Creature {
   return c.ivs ? c : { ...c, ivs: rollIvs() }
+}
+
+/** Backfill a stable instance id (§ instance IDs). Idempotent — keeps any existing id. */
+function withId(c: Creature): Creature {
+  return c.id ? c : { ...c, id: newCreatureId() }
+}
+
+/**
+ * Remap the persisted active team to instance ids (§ instance IDs). Idempotent:
+ *  - an entry already matching a creature's id is kept as-is (re-run safe);
+ *  - a legacy speciesId entry is remapped to that species' creature id;
+ *  - anything unresolvable is dropped (resolveBattleTeam falls back to top-3).
+ * Assumes `party` has already been through withId (every creature has an id).
+ */
+function remapActiveTeam(party: Creature[], activeTeam: string[] | undefined): string[] {
+  const ids = new Set(party.map((c) => c.id))
+  return (activeTeam ?? [])
+    .map((entry) => (ids.has(entry) ? entry : party.find((c) => c.speciesId === entry)?.id))
+    .filter((id): id is string => id !== undefined)
 }
 
 // ── v5 shape (pre-puzzle-attempts) ───────────────────────────────────────────
@@ -146,14 +166,18 @@ export function migrateSave(parsed: unknown): PersistedState | null {
   const version = (parsed as { version?: number }).version
 
   let state: PersistedState | null = null
-  if (version === VERSION)  state = migrateV5(parsed as SaveDataV5)   // v6 reads via v5 shape (superset)
-  else if (version === 5)   state = migrateV5(parsed as SaveDataV5)
+  // v7/v6/v5 share the same superset shape (v7 adds Creature.id + id-based
+  // activeTeam, both handled by the universal backfill below).
+  if (version === 7 || version === 6 || version === 5) state = migrateV5(parsed as SaveDataV5)
   else if (version === 4)   state = migrateV4(parsed as SaveDataV4)
   else if (version === 3)   state = migrateV3(parsed as SaveDataV3)
   else if (version === 2)   state = migrateV2(parsed as SaveDataV2)
   if (!state) return null
 
-  return { ...state, party: state.party.map(withIvs) }
+  // Universal backfill (runs for every readable version, idempotent): give each
+  // creature an IV set and an instance id, then remap the active team to ids.
+  const party = state.party.map(withIvs).map(withId)
+  return { ...state, party, activeTeam: remapActiveTeam(party, state.activeTeam) }
 }
 
 export function loadGame(): PersistedState | null {

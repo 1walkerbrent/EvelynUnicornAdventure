@@ -16,8 +16,10 @@ import { getTypeMultiplier } from './combat'
 import { SPECIES_BY_ID } from '../content/creatures'
 import type { Creature } from './types'
 
-function mk(speciesId: string, level: number): Creature {
-  return { speciesId, nickname: speciesId, level, currentHp: 1, xp: 0 }
+// `id` defaults to a per-species stub so single-species test parties stay readable,
+// but it's deliberately DIFFERENT from speciesId so tests prove id-based resolution.
+function mk(speciesId: string, level: number, id = 'c-' + speciesId): Creature {
+  return { id, speciesId, nickname: speciesId, level, currentHp: 1, xp: 0 }
 }
 
 // Known elements from content: meadow-bloom=earth, marina-mist=water,
@@ -31,7 +33,8 @@ describe('active team — default + picker visibility', () => {
       mk('ember-spark', 5),
       mk('sky-dancer', 7),
     ]
-    expect(defaultActiveTeam(party)).toEqual(['marina-mist', 'sky-dancer', 'ember-spark'])
+    // Returns instance ids (highest level first), not speciesIds.
+    expect(defaultActiveTeam(party)).toEqual(['c-marina-mist', 'c-sky-dancer', 'c-ember-spark'])
     expect(defaultActiveTeam(party)).toHaveLength(MAX_ACTIVE_TEAM)
   })
 
@@ -46,7 +49,8 @@ describe('active team — default + picker visibility', () => {
     expect(resolveBattleTeam(three, [])).toHaveLength(3)
 
     const four = [...three, mk('sky-dancer', 1)]
-    const chosen = resolveBattleTeam(four, ['marina-mist', 'ember-spark', 'sky-dancer'])
+    // activeTeam holds instance ids, in the player's chosen attack order.
+    const chosen = resolveBattleTeam(four, ['c-marina-mist', 'c-ember-spark', 'c-sky-dancer'])
     expect(chosen.map((c) => c.speciesId)).toEqual(['marina-mist', 'ember-spark', 'sky-dancer'])
   })
 
@@ -55,6 +59,42 @@ describe('active team — default + picker visibility', () => {
     // Stored ids no longer in the party → fall back to default.
     expect(resolveBattleTeam(four, ['ghost-pony']).map((c) => c.speciesId))
       .toEqual(['marina-mist', 'sky-dancer', 'ember-spark'])
+  })
+})
+
+describe('instance ids — same species coexist, resolution is by id not speciesId', () => {
+  it('two ponies of the same species have distinct ids and both live in the roster', () => {
+    const a = mk('marina-mist', 5, 'c-a')
+    const b = mk('marina-mist', 6, 'c-b')
+    const party = [a, b, mk('ember-spark', 4, 'c-e'), mk('sky-dancer', 3, 'c-s')]
+
+    expect(a.speciesId).toBe(b.speciesId)  // same species…
+    expect(a.id).not.toBe(b.id)            // …different individuals
+
+    // Picking 'c-b' selects b (Lv.6), never its same-species twin a (Lv.5).
+    const team = resolveBattleTeam(party, ['c-b', 'c-e', 'c-s'])
+    expect(team.map((c) => c.id)).toEqual(['c-b', 'c-e', 'c-s'])
+    const marina = team.find((c) => c.speciesId === 'marina-mist')!
+    expect(marina.id).toBe('c-b')
+    expect(marina.level).toBe(6)
+  })
+
+  it('resolveBattleTeam keys by instance id — legacy speciesId entries no longer match', () => {
+    const party = [
+      mk('marina-mist', 5, 'c-a'),
+      mk('ember-spark', 4, 'c-e'),
+      mk('sky-dancer',  3, 'c-s'),
+      mk('meadow-bloom', 2, 'c-m'),
+    ]
+    // Passing speciesIds (the old scheme) resolves nothing → falls back to top-3.
+    // If it wrongly keyed by species, meadow-bloom would be on the team.
+    const bySpecies = resolveBattleTeam(party, ['meadow-bloom', 'ember-spark', 'sky-dancer'])
+    expect(bySpecies.map((c) => c.speciesId)).toEqual(['marina-mist', 'ember-spark', 'sky-dancer'])
+    expect(bySpecies.some((c) => c.speciesId === 'meadow-bloom')).toBe(false)
+
+    // Passing instance ids resolves exactly, in order.
+    const byId = resolveBattleTeam(party, ['c-m', 'c-e', 'c-s'])
+    expect(byId.map((c) => c.id)).toEqual(['c-m', 'c-e', 'c-s'])
   })
 })
 
@@ -128,8 +168,13 @@ describe('recommended team (3-loss safety net)', () => {
     const rec = recommendTeamVsElement(party, 'water')
     expect(rec.kind).toBe('recommend')
     if (rec.kind !== 'recommend') return
+    // rec.team is instance ids — resolve back to species to check the ordering.
+    const firstTwoSpecies = rec.team
+      .slice(0, 2)
+      .map((id) => party.find((c) => c.id === id)!.speciesId)
+      .sort()
     // Both earth ponies come first (Strong), regardless of the high-level water one.
-    expect(rec.team.slice(0, 2).sort()).toEqual(['boulderhoof', 'meadow-bloom'])
+    expect(firstTwoSpecies).toEqual(['boulderhoof', 'meadow-bloom'])
     expect(rec.team).toHaveLength(3)
     expect(rec.reason).toBe('Earth beats Water!')
     expect(rec.counterElement).toBe('earth')

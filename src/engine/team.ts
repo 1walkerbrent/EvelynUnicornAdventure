@@ -27,12 +27,13 @@ function cap(s: string): string {
   return s.charAt(0).toUpperCase() + s.slice(1)
 }
 
-/** Default active team = her 3 highest-level ponies (so it's never empty). */
+/** Default active team = her 3 highest-level ponies (so it's never empty). Returns instance ids. */
 export function defaultActiveTeam(party: Creature[]): string[] {
   return [...party]
     .sort((a, b) => b.level - a.level)
     .slice(0, MAX_ACTIVE_TEAM)
-    .map((c) => c.speciesId)
+    .map((c) => c.id)
+    .filter((id): id is string => id !== undefined)
 }
 
 /** Only show the picker once she has more ponies than fit on a team. */
@@ -44,16 +45,19 @@ export function shouldShowPicker(party: Creature[]): boolean {
  * The Creatures that actually fight. With ≤3 ponies everyone fights and the
  * stored selection is ignored; otherwise the active set is used (valid members
  * only), falling back to the default top-3 if the stored set is unusable.
+ *
+ * `activeTeam` holds instance ids (§ instance IDs), so members are resolved by
+ * Creature.id — two ponies of the same species are told apart correctly.
  */
 export function resolveBattleTeam(party: Creature[], activeTeam: string[]): Creature[] {
   if (party.length <= MAX_ACTIVE_TEAM) return party
   const valid = activeTeam
-    .map((id) => party.find((c) => c.speciesId === id))
+    .map((id) => party.find((c) => c.id === id))
     .filter((c): c is Creature => !!c)
     .slice(0, MAX_ACTIVE_TEAM)
   if (valid.length === MAX_ACTIVE_TEAM) return valid
   return defaultActiveTeam(party)
-    .map((id) => party.find((c) => c.speciesId === id))
+    .map((id) => party.find((c) => c.id === id))
     .filter((c): c is Creature => !!c)
 }
 
@@ -73,7 +77,7 @@ export function matchupForCreature(c: Creature, oppEl: Element): Matchup | null 
 
 export interface RecommendCounter {
   kind: 'recommend'
-  /** speciesIds of the suggested team (up to 3). */
+  /** Instance ids of the suggested team (up to 3), ready to pass to setActiveTeam. */
   team: string[]
   /** Kid-friendly reason, e.g. "Earth beats Water!". */
   reason: string
@@ -116,7 +120,10 @@ export function recommendTeamVsElement(party: Creature[], oppEl: Element): Recom
 
   return {
     kind: 'recommend',
-    team: ranked.slice(0, MAX_ACTIVE_TEAM).map((c) => c.speciesId),
+    team: ranked
+      .slice(0, MAX_ACTIVE_TEAM)
+      .map((c) => c.id)
+      .filter((id): id is string => id !== undefined),
     reason: `${cap(counter)} beats ${cap(oppEl)}!`,
     counterElement: counter,
   }

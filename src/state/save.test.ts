@@ -83,7 +83,7 @@ describe('migrateSave — IV backfill (save v5)', () => {
     expect(state!.recentPuzzleAttempts).toEqual([])
   })
 
-  it('v5 save gets recentPuzzleAttempts: [] (upgrade to v6)', () => {
+  it('v5 save gets recentPuzzleAttempts: [] (upgrade to v7)', () => {
     const v5 = {
       version: 5,
       playerName: 'Evelyn',
@@ -97,5 +97,62 @@ describe('migrateSave — IV backfill (save v5)', () => {
     expect(state).not.toBeNull()
     expect(state!.recentPuzzleAttempts).toEqual([])
     expect(state!.party[0].ivs).toEqual({ heart: 2, power: 1, speed: 3 })
+  })
+})
+
+describe('migrateSave — instance id backfill + activeTeam remap (save v7)', () => {
+  it('backfills a distinct instance id on every creature that lacks one', () => {
+    const state = migrateSave(v4Save([ponyNoIvs('marina-mist'), ponyNoIvs('ember-spark')]))
+    expect(state).not.toBeNull()
+    for (const c of state!.party) {
+      expect(typeof c.id).toBe('string')
+      expect(c.id!.length).toBeGreaterThan(0)
+    }
+    // Each creature gets its own id (no collisions).
+    expect(new Set(state!.party.map((c) => c.id)).size).toBe(2)
+  })
+
+  it('remaps a legacy speciesId-based activeTeam to the creatures’ instance ids', () => {
+    const save = {
+      ...v4Save([
+        ponyNoIvs('marina-mist'), ponyNoIvs('ember-spark'),
+        ponyNoIvs('sky-dancer'), ponyNoIvs('meadow-bloom'),
+      ]),
+      activeTeam: ['marina-mist', 'sky-dancer'], // old scheme: speciesIds
+    }
+    const state = migrateSave(save)!
+    const idBySpecies = Object.fromEntries(state.party.map((c) => [c.speciesId, c.id]))
+    // Remapped to the matching creatures' ids, order preserved.
+    expect(state.activeTeam).toEqual([idBySpecies['marina-mist'], idBySpecies['sky-dancer']])
+    // Every entry is now a real instance id present in the party, not a speciesId.
+    const ids = new Set(state.party.map((c) => c.id))
+    expect(state.activeTeam.every((id) => ids.has(id))).toBe(true)
+  })
+
+  it('drops unresolvable activeTeam entries (no matching creature)', () => {
+    const save = {
+      ...v4Save([
+        ponyNoIvs('marina-mist'), ponyNoIvs('ember-spark'),
+        ponyNoIvs('sky-dancer'), ponyNoIvs('meadow-bloom'),
+      ]),
+      activeTeam: ['marina-mist', 'ghost-pony'], // ghost-pony was never in the party
+    }
+    const state = migrateSave(save)!
+    const idBySpecies = Object.fromEntries(state.party.map((c) => [c.speciesId, c.id]))
+    expect(state.activeTeam).toEqual([idBySpecies['marina-mist']])
+  })
+
+  it('is idempotent — re-migrating an already-migrated save keeps ids + activeTeam', () => {
+    const first = migrateSave({
+      ...v4Save([
+        ponyNoIvs('marina-mist'), ponyNoIvs('ember-spark'),
+        ponyNoIvs('sky-dancer'), ponyNoIvs('meadow-bloom'),
+      ]),
+      activeTeam: ['marina-mist', 'sky-dancer'],
+    })!
+    // Feed the migrated state straight back in as a current-version save.
+    const second = migrateSave({ version: 7, ...first })!
+    expect(second.party.map((c) => c.id)).toEqual(first.party.map((c) => c.id))
+    expect(second.activeTeam).toEqual(first.activeTeam)
   })
 })

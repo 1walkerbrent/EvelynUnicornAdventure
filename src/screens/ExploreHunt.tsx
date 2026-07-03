@@ -5,6 +5,7 @@ import { ZONE_BY_ID } from '../content/zones'
 import { getStats } from '../engine/stats'
 import { pickWildEncounter, buildWildMiniBoss } from '../engine/explore'
 import { rollIvs } from '../engine/ivs'
+import { newCreatureId } from '../engine/creature'
 import { resolveBattleTeam } from '../engine/team'
 import { XP_PER_BATTLE_WIN } from '../engine/leveling'
 import { effectiveDifficulty } from '../engine/difficulty'
@@ -121,6 +122,7 @@ export default function ExploreHunt() {
     const ivs = rollIvs()
     const stats = getStats(species!.tier, tameLevel, ivs)
     addToParty({
+      id:        newCreatureId(),
       speciesId: species!.id,
       nickname:  species!.name,
       level:     tameLevel,

@@ -54,7 +54,7 @@ export default function PartyCard({ creature, levelCap, active }: { creature: Cr
         </div>
         <div className="text-purple-300 text-xs capitalize">{species.element}</div>
         <div className="text-purple-400 text-xs mt-0.5">
-          HP {creature.currentHp}/{stats.heart} · Pwr {stats.power} · Spd {stats.speed}
+          Pwr {stats.power} · Spd {stats.speed}
         </div>
 
         {/* XP progress bar */}

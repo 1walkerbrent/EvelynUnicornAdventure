@@ -92,7 +92,7 @@ export default function Trial() {
             if (!sp) return null
             const matchup = matchupVsElement(sp.element, oppEl)
             return (
-              <div key={c.speciesId} className="flex items-center gap-2">
+              <div key={c.id ?? c.speciesId} className="flex items-center gap-2">
                 <CreatureSprite element={sp.element} color={c.accentColor ?? sp.spritePlaceholderColor} size={32} speciesId={sp.id} />
                 <span className="font-semibold text-white flex-1 truncate">{c.nickname || sp.name}</span>
                 <span className="text-purple-300 text-xs">Lv.{c.level}</span>
@@ -113,11 +113,15 @@ export default function Trial() {
         <div className="bg-green-950/50 border border-green-600/40 rounded-2xl p-3 space-y-2">
           <p className="text-green-300 font-bold">💡 Try this team — {rec.reason}</p>
           <div className="flex flex-wrap gap-1.5">
-            {rec.team.map((id) => (
-              <span key={id} className="text-xs bg-green-900/60 text-green-100 px-2 py-0.5 rounded-full">
-                {SPECIES_BY_ID[id]?.name ?? id}
-              </span>
-            ))}
+            {rec.team.map((id) => {
+              const c = party.find((p) => p.id === id)
+              const name = c ? (c.nickname || SPECIES_BY_ID[c.speciesId]?.name) : undefined
+              return (
+                <span key={id} className="text-xs bg-green-900/60 text-green-100 px-2 py-0.5 rounded-full">
+                  {name ?? id}
+                </span>
+              )
+            })}
           </div>
           {canPick && (
             <button
@@ -169,7 +173,7 @@ export default function Trial() {
       {pickerOpen && (
         <TeamPicker
           party={party}
-          initialSelection={activeCreatures.map((c) => c.speciesId)}
+          initialSelection={activeCreatures.map((c) => c.id).filter((id): id is string => !!id)}
           opponentElement={oppEl}
           onConfirm={(ids) => { setActiveTeam(ids); setPickerOpen(false) }}
           onCancel={() => setPickerOpen(false)}

@@ -9,6 +9,7 @@ import { zoneNumber } from '../engine/progression'
 import { XP_PER_CORRECT_ANSWER } from '../engine/leveling'
 import { getStats } from '../engine/stats'
 import { rollIvs } from '../engine/ivs'
+import { newCreatureId } from '../engine/creature'
 import type { Problem } from '../engine/problems'
 import ProblemCard from '../components/ProblemCard'
 import CreatureSprite from '../components/CreatureSprite'
@@ -66,6 +67,7 @@ export default function Quest() {
   function handleSolve() {
     if (!alreadyDone) {
       addToParty({
+        id:        newCreatureId(),
         speciesId: reward.id,
         nickname:  reward.name,
         level:     rewardLevel,
