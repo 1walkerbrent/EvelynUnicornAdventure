@@ -1,0 +1,17 @@
+# Normalize line endings: store text as LF in the repo, check out native per-OS.
+* text=auto
+
+# Explicitly treat common binary assets as binary so Git never touches their bytes.
+*.png  binary
+*.jpg  binary
+*.jpeg binary
+*.gif  binary
+*.ico  binary
+*.webp binary
+*.woff  binary
+*.woff2 binary
+*.ttf   binary
+*.otf   binary
+*.mp3 binary
+*.wav binary
+*.ogg binary
