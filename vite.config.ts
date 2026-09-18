@@ -8,6 +8,18 @@ export default defineConfig({
     VitePWA({
       registerType: 'autoUpdate',
       includeAssets: ['apple-touch-icon.png'],
+      workbox: {
+        // Precache the ARTWORK too, not just the code. Workbox's default glob
+        // only picks up js/css/html, which left all 38 pony sprites and 16
+        // backgrounds (~19 MB) uncached — the game ran offline but every pony
+        // and every scene failed to load. This is what makes it playable on a
+        // plane. The whole bundle is fetched when the service worker installs,
+        // so the app must be opened once ON WIFI after deploying.
+        globPatterns: ['**/*.{js,css,html,png,jpg,jpeg,svg,webmanifest}'],
+        // Largest sprite is ~535 KB today; the default cap is 2 MiB. Headroom
+        // so a bigger piece of art can never silently drop out of the bundle.
+        maximumFileSizeToCacheInBytes: 6 * 1024 * 1024,
+      },
       manifest: {
         name: "Evelyn's Unicorn Adventure",
         short_name: 'Unicorn RPG',
