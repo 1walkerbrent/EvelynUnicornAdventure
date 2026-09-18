@@ -13,7 +13,9 @@ import { zoneNumber } from '../engine/progression'
 import { generateHuntMathProblem } from '../engine/huntMathGenerator'
 import { generateLogicProblem } from '../engine/logicGenerator'
 import { generateComprehensionProblem } from '../engine/comprehensionGenerator'
-import { selectProblemCategory } from '../engine/puzzleSelector'
+import { generateSpellingProblem } from '../engine/spellingGenerator'
+import { selectProblemCategory, availableCategories } from '../engine/puzzleSelector'
+import { isSpeechAvailable } from '../engine/speech'
 import type { Problem } from '../engine/problems'
 import BattleScreen from '../components/BattleScreen'
 import ProblemCard from '../components/ProblemCard'
@@ -47,9 +49,14 @@ export default function ExploreHunt() {
   // Generate the warm-up puzzle once on mount. Hunt uses simpler math bands.
   const huntPuzzle = useState<Problem>(() => {
     const diff     = effectiveDifficulty(num, partyLevel)
-    const category = selectProblemCategory(recentPuzzleAttempts)
-    if (category === 'math')  return generateHuntMathProblem(num)
-    if (category === 'logic') return generateLogicProblem(diff)
+    const category = selectProblemCategory(
+      recentPuzzleAttempts,
+      Math.random,
+      availableCategories(isSpeechAvailable()),
+    )
+    if (category === 'math')     return generateHuntMathProblem(num)
+    if (category === 'logic')    return generateLogicProblem(diff)
+    if (category === 'spelling') return generateSpellingProblem(diff)
     return generateComprehensionProblem(diff)
   })[0]
 

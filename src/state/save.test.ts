@@ -156,3 +156,60 @@ describe('migrateSave — instance id backfill + activeTeam remap (save v7)', ()
     expect(second.activeTeam).toEqual(first.activeTeam)
   })
 })
+
+describe('migrateSave — recentPuzzleAttempts survive a reload', () => {
+  function v7Save(recentPuzzleAttempts: unknown) {
+    return {
+      version: 7,
+      playerName: 'Evelyn',
+      party: [{ ...ponyNoIvs('ember-spark'), id: 'c1', ivs: { heart: 2, power: 1, speed: 3 } }],
+      areasDone: ['brindlewood'],
+      championDefeated: false,
+      activeTeam: ['c1'],
+      trialLossStreaks: {},
+      recentPuzzleAttempts,
+    }
+  }
+
+  it('carries a v7 rolling history forward instead of wiping it', () => {
+    // Regression: migrateV5 used to spread PUZZLE_DEFAULTS last, resetting the
+    // history to [] on EVERY load, so reinforcement weighting never accumulated.
+    const attempts = [
+      { category: 'math', correct: false },
+      { category: 'math', correct: false },
+      { category: 'spelling', correct: true },
+    ]
+    const state = migrateSave(v7Save(attempts))
+    expect(state).not.toBeNull()
+    expect(state!.recentPuzzleAttempts).toEqual(attempts)
+  })
+
+  it('keeps spelling attempts (the new category round-trips)', () => {
+    const state = migrateSave(v7Save([{ category: 'spelling', correct: false }]))
+    expect(state!.recentPuzzleAttempts).toEqual([{ category: 'spelling', correct: false }])
+  })
+
+  it('drops malformed entries rather than feeding them to the weighting', () => {
+    const state = migrateSave(v7Save([
+      { category: 'math', correct: true },
+      { category: 'astrology', correct: true },   // unknown category
+      { category: 'logic', correct: 'yes' },       // wrong type
+      null,
+      'nonsense',
+    ]))
+    expect(state!.recentPuzzleAttempts).toEqual([{ category: 'math', correct: true }])
+  })
+
+  it('caps a bloated history at the last 10', () => {
+    const many = Array.from({ length: 25 }, (_, i) => ({ category: 'logic', correct: i % 2 === 0 }))
+    const state = migrateSave(v7Save(many))
+    expect(state!.recentPuzzleAttempts).toHaveLength(10)
+    // Last kept entry is the original index 24 → 24 % 2 === 0 → correct.
+    expect(state!.recentPuzzleAttempts[9]).toEqual({ category: 'logic', correct: true })
+  })
+
+  it('tolerates a non-array history', () => {
+    expect(migrateSave(v7Save('oops'))!.recentPuzzleAttempts).toEqual([])
+    expect(migrateSave(v7Save(undefined))!.recentPuzzleAttempts).toEqual([])
+  })
+})

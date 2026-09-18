@@ -132,7 +132,7 @@ export function buildMathSpec(rng: Rng, band: 2 | 3 | 4 | 5 | 6): MathSpec {
   const spec: MathSpec = { numbers, ops, runningTotals, answer: running }
 
   if (p.extraneous) {
-    let extra = 0
+    let extra: number
     do {
       extra = randInt(rng, p.operandMin, p.max)
     } while (numbers.includes(extra) || extra === spec.answer)

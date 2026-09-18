@@ -1,7 +1,8 @@
 import type { Creature } from '../engine/types'
 import { rollIvs } from '../engine/ivs'
 import { newCreatureId } from '../engine/creature'
-import type { PuzzleAttempt } from '../engine/puzzleSelector'
+import type { PuzzleAttempt, PuzzleCategory } from '../engine/puzzleSelector'
+import { ALL_CATEGORIES } from '../engine/puzzleSelector'
 
 export interface SaveData {
   version: 7
@@ -30,6 +31,23 @@ export type PersistedState = Omit<SaveData, 'version'>
 
 const M2E_DEFAULTS = { activeTeam: [] as string[], trialLossStreaks: {} as Record<string, number> }
 const PUZZLE_DEFAULTS = { recentPuzzleAttempts: [] as PuzzleAttempt[] }
+
+/**
+ * Keep only well-formed attempts, so a hand-edited or older save can't feed
+ * garbage categories into the reinforcement weighting. Also caps at the last 10,
+ * matching `updatePuzzleAttempts`.
+ */
+function sanitizeAttempts(raw: unknown): PuzzleAttempt[] {
+  if (!Array.isArray(raw)) return []
+  const known = new Set<string>(ALL_CATEGORIES)
+  return raw
+    .filter((a): a is PuzzleAttempt =>
+      typeof a === 'object' && a !== null &&
+      known.has((a as PuzzleAttempt).category) &&
+      typeof (a as PuzzleAttempt).correct === 'boolean')
+    .map(a => ({ category: a.category as PuzzleCategory, correct: a.correct }))
+    .slice(-10)
+}
 
 function withIvs(c: Creature): Creature {
   return c.ivs ? c : { ...c, ivs: rollIvs() }
@@ -63,6 +81,8 @@ interface SaveDataV5 {
   championDefeated: boolean
   activeTeam: string[]
   trialLossStreaks: Record<string, number>
+  /** Present from v6 onward; absent on a true v5 save. */
+  recentPuzzleAttempts?: PuzzleAttempt[]
   lastZoneId?: string
 }
 
@@ -75,7 +95,10 @@ function migrateV5(d: SaveDataV5): PersistedState {
     activeTeam:           d.activeTeam ?? [],
     trialLossStreaks:     d.trialLossStreaks ?? {},
     lastZoneId:           d.lastZoneId,
-    ...PUZZLE_DEFAULTS,
+    // Carry the rolling puzzle history forward (v6/v7). A true v5 save has none,
+    // and sanitizeAttempts turns that into []. Previously this spread
+    // PUZZLE_DEFAULTS last, silently wiping the history on every load.
+    recentPuzzleAttempts: sanitizeAttempts(d.recentPuzzleAttempts),
   }
 }
 

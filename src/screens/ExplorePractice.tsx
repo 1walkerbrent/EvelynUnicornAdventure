@@ -4,7 +4,9 @@ import { ZONE_BY_ID } from '../content/zones'
 import { generateMathProblem } from '../engine/mathGenerator'
 import { generateLogicProblem } from '../engine/logicGenerator'
 import { generateComprehensionProblem } from '../engine/comprehensionGenerator'
-import { selectProblemCategory } from '../engine/puzzleSelector'
+import { generateSpellingProblem } from '../engine/spellingGenerator'
+import { selectProblemCategory, availableCategories } from '../engine/puzzleSelector'
+import { isSpeechAvailable } from '../engine/speech'
 import { effectiveDifficulty } from '../engine/difficulty'
 import { zoneNumber } from '../engine/progression'
 import { XP_PER_CORRECT_ANSWER } from '../engine/leveling'
@@ -12,7 +14,8 @@ import type { Problem } from '../engine/problems'
 import ProblemCard from '../components/ProblemCard'
 
 // Explore → Practice (§8): pure learning/leveling. Weighted category selection
-// (math/logic/comprehension) with reinforcement doubling for weak categories.
+// (math/logic/comprehension/spelling) with reinforcement doubling for weak
+// categories. Spelling drops out on devices with no speech synthesis.
 export default function ExplorePractice() {
   const party                = useGameStore((s) => s.party)
   const awardXpToParty       = useGameStore((s) => s.awardXpToParty)
@@ -27,9 +30,14 @@ export default function ExplorePractice() {
 
   function makeProblem(): Problem {
     const diff     = effectiveDifficulty(num, partyLevel)
-    const category = selectProblemCategory(recentPuzzleAttempts)
-    if (category === 'math')  return generateMathProblem(diff)
-    if (category === 'logic') return generateLogicProblem(diff)
+    const category = selectProblemCategory(
+      recentPuzzleAttempts,
+      Math.random,
+      availableCategories(isSpeechAvailable()),
+    )
+    if (category === 'math')     return generateMathProblem(diff)
+    if (category === 'logic')    return generateLogicProblem(diff)
+    if (category === 'spelling') return generateSpellingProblem(diff)
     return generateComprehensionProblem(diff)
   }
 
@@ -51,6 +59,7 @@ export default function ExplorePractice() {
   const typeLabel =
     problem.type === 'math'          ? 'A number problem' :
     problem.type === 'logic'         ? 'A story puzzle'   :
+    problem.type === 'spelling'      ? 'A spelling word'  :
                                        'A reading passage'
 
   return (

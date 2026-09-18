@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import type { Problem } from '../engine/problems'
+import SpellingPuzzle from './SpellingPuzzle'
 
 const ENCOURAGEMENT = [
   "Not quite — but you've totally got this! Try again! 🌟",
@@ -44,6 +45,17 @@ export default function ProblemCard({ problem, onSolve, onAttempt }: Props) {
     }
   }
 
+  // Spelling returns the verdict so <SpellingPuzzle> can shake its tiles on a miss.
+  function handleSpellingSubmit(guess: string): boolean {
+    if (problem.type !== 'spelling') return false
+    if (guess === problem.word) {
+      handleCorrect()
+      return true
+    }
+    recordWrong()
+    return false
+  }
+
   // Unified handler for logic + comprehension (both use choices[] + correctIndex)
   function handleChoice(idx: number) {
     if (problem.type !== 'logic' && problem.type !== 'comprehension') return
@@ -57,7 +69,7 @@ export default function ProblemCard({ problem, onSolve, onAttempt }: Props) {
   return (
     <div className="space-y-4">
       {/* Prompt block — math and logic only */}
-      {problem.type !== 'comprehension' && (
+      {(problem.type === 'math' || problem.type === 'logic') && (
         <div className="bg-purple-900/60 rounded-2xl p-4 space-y-1">
           {problem.prompt.split('\n').map((line, i) => (
             <p key={i} className={`${line === '' ? 'h-2' : 'text-white leading-relaxed'}`}>
@@ -75,6 +87,12 @@ export default function ProblemCard({ problem, onSolve, onAttempt }: Props) {
           </div>
           <p className="text-yellow-200 font-semibold leading-snug">{problem.question}</p>
         </div>
+      )}
+
+      {/* Spelling: audio replay + drag-and-drop letter tiles.
+          The key means a new word gets a fresh, empty board without an effect. */}
+      {problem.type === 'spelling' && (
+        <SpellingPuzzle key={problem.word} problem={problem} onSubmit={handleSpellingSubmit} />
       )}
 
       {/* Math input */}

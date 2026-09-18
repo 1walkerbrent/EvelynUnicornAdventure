@@ -281,25 +281,26 @@ Enemy ponies in the "earned" battles (Hunt mini-boss, Trials, Champion) are **bo
 
 ## 9. Quests & problem types
 
-Problems are **generated from rules, never stored as a fixed list** — a hand-written bank runs dry and kills replay value. Each encounter rolls a fresh problem from one of **three categories**, which keeps the learning loop alive across many play sessions.
+Problems are **generated from rules, never stored as a fixed list** — a hand-written bank runs dry and kills replay value. Each encounter rolls a fresh problem from one of **four categories**, which keeps the learning loop alive across many play sessions.
 
-### Three categories
+### Four categories
 
 - **Math** — bare equations only ("56 + 43 = __ ", "__ − 28 = 45"). No story wrappers. Player types the missing number. All three modes (Practice, Hunt, Quest) use math. *Two distinct difficulty bands*: Quest/Practice use zone-progression bands (harder); Hunt uses simpler per-zone bands so early zones are faster confidence-builders.
 - **Logic** — varied-format multiple-choice puzzles. Each band group has ≥8 templates (not all elimination-style): Z1–Z2 = comparison, pattern continuation, odd-one-out, categorization, if/then (3 choices); Z3–Z4 = two-attribute filter, ordering, chain reasoning, must-be-true (4 choices); Z5–Z6 = three-attribute deduction, impossibility detection, seating constraints (5 choices). Templates mix freely so the same format rarely appears twice in a row.
 - **Comprehension** — read a short passage then answer a multiple-choice question (4 choices, 3 plausible distractors). Static bank of **90 passages** (15 per zone, `src/content/comprehensionBank.ts`) — passages are zone-themed (Zone 1 = Brindlewood ponies, Zone 6 = Starfall Temple lore). Because the bank is finite, anti-repeat cycling ensures each zone's pool cycles before repeating.
+- **Spelling** — **audio-first**: the word is spoken, never shown, and she rebuilds it from scrambled letter tiles. Static bank of **90 words** (15 per zone, `src/content/spellingBank.ts`), banded by spelling difficulty rather than length alone (band 1 = short vowels and CVCe; band 6 = multi-syllable words with schwa sounds and silent letters). Three audio buttons — **🔊 Hear the word**, **🐢 Slower**, **💬 In a sentence** — are all re-tappable as many times as she likes, which is the whole point: she sounds it out at her own pace. See the *Spelling generator* subsection.
 
 ### Where each category appears
 
-| Mode | Math bands | Logic | Comprehension |
-|---|---|---|---|
-| **Quest** (Areas 1 & 2) | Zone-progression bands | Zone-progression bands | — (quests are math or logic only) |
-| **Practice** (Explore) | Zone-progression bands | Zone-progression bands | ✓ weighted |
-| **Hunt** (pre-battle puzzle) | Hunt bands (simpler) | Zone-progression bands | ✓ weighted |
+| Mode | Math bands | Logic | Comprehension | Spelling |
+|---|---|---|---|---|
+| **Quest** (Areas 1 & 2) | Zone-progression bands | Zone-progression bands | — (quests are math or logic only) | — |
+| **Practice** (Explore) | Zone-progression bands | Zone-progression bands | ✓ weighted | ✓ weighted |
+| **Hunt** (pre-battle puzzle) | Hunt bands (simpler) | Zone-progression bands | ✓ weighted | ✓ weighted |
 
 ### Reinforcement weighting
 
-A **rolling window of the last 10 puzzle attempts** (category + correct/wrong) is stored in the save and used to weight category selection in Practice and Hunt. Any category with **< 60% accuracy AND ≥ 3 attempts** gets **weight 2** (doubled); categories with fewer than 3 attempts are neutral (weight 1). This means if she keeps missing math, the game surfaces more math problems without any explicit mode change — the difficulty adapts to her.
+A **rolling window of the last 10 puzzle attempts** (category + correct/wrong) is stored in the save and used to weight category selection in Practice and Hunt. All four categories are weighted the same way — spelling included. Any category with **< 60% accuracy AND ≥ 3 attempts** gets **weight 2** (doubled); categories with fewer than 3 attempts are neutral (weight 1). This means if she keeps missing math, the game surfaces more math problems without any explicit mode change — the difficulty adapts to her.
 
 ### Difficulty: one knob, fed by two dials
 
@@ -344,6 +345,14 @@ A **pool of templates with swappable variables** per band group — a deduction 
 ### Comprehension generator
 
 Picks from the 90-entry static bank keyed by zone (band 1–6 maps to zone 1–6). An anti-repeat tracker per zone prevents the same passage repeating until the zone's pool of 15 cycles.
+
+### Spelling generator
+
+`src/engine/spellingGenerator.ts` picks from the 90-entry bank keyed by band (1–6 maps to zone 1–6), with a per-band anti-repeat tracker so a band's 15 words cycle before any repeats. `scrambleWord` is a seeded Fisher–Yates shuffle that is **guaranteed never to return the word already in the correct order** — an unscrambled word would hand her the answer. Tile identity is the *index* into the scrambled array, not the letter, so words with repeated letters (`pebble`, `shallow`) still have distinguishable tiles.
+
+**Audio** is the browser's built-in Web Speech API (`src/engine/speech.ts`) — deliberately asset-free, so there are no recordings to make, ship, or cache, and the voice comes from the device. Nothing ever auto-speaks: every call sits inside a button tap, which is also what iOS/Safari requires. A device with no speech synthesis drops spelling from the rotation entirely (`availableCategories`) rather than serving a puzzle she has no way to hear.
+
+**Interaction** (`src/components/SpellingPuzzle.tsx`) reuses the pointer-event idiom from `<BattleScreen>`: `setPointerCapture` on the tile, bounding-rect hit-testing on move, a drag ghost, and a sub-10px movement threshold that falls back to tap-to-place — so drag and tap both work. Dragging a tile onto an occupied slot swaps them. A wrong guess **keeps her tiles in place** (she fixes one letter rather than rebuilding the whole word) and shakes the row; the 3rd wrong attempt reveals the phonics hint per §10.
 
 ### Anti-repetition
 
@@ -500,6 +509,13 @@ Build Zone 1 end-to-end before anything else, with placeholder art (colored shap
     - **Instance IDs (§5).** Added a stable per-creature `id` (`newCreatureId()` in `engine/creature.ts`), set at every creation site (`store.makeCreature`, `CharacterCreation`, `Quest`, `ExploreHunt`). The active team and picker now key by `Creature.id` instead of `speciesId` — `defaultActiveTeam`/`resolveBattleTeam`/`recommendTeamVsElement` (`engine/team.ts`), `TeamPicker`, `Party`, and `Trial`. `speciesId` is unchanged and still drives art/stats/element/name. **Save bumped to v7:** migration backfills ids on pre-id creatures and remaps a legacy speciesId-based `activeTeam` to instance ids (idempotent). Unblocks same-species duplicates from breeding / New Game+ (§15).
     - **Dead HP display removed.** `PartyCard` dropped the `HP {currentHp}/{heart}` line — it was always `x/x` (battles rebuild ponies at full HP via `buildBattlePony`; level-ups heal to full). The card now shows just `Pwr · Spd`. `Creature.currentHp` is **kept** (still read/written by `addXp` in `leveling.ts`); only the always-redundant display was removed.
     - Tests: same-species coexistence + id-based resolution (`team.test.ts`), migration backfill/remap/idempotency (`save.test.ts`). Full suite (242 tests) + build clean.
+- **M3c — Spelling category ✅ DONE (current milestone):** a **fourth** puzzle category (§9), audio-first and drag-and-drop. Additive — no change to the XP economy, difficulty formula, progression, or combat.
+  - **Type + bank.** `SpellingProblem` (`problems.ts`) joins the `Problem` union. `src/content/spellingBank.ts` holds 90 zone-themed words (15 per band), each with a spoken sentence and a phonics hint.
+  - **Generator.** `spellingGenerator.ts` — band lookup + per-band anti-repeat, and a `scrambleWord` that can never return the word in order.
+  - **Audio.** `engine/speech.ts` wraps the Web Speech API. No audio assets. `isSpeechAvailable()` + `availableCategories()` drop spelling on devices that cannot speak.
+  - **UI.** `components/SpellingPuzzle.tsx` — drag-and-drop letter tiles with tap fallback, slot swapping, Clear, and a Check button that only arms once every letter is placed. `<ProblemCard>` still owns attempts/encouragement/hints, so §10's retry rules apply unchanged.
+  - **Wiring.** `'spelling'` joins `ALL_CATEGORIES` in `puzzleSelector.ts`, so reinforcement weighting covers it for free. Appears in Practice and Hunt. **No save version bump** — the category union widens without changing the persisted shape.
+  - Tests: `spelling.test.ts` (scramble guarantees, band routing, anti-repeat, bank integrity) plus reworked `puzzleSelector.test.ts` for four categories. 267 tests passing, build clean.
 - **M3 — Polish:** balance tuning (the 1.5/0.5 dial), audio, save backup UX, content top-ups to the Explore pool.
 
 ---
@@ -529,3 +545,7 @@ Framed as expansion / unlock-style content once v1 is proven and loved:
 ## 17. Bug fixes
 
 - **Missing pony art on reward/display screens:** `CreatureSprite` only renders real PNG art when passed `speciesId`; three screens omitted it, so ponies appeared as element-colored placeholder circles despite art existing in `src/assets/ponies/`. Fixed by passing `speciesId` on: the Quest "You tamed …!" reward reveal, the completed-quest revisit view (which also now shows the earned pony's sprite instead of just ✅ + text), the GameComplete victory roster, and the pre-Trial "Your team" preview.
+
+- **Rolling puzzle history was wiped on every load:** `migrateSave` routed v5/v6/v7 saves through `migrateV5`, which spread `PUZZLE_DEFAULTS` **last** — and since the v5 shape has no `recentPuzzleAttempts` field, the stored history was silently reset to `[]` every single time the game loaded. The §9 reinforcement weighting therefore never accumulated across sessions and effectively never fired. Fixed by adding the optional field to the v5+ superset shape and reading it through a `sanitizeAttempts` helper (drops malformed/unknown-category entries, caps at the last 10). Regression-tested in `save.test.ts`.
+
+- **Lint debt cleared (`npm run lint` now exits clean):** `eslint-plugin-react-hooks` 7.x folded the React Compiler rules into its recommended preset, which lit up three pre-existing problems in `BattleScreen.tsx` that the older preset never checked. (1) `stateRef` mirrored `battleState` by assigning `.current` **during render**; it was redundant — `fireFrom` already closes over the current `battleState` on the line above — so the ref is deleted. (2) `previewLabel` read `dragFrom.current` during render to pick the damage-preview attacker, so React had no reason to re-render when it changed; it only looked correct because `dragPos` updates on every pointermove and forced a re-render anyway. Fixed with a `dragTileId` state mirror set in lockstep with the ref — event handlers still read the ref, anything rendered reads the state. (3) The turn-machine effect's `setPhase` calls are **kept deliberately** (scoped `eslint-disable` + rationale): phase transitions are gated on the previous animation finishing, and deriving victory/defeat from `battleState` would pop the overlay the instant the last HP hits 0, mid death-flash. Also: `argsIgnorePattern: '^_'` added to the ESLint config so `xpForNextLevel(_level)`'s intentionally-unused parameter stops erroring, a dead `= 0` initializer removed in `mathGenerator.ts`, and one `let` → `const` in `battle.test.ts`.

@@ -103,6 +103,8 @@ export default function BattleScreen({
   const [dragOrigin,    setDragOrigin]    = useState<{ x: number; y: number } | null>(null)
   const [dragPos,       setDragPos]       = useState<{ x: number; y: number } | null>(null)
   const [hovEnemyId,    setHovEnemyId]    = useState<string | null>(null)
+  // Render-safe mirror of `dragFrom` (a ref can't be read during render).
+  const [dragTileId,    setDragTileId]    = useState<string | null>(null)
   const [floats,        setFloats]        = useState<DmgFloat[]>([])
 
   // Player ponies that still have their action this round (only during her phase).
@@ -120,11 +122,9 @@ export default function BattleScreen({
   const ponyRefs    = useRef<Record<string, HTMLDivElement | null>>({})
   const pointerDown = useRef<{ x: number; y: number } | null>(null)
   // Which pony a drag started from (kept in a ref so the tap-click that follows
-  // pointerup doesn't clobber the selection).
+  // pointerup doesn't clobber the selection). Event handlers read the ref;
+  // anything rendered reads `dragTileId` below, which is set in lockstep with it.
   const dragFrom    = useRef<string | null>(null)
-  // Keep a ref in sync with battleState so callbacks always see current state
-  const stateRef    = useRef(battleState)
-  stateRef.current  = battleState
 
   // ── executeAttack — runs lunge → flash → HP drain → idle ─────────────────
   const executeAttack = useCallback((
@@ -170,6 +170,13 @@ export default function BattleScreen({
   }, [])
 
   // ── Turn machine ──────────────────────────────────────────────────────────
+  // A state machine, not derived state, and the setState calls below are
+  // deliberate. Every transition is gated on the previous animation finishing:
+  // executeAttack only returns phase to 'idle' ~860ms after a hit (380ms lunge
+  // + 480ms flash). Deriving victory/defeat straight from `battleState` would
+  // render the overlay the instant the last HP hits 0 — mid death-flash, before
+  // the damage float and settle — so the phase hop has to stay.
+  /* eslint-disable react-hooks/set-state-in-effect */
   useEffect(() => {
     if (phase !== 'idle') return
 
@@ -195,6 +202,7 @@ export default function BattleScreen({
     }, 700)
     return () => clearTimeout(t)
   }, [battleState, phase, executeAttack])
+  /* eslint-enable react-hooks/set-state-in-effect */
 
   // ── Player pony tap (step 1: choose which pony acts) ─────────────────────
   function handlePonyClick(ponyId: string) {
@@ -209,7 +217,7 @@ export default function BattleScreen({
     const enemy = battleState.enemyPonies.find(p => p.id === enemyId)
     if (!enemy || enemy.currentHp <= 0) return
     setPhase('animating')
-    executeAttack(stateRef.current, attackerId, enemyId)
+    executeAttack(battleState, attackerId, enemyId)
   }
 
   function handleEnemyClick(enemyId: string) {
@@ -221,6 +229,7 @@ export default function BattleScreen({
   function handlePointerDown(e: React.PointerEvent, ponyId: string) {
     if (phase !== 'playerPhase' || !readyIds.includes(ponyId)) return
     dragFrom.current = ponyId
+    setDragTileId(ponyId)
     e.currentTarget.setPointerCapture(e.pointerId)
     const el = ponyRefs.current[ponyId]
     if (!el) return
@@ -261,6 +270,7 @@ export default function BattleScreen({
 
     if (dist < 10) {
       dragFrom.current = null
+      setDragTileId(null)
       setDragOrigin(null)
       setDragPos(null)
       return
@@ -269,6 +279,7 @@ export default function BattleScreen({
     const target = hovEnemyId
     const from = dragFrom.current
     dragFrom.current = null
+    setDragTileId(null)
     setDragOrigin(null)
     setDragPos(null)
     setHovEnemyId(null)
@@ -287,6 +298,7 @@ export default function BattleScreen({
     setAttackingId(null)
     setFlashingId(null)
     dragFrom.current = null
+    setDragTileId(null)
     setDragOrigin(null)
     setDragPos(null)
     setHovEnemyId(null)
@@ -295,7 +307,7 @@ export default function BattleScreen({
 
   // ── Damage preview label (uses the pony she's about to attack with) ───────
   function previewLabel(enemyId: string): string | null {
-    const attackerId = dragFrom.current ?? selectedId
+    const attackerId = dragTileId ?? selectedId
     if (!attackerId) return null
     const attacker = battleState.playerPonies.find(p => p.id === attackerId)
     if (!attacker) return null

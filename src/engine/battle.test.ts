@@ -195,7 +195,7 @@ describe('round cycle — both phases then reset', () => {
 
     // ── Round 1 ──────────────────────────────────────────────────────────
     expect(state.activePhase).toBe('enemy')         // water faster
-    let actor = nextActor(state)
+    const actor = nextActor(state)
     expect(actor?.pony.id).toBe('w1')
 
     // water→earth: ×1.0 neutral (asymmetric matrix) → damage 10
