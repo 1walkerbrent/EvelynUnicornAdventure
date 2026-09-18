@@ -74,19 +74,20 @@ describe('generateSpellingProblem', () => {
   })
 
   it('cycles a band before repeating a word (anti-repeat)', () => {
-    // Band 6 has its own tracker; 15 pulls should yield close to 15 distinct
-    // words (the tracker window is poolSize - 1).
+    // Band 6 has its own tracker sized to the band. N pulls should yield close
+    // to N distinct words (the tracker window is poolSize - 1).
+    const poolSize = SPELLING_BANK.filter(e => e.zone === 6).length
     const rng = seededRng(404)
     const seen = new Set<string>()
-    for (let i = 0; i < 15; i++) seen.add(generateSpellingProblem(24, rng).word)
-    expect(seen.size).toBeGreaterThanOrEqual(14)
+    for (let i = 0; i < poolSize; i++) seen.add(generateSpellingProblem(24, rng).word)
+    expect(seen.size).toBeGreaterThanOrEqual(poolSize - 1)
   })
 })
 
 describe('SPELLING_BANK integrity', () => {
-  it('has 15 words in each of the 6 zones', () => {
+  it('has 25 words in each of the 6 zones', () => {
     for (let zone = 1; zone <= 6; zone++) {
-      expect(SPELLING_BANK.filter(e => e.zone === zone)).toHaveLength(15)
+      expect(SPELLING_BANK.filter(e => e.zone === zone)).toHaveLength(25)
     }
   })
 
@@ -121,6 +122,27 @@ describe('SPELLING_BANK integrity', () => {
         tokens.includes(entry.word),
         `hint for "${entry.word}" spells it out`,
       ).toBe(false)
+    }
+  })
+
+  it('stays within the per-band length ceiling (grade calibration)', () => {
+    // The ramp tops out at ~4th grade. These ceilings are the tripwire: a word
+    // longer than its band's cap is almost always vocabulary above her level
+    // ("turbulent", "constellation"), which is how the first bank drifted.
+    const MAX_LEN: Record<number, number> = { 1: 6, 2: 7, 3: 8, 4: 9, 5: 10, 6: 11 }
+    for (const entry of SPELLING_BANK) {
+      expect(
+        entry.word.length,
+        `"${entry.word}" is ${entry.word.length} letters, over band ${entry.zone}'s cap of ${MAX_LEN[entry.zone]}`,
+      ).toBeLessThanOrEqual(MAX_LEN[entry.zone])
+    }
+  })
+
+  it('never reintroduces the words pulled for being above grade level', () => {
+    const TOO_ADVANCED = ['turbulent', 'atmosphere', 'celestial', 'brilliance', 'constellation']
+    const words = new Set(SPELLING_BANK.map(e => e.word))
+    for (const w of TOO_ADVANCED) {
+      expect(words.has(w), `"${w}" is 5th-6th grade vocabulary`).toBe(false)
     }
   })
 

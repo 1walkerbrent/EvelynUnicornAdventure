@@ -34,7 +34,11 @@ export default function GameComplete() {
           })}
         </div>
 
-        <p className="text-purple-400 text-sm italic">More adventures (and New Game+) are coming soon!</p>
+        <p className="text-amber-200/90 text-sm italic max-w-sm">
+          Want to do it all again? Head back to your map and tap
+          <span className="font-semibold"> ✨ New Journey</span> — you'll start fresh,
+          but Aurelune comes with you.
+        </p>
 
         <button onClick={() => setScreen('worldMap')}
           className="bg-amber-400 hover:bg-amber-300 text-purple-950 font-bold px-8 py-4 rounded-2xl text-lg transition-colors">

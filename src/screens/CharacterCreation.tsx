@@ -33,9 +33,13 @@ export default function CharacterCreation() {
   const setPlayerName = useGameStore((s) => s.setPlayerName)
   const addToParty    = useGameStore((s) => s.addToParty)
   const setScreen     = useGameStore((s) => s.setScreen)
+  const playerName    = useGameStore((s) => s.playerName)
+  const prestigeCount = useGameStore((s) => s.prestigeCount)
+  // A prestige run reuses her existing name — she only picks a new starter.
+  const isNewJourney  = playerName !== ''
 
   const [step,         setStep]        = useState<'pick' | 'customize'>('pick')
-  const [trainerName,  setTrainerName] = useState('Evelyn')
+  const [trainerName,  setTrainerName] = useState(() => playerName || 'Evelyn')
   const [pickedId,     setPickedId]    = useState('')
   const [nickname,     setNickname]    = useState('')
   const [accentColor,  setAccentColor] = useState('#f472b6')
@@ -75,14 +79,18 @@ export default function CharacterCreation() {
         <div className="absolute inset-0 bg-black/50" />
         <div className="relative z-10 flex-1 overflow-y-auto p-4 space-y-5">
           <div className="text-center pt-4">
-            <div className="text-5xl mb-2">🌟</div>
-            <h1 className="text-3xl font-bold text-yellow-300">Welcome, Trainer!</h1>
+            <div className="text-5xl mb-2">{isNewJourney ? '✨' : '🌟'}</div>
+            <h1 className="text-3xl font-bold text-yellow-300">
+              {isNewJourney ? `Journey ${prestigeCount + 1}!` : 'Welcome, Trainer!'}
+            </h1>
             <p className="text-purple-300 text-sm mt-1">
-              Choose your first companion to begin your adventure.
+              {isNewJourney
+                ? 'Aurelune is waiting for you. Choose a new companion to travel with.'
+                : 'Choose your first companion to begin your adventure.'}
             </p>
           </div>
 
-          <div>
+          <div className={isNewJourney ? 'hidden' : ''}>
             <label className="block text-purple-300 text-sm font-medium mb-1">
               Your name
             </label>

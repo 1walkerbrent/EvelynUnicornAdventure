@@ -27,13 +27,14 @@ export function scrambleWord(word: string, rng: () => number = Math.random): str
   return [...letters.slice(1), letters[0]]
 }
 
-// One anti-repeat tracker per band so the same word doesn't recur until the
-// band's pool of 15 has cycled (mirrors the comprehension generator).
+// One anti-repeat tracker per band, sized from that band's actual word count so
+// the whole pool cycles before anything repeats. Derived, not hardcoded —
+// growing the bank must not silently shrink the window.
 const trackers = new Map<number, RecentlySeenTracker>()
-function trackerFor(band: number): RecentlySeenTracker {
+function trackerFor(band: number, poolSize: number): RecentlySeenTracker {
   let t = trackers.get(band)
   if (!t) {
-    t = new RecentlySeenTracker(15)
+    t = new RecentlySeenTracker(poolSize)
     trackers.set(band, t)
   }
   return t
@@ -47,7 +48,7 @@ export function generateSpellingProblem(
   const bandEntries = SPELLING_BANK.filter(e => e.zone === band)
 
   const ids = bandEntries.map((_, i) => i)
-  const idx = trackerFor(band).pickFresh(ids, rng)
+  const idx = trackerFor(band, bandEntries.length).pickFresh(ids, rng)
   const entry = bandEntries[idx]
 
   return {

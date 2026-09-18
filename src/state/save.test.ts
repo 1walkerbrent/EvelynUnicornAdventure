@@ -213,3 +213,60 @@ describe('migrateSave — recentPuzzleAttempts survive a reload', () => {
     expect(migrateSave(v7Save(undefined))!.recentPuzzleAttempts).toEqual([])
   })
 })
+
+describe('migrateSave — prestige fields (save v8)', () => {
+  function v8Save(extra: Record<string, unknown>) {
+    return {
+      version: 8,
+      playerName: 'Evelyn',
+      party: [{ ...ponyNoIvs('aurelune'), id: 'c1', ivs: { heart: 3, power: 3, speed: 3 } }],
+      areasDone: [],
+      championDefeated: false,
+      activeTeam: [],
+      trialLossStreaks: {},
+      recentPuzzleAttempts: [],
+      ...extra,
+    }
+  }
+
+  it('round-trips the journey counter', () => {
+    expect(migrateSave(v8Save({ prestigeCount: 3 }))!.prestigeCount).toBe(3)
+  })
+
+  it('round-trips the awaiting-starter flag', () => {
+    expect(migrateSave(v8Save({ awaitingStarter: true }))!.awaitingStarter).toBe(true)
+  })
+
+  it('treats every pre-v8 save as a first journey', () => {
+    const v7 = {
+      version: 7,
+      playerName: 'Evelyn',
+      party: [{ ...ponyNoIvs('ember-spark'), id: 'c1', ivs: { heart: 1, power: 1, speed: 1 } }],
+      areasDone: ['brindlewood'],
+      championDefeated: false,
+      activeTeam: ['c1'],
+      trialLossStreaks: {},
+      recentPuzzleAttempts: [],
+    }
+    const state = migrateSave(v7)!
+    expect(state.prestigeCount).toBe(0)
+    expect(state.awaitingStarter).toBe(false)
+  })
+
+  it('a v4 save (well before prestige existed) still migrates', () => {
+    const state = migrateSave(v4Save([ponyNoIvs('marina-mist')]))!
+    expect(state.prestigeCount).toBe(0)
+    expect(state.awaitingStarter).toBe(false)
+  })
+
+  it('coerces a corrupted journey counter to a sane number', () => {
+    expect(migrateSave(v8Save({ prestigeCount: -5 }))!.prestigeCount).toBe(0)
+    expect(migrateSave(v8Save({ prestigeCount: 'lots' }))!.prestigeCount).toBe(0)
+    expect(migrateSave(v8Save({ prestigeCount: 2.7 }))!.prestigeCount).toBe(2)
+  })
+
+  it('only treats a literal true as awaiting a starter', () => {
+    expect(migrateSave(v8Save({ awaitingStarter: 'yes' }))!.awaitingStarter).toBe(false)
+    expect(migrateSave(v8Save({}))!.awaitingStarter).toBe(false)
+  })
+})

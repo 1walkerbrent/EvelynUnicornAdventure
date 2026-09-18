@@ -12,6 +12,7 @@ import type { Ivs } from '../engine/types'
 import { finalAreaId, badgeCount } from '../engine/progression'
 import { bumpStreak, clearStreak } from '../engine/team'
 import { updatePuzzleAttempts } from '../engine/puzzleSelector'
+import { prestigeParty } from '../engine/prestige'
 import type { PuzzleAttempt } from '../engine/puzzleSelector'
 
 export type Screen =
@@ -39,6 +40,10 @@ interface GameStore {
   trialLossStreaks: Record<string, number>
   /** Rolling 10-attempt puzzle history for reinforcement weighting. */
   recentPuzzleAttempts: PuzzleAttempt[]
+  /** Completed journeys (§15 prestige). 0 = first playthrough. */
+  prestigeCount: number
+  /** True from starting a new journey until that run's starter is picked. */
+  awaitingStarter: boolean
   // derived from areasDone — not persisted
   badges: number
   levelCap: number
@@ -56,6 +61,8 @@ interface GameStore {
   completeArea: (areaId: string) => void
   winTrial: (zoneId: string) => void
   winChampion: () => void
+  /** Start a new journey (§15): keep only the Champion trophies, reset everything else. */
+  prestige: () => void
   openZone: (zoneId: string) => void
   openArea: (areaId: string, screen: Screen) => void
   openExplore: (zoneId: string) => void
@@ -76,6 +83,8 @@ export const useGameStore = create<GameStore>()((set, get) => {
       activeTeam:           s.activeTeam,
       trialLossStreaks:     s.trialLossStreaks,
       recentPuzzleAttempts: s.recentPuzzleAttempts,
+      prestigeCount:        s.prestigeCount,
+      awaitingStarter:      s.awaitingStarter,
       lastZoneId:           s.selectedZoneId ?? undefined,
     })
   }
@@ -111,13 +120,17 @@ export const useGameStore = create<GameStore>()((set, get) => {
     activeTeam:            [],
     trialLossStreaks:       {},
     recentPuzzleAttempts:  [],
+    prestigeCount:         0,
+    awaitingStarter:       false,
     badges:                0,
     levelCap:         levelCapForBadges(0),
     currentScreen:    'worldMap',
     selectedZoneId:   null,
     selectedAreaId:   null,
 
-    setPlayerName: (name) => { set({ playerName: name }); persist() },
+    // Called once, as the last step of character creation — which is also what
+    // ends the "pick this journey's starter" state on a prestige run.
+    setPlayerName: (name) => { set({ playerName: name, awaitingStarter: false }); persist() },
 
     addToParty: (creature) => {
       set({ party: [...get().party, creature] })
@@ -215,6 +228,28 @@ export const useGameStore = create<GameStore>()((set, get) => {
 
     save: () => persist(),
 
+    // §15 New Game+. Everything resets except the Champion trophies, which come
+    // along at the FRESH cap (level 4) — same difficulty curve as a first run,
+    // but she keeps the proof she won. The rolling puzzle history deliberately
+    // carries over: it describes how she learns, not how far she has progressed.
+    prestige: () => {
+      const fresh = derive([])
+      set({
+        party:            prestigeParty(get().party, fresh.levelCap),
+        areasDone:        [],
+        championDefeated: false,
+        activeTeam:       [],
+        trialLossStreaks: {},
+        prestigeCount:    get().prestigeCount + 1,
+        awaitingStarter:  true,
+        selectedZoneId:   null,
+        selectedAreaId:   null,
+        currentScreen:    'worldMap',
+        ...fresh,
+      })
+      persist()
+    },
+
     resetGame: () => {
       clearSave()
       set({
@@ -222,6 +257,8 @@ export const useGameStore = create<GameStore>()((set, get) => {
         party:                [],
         areasDone:            [],
         championDefeated:     false,
+        prestigeCount:        0,
+        awaitingStarter:      false,
         activeTeam:           [],
         trialLossStreaks:     {},
         recentPuzzleAttempts: [],
@@ -244,6 +281,8 @@ export const useGameStore = create<GameStore>()((set, get) => {
           activeTeam:            saved.activeTeam ?? [],
           trialLossStreaks:      saved.trialLossStreaks ?? {},
           recentPuzzleAttempts:  saved.recentPuzzleAttempts ?? [],
+          prestigeCount:         saved.prestigeCount ?? 0,
+          awaitingStarter:       saved.awaitingStarter ?? false,
           selectedZoneId:        saved.lastZoneId ?? null,
           currentScreen:         'worldMap',
           ...derive(saved.areasDone),

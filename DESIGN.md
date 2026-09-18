@@ -288,7 +288,7 @@ Problems are **generated from rules, never stored as a fixed list** — a hand-w
 - **Math** — bare equations only ("56 + 43 = __ ", "__ − 28 = 45"). No story wrappers. Player types the missing number. All three modes (Practice, Hunt, Quest) use math. *Two distinct difficulty bands*: Quest/Practice use zone-progression bands (harder); Hunt uses simpler per-zone bands so early zones are faster confidence-builders.
 - **Logic** — varied-format multiple-choice puzzles. Each band group has ≥8 templates (not all elimination-style): Z1–Z2 = comparison, pattern continuation, odd-one-out, categorization, if/then (3 choices); Z3–Z4 = two-attribute filter, ordering, chain reasoning, must-be-true (4 choices); Z5–Z6 = three-attribute deduction, impossibility detection, seating constraints (5 choices). Templates mix freely so the same format rarely appears twice in a row.
 - **Comprehension** — read a short passage then answer a multiple-choice question (4 choices, 3 plausible distractors). Static bank of **90 passages** (15 per zone, `src/content/comprehensionBank.ts`) — passages are zone-themed (Zone 1 = Brindlewood ponies, Zone 6 = Starfall Temple lore). Because the bank is finite, anti-repeat cycling ensures each zone's pool cycles before repeating.
-- **Spelling** — **audio-first**: the word is spoken, never shown, and she rebuilds it from scrambled letter tiles. Static bank of **90 words** (15 per zone, `src/content/spellingBank.ts`), banded by spelling difficulty rather than length alone (band 1 = short vowels and CVCe; band 6 = multi-syllable words with schwa sounds and silent letters). Three audio buttons — **🔊 Hear the word**, **🐢 Slower**, **💬 In a sentence** — are all re-tappable as many times as she likes, which is the whole point: she sounds it out at her own pace. See the *Spelling generator* subsection.
+- **Spelling** — **audio-first**: the word is spoken, never shown, and she rebuilds it from scrambled letter tiles. Static bank of **150 words** (25 per zone, `src/content/spellingBank.ts`). Three audio buttons — **🔊 Hear the word**, **🐢 Slower**, **💬 In a sentence** — are all re-tappable as many times as she likes, which is the whole point: she sounds it out at her own pace. See the *Spelling generator* subsection.
 
 ### Where each category appears
 
@@ -346,9 +346,24 @@ A **pool of templates with swappable variables** per band group — a deduction 
 
 Picks from the 90-entry static bank keyed by zone (band 1–6 maps to zone 1–6). An anti-repeat tracker per zone prevents the same passage repeating until the zone's pool of 15 cycles.
 
+### Spelling grade calibration
+
+**Difficulty comes from the spelling pattern, not from rare vocabulary.** Every word in the bank is one she can already *say*; the only thing she has to solve is how it is written. Length is not difficulty — `beautiful` and `turbulent` are both 9 letters, but only one of them is a word a 9-year-old owns.
+
+| Band | Zone | Target grade | Pattern focus |
+|---|---|---|---|
+| 1 | Z1 | ~1 | 4–6 letters; short vowels, CVCe, simple digraphs |
+| 2 | Z2 | ~2 | 5–7 letters; blends, double consonants |
+| 3 | Z3 | ~2–3 | 5–8 letters; vowel teams (ea/oa/ai), r-controlled vowels |
+| 4 | Z4 | ~3 | 5–9 letters; compound words, -ing/-ed suffix rules |
+| 5 | Z5 | ~3–4 | 6–10 letters; silent letters (gh, b, t), common suffixes |
+| 6 | Z6 | ~4 | 8–11 letters; multisyllable, -ful/-ness/-ous/-ship |
+
+The first pass at this bank was banded by **length and syllable count**, which let the top bands drift to 5th–6th grade vocabulary — `turbulent`, `atmosphere`, `celestial`, `brilliance`, `constellation`. Playtest caught `turbulent` in Zone 5. All five are removed and the ceiling is now solid 4th grade. Two tests in `spelling.test.ts` hold the line: a per-band maximum word length, and an explicit deny-list so those five can't come back.
+
 ### Spelling generator
 
-`src/engine/spellingGenerator.ts` picks from the 90-entry bank keyed by band (1–6 maps to zone 1–6), with a per-band anti-repeat tracker so a band's 15 words cycle before any repeats. `scrambleWord` is a seeded Fisher–Yates shuffle that is **guaranteed never to return the word already in the correct order** — an unscrambled word would hand her the answer. Tile identity is the *index* into the scrambled array, not the letter, so words with repeated letters (`pebble`, `shallow`) still have distinguishable tiles.
+`src/engine/spellingGenerator.ts` picks from the 150-entry bank keyed by band (1–6 maps to zone 1–6), with a per-band anti-repeat tracker so a band's 25 words cycle before any repeats. The tracker is **sized from the band's actual entry count**, not a hardcoded number, so growing the bank widens the window instead of silently shrinking it. `scrambleWord` is a seeded Fisher–Yates shuffle that is **guaranteed never to return the word already in the correct order** — an unscrambled word would hand her the answer. Tile identity is the *index* into the scrambled array, not the letter, so words with repeated letters (`pebble`, `shallow`) still have distinguishable tiles.
 
 **Audio** is the browser's built-in Web Speech API (`src/engine/speech.ts`) — deliberately asset-free, so there are no recordings to make, ship, or cache, and the voice comes from the device. Nothing ever auto-speaks: every call sits inside a button tap, which is also what iOS/Safari requires. A device with no speech synthesis drops spelling from the rotation entirely (`availableCategories`) rather than serving a puzzle she has no way to hear.
 
@@ -517,6 +532,7 @@ Build Zone 1 end-to-end before anything else, with placeholder art (colored shap
   - **Wiring.** `'spelling'` joins `ALL_CATEGORIES` in `puzzleSelector.ts`, so reinforcement weighting covers it for free. Appears in Practice and Hunt. **No save version bump** — the category union widens without changing the persisted shape.
   - Tests: `spelling.test.ts` (scramble guarantees, band routing, anti-repeat, bank integrity) plus reworked `puzzleSelector.test.ts` for four categories. 267 tests passing, build clean.
 - **M3 — Polish:** balance tuning (the 1.5/0.5 dial), audio, save backup UX, content top-ups to the Explore pool.
+- **M4 — Prestige / New Game+ ✅ DONE (current milestone):** the §15 restart, built as the same-difficulty variant. `engine/prestige.ts` (pure: `isCarriedThroughPrestige`, `resetToCap`, `prestigeParty`), a `store.prestige()` action, a two-step `<PrestigeDialog>` reached from a pinned bar on the world map, and an `awaitingStarter` flow that returns her to character creation for a fresh starter without re-asking her name. Save bumped to **v8** (`prestigeCount`, `awaitingStarter`; v7→v8 migration). Carries only Champion trophies, reset to the new cap. See §18. 293 tests passing, lint and build clean.
 
 ---
 
@@ -526,7 +542,7 @@ Framed as expansion / unlock-style content once v1 is proven and loved:
 - **Owlicorns and Pegasi** as new families (new art, family-specific flavor).
 - **Breeding:** offspring inherit element from parents; the "unique variant" payoff is a **palette swap** (e.g. Starlight or Shadow coloring), so it adds depth with near-zero new base art.
 - **Achievements / unlock milestones.**
-- **New Game+ (leveled restart):** on beating the game, offer "start over (same difficulty)" or "start over (harder)." The harder mode applies a global level offset that every problem generator reads (§9), so the math scales up automatically with no new content. Assign levels that keep problems getting incrementally harder as she progresses.
+- **New Game+ / prestige — ✅ BUILT (see §18).** The *same-difficulty* restart shipped. The **harder** variant is still deferred: it would apply a global level offset that every problem generator reads (§9), scaling the math up with no new content.
 
 ### Combat turn-order refinements (revisit when next touching battle)
 
@@ -549,3 +565,27 @@ Framed as expansion / unlock-style content once v1 is proven and loved:
 - **Rolling puzzle history was wiped on every load:** `migrateSave` routed v5/v6/v7 saves through `migrateV5`, which spread `PUZZLE_DEFAULTS` **last** — and since the v5 shape has no `recentPuzzleAttempts` field, the stored history was silently reset to `[]` every single time the game loaded. The §9 reinforcement weighting therefore never accumulated across sessions and effectively never fired. Fixed by adding the optional field to the v5+ superset shape and reading it through a `sanitizeAttempts` helper (drops malformed/unknown-category entries, caps at the last 10). Regression-tested in `save.test.ts`.
 
 - **Lint debt cleared (`npm run lint` now exits clean):** `eslint-plugin-react-hooks` 7.x folded the React Compiler rules into its recommended preset, which lit up three pre-existing problems in `BattleScreen.tsx` that the older preset never checked. (1) `stateRef` mirrored `battleState` by assigning `.current` **during render**; it was redundant — `fireFrom` already closes over the current `battleState` on the line above — so the ref is deleted. (2) `previewLabel` read `dragFrom.current` during render to pick the damage-preview attacker, so React had no reason to re-render when it changed; it only looked correct because `dragPos` updates on every pointermove and forced a re-render anyway. Fixed with a `dragTileId` state mirror set in lockstep with the ref — event handlers still read the ref, anything rendered reads the state. (3) The turn-machine effect's `setPhase` calls are **kept deliberately** (scoped `eslint-disable` + rationale): phase transitions are gated on the previous animation finishing, and deriving victory/defeat from `battleState` would pop the overlay the instant the last HP hits 0, mid death-flash. Also: `argsIgnorePattern: '^_'` added to the ESLint config so `xpForNextLevel(_level)`'s intentionally-unused parameter stops erroring, a dead `= 0` initializer removed in `mathGenerator.ts`, and one `let` → `const` in `battle.test.ts`.
+
+- **Spelling bank recalibrated to grade level (playtest fix):** the original 90-word bank was banded by length and syllable count, which pushed Bands 5–6 into 5th–6th grade vocabulary. Playtest surfaced `turbulent` in Zone 5 — decodable, but above a 9-year-old's spelling level. Bank rebuilt around *familiar words with tricky spelling patterns* and expanded to **150 words (25 per zone)**; `turbulent`, `atmosphere`, `celestial`, `brilliance` and `constellation` removed, ceiling brought down to solid 4th grade (see the *Spelling grade calibration* subsection). Also fixed alongside: `spellingGenerator`'s anti-repeat tracker hardcoded a 15-word window, so the expanded 25-word bands would have started repeating after 14 — it now derives the window from the band's entry count.
+
+---
+
+## 18. Prestige / New Game+ (§15)
+
+Beating Grand Champion Vesper unlocks a **new journey**: the whole game resets, and the only thing that travels with her is the legendary trophy that proves she finished it.
+
+**Entry point.** A pinned **✨ New Journey** bar appears at the bottom of the world map, gated on `championDefeated && hasTrophy` — she must actually hold an Aurelune, or there would be nothing to carry. The bar also shows which journey she is on once `prestigeCount > 0`.
+
+**Two-step confirm** (`components/PrestigeDialog.tsx`). Prestiging destroys five badges and every non-trophy pony with no undo, so it is deliberately not a single tap:
+1. **Explain.** A green *You KEEP* panel (Aurelune, her name, her journey count) beside a red *You START OVER* panel that names the exact count of ponies left behind, the badges, the zone locks, and the level-cap drop.
+2. **Confirm.** A second screen restates that it cannot be undone before the final red **Start Journey N** button. Nothing mutates until that press; both screens can back out.
+
+**What carries.** Only Champion trophies (`engine/prestige.ts`, pure and tested). Each is **reset to the new run's level cap** (level 4 at 0 badges), XP cleared, HP refilled — keeping its instance `id` and permanent IVs, so it is the same individual starting over. The difficulty curve is therefore identical to a first playthrough; Aurelune still *feels* legendary because tier 5 + max IVs outclasses a level-3 starter without trivialising anything. Winning again adds another trophy, so a third journey starts with two — this is exactly what the save-v7 instance ids were added for.
+
+**What resets.** `areasDone`, `championDefeated`, `activeTeam`, `trialLossStreaks`, and every non-trophy pony. `badges`/`levelCap` follow automatically, since they are derived from `areasDone`.
+
+**What deliberately does *not* reset.** `playerName`, and the rolling `recentPuzzleAttempts` window — that history describes *how she learns*, not how far she has progressed, so the §9 reinforcement weighting stays calibrated across journeys.
+
+**New starter.** `awaitingStarter` (persisted) routes her back into `<CharacterCreation>` without clearing her name: the screen reads "Journey N!", hides the name field, and she picks a fresh starter from all five elements. `setPlayerName` clears the flag as the last step of creation.
+
+**Save v8** adds `prestigeCount` and `awaitingStarter`, with a v7→v8 migration that defaults every earlier save to a first journey and coerces a corrupted counter to a sane integer.

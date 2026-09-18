@@ -5,7 +5,7 @@ import type { PuzzleAttempt, PuzzleCategory } from '../engine/puzzleSelector'
 import { ALL_CATEGORIES } from '../engine/puzzleSelector'
 
 export interface SaveData {
-  version: 7
+  version: 8
   playerName: string
   party: Creature[]
   /** Completed area ids — the single source of truth for progression. */
@@ -17,20 +17,25 @@ export interface SaveData {
   trialLossStreaks: Record<string, number>
   /** Rolling 10-attempt history for reinforcement category weighting (M3a). */
   recentPuzzleAttempts: PuzzleAttempt[]
+  /** How many times she has beaten the Champion and started over (§15). 0 = first journey. */
+  prestigeCount: number
+  /** True between starting a new journey and picking that run's starter pony. */
+  awaitingStarter: boolean
   /** Last zone she was viewing (restored on load for convenience). */
   lastZoneId?: string
 }
 
 const SAVE_KEY = 'evelyn_unicorn_adventure'
-const VERSION = 7 as const
+const VERSION = 8 as const
 
 /** Save schema versions this build can read (current + migratable predecessors). */
-const READABLE_VERSIONS = [7, 6, 5, 4, 3, 2]
+const READABLE_VERSIONS = [8, 7, 6, 5, 4, 3, 2]
 
 export type PersistedState = Omit<SaveData, 'version'>
 
 const M2E_DEFAULTS = { activeTeam: [] as string[], trialLossStreaks: {} as Record<string, number> }
 const PUZZLE_DEFAULTS = { recentPuzzleAttempts: [] as PuzzleAttempt[] }
+const PRESTIGE_DEFAULTS = { prestigeCount: 0, awaitingStarter: false }
 
 /**
  * Keep only well-formed attempts, so a hand-edited or older save can't feed
@@ -83,6 +88,9 @@ interface SaveDataV5 {
   trialLossStreaks: Record<string, number>
   /** Present from v6 onward; absent on a true v5 save. */
   recentPuzzleAttempts?: PuzzleAttempt[]
+  /** Present from v8 onward. */
+  prestigeCount?: number
+  awaitingStarter?: boolean
   lastZoneId?: string
 }
 
@@ -99,6 +107,9 @@ function migrateV5(d: SaveDataV5): PersistedState {
     // and sanitizeAttempts turns that into []. Previously this spread
     // PUZZLE_DEFAULTS last, silently wiping the history on every load.
     recentPuzzleAttempts: sanitizeAttempts(d.recentPuzzleAttempts),
+    // v8 (§15 prestige). A pre-v8 save is a first journey by definition.
+    prestigeCount:        Math.max(0, Math.floor(Number(d.prestigeCount) || 0)),
+    awaitingStarter:      d.awaitingStarter === true,
   }
 }
 
@@ -124,6 +135,7 @@ function migrateV4(d: SaveDataV4): PersistedState {
     trialLossStreaks: d.trialLossStreaks ?? {},
     lastZoneId:       d.lastZoneId,
     ...PUZZLE_DEFAULTS,
+    ...PRESTIGE_DEFAULTS,
   }
 }
 
@@ -146,6 +158,7 @@ function migrateV3(d: SaveDataV3): PersistedState {
     lastZoneId:       d.lastZoneId,
     ...M2E_DEFAULTS,
     ...PUZZLE_DEFAULTS,
+    ...PRESTIGE_DEFAULTS,
   }
 }
 
@@ -173,6 +186,7 @@ function migrateV2(d: SaveDataV2): PersistedState {
     championDefeated: false,
     ...M2E_DEFAULTS,
     ...PUZZLE_DEFAULTS,
+    ...PRESTIGE_DEFAULTS,
   }
 }
 
@@ -189,9 +203,10 @@ export function migrateSave(parsed: unknown): PersistedState | null {
   const version = (parsed as { version?: number }).version
 
   let state: PersistedState | null = null
-  // v7/v6/v5 share the same superset shape (v7 adds Creature.id + id-based
-  // activeTeam, both handled by the universal backfill below).
-  if (version === 7 || version === 6 || version === 5) state = migrateV5(parsed as SaveDataV5)
+  // v8/v7/v6/v5 share the same superset shape (v7 adds Creature.id + id-based
+  // activeTeam, both handled by the universal backfill below; v8 adds the
+  // prestige fields, defaulted in migrateV5).
+  if (version === 8 || version === 7 || version === 6 || version === 5) state = migrateV5(parsed as SaveDataV5)
   else if (version === 4)   state = migrateV4(parsed as SaveDataV4)
   else if (version === 3)   state = migrateV3(parsed as SaveDataV3)
   else if (version === 2)   state = migrateV2(parsed as SaveDataV2)

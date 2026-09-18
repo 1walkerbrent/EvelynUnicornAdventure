@@ -20,13 +20,15 @@ const FULLSCREEN_SCREENS = new Set(['provingGlade', 'trial', 'champion', 'gameCo
 export default function App() {
   const playerName    = useGameStore((s) => s.playerName)
   const currentScreen = useGameStore((s) => s.currentScreen)
+  const awaitingStarter = useGameStore((s) => s.awaitingStarter)
   const load          = useGameStore((s) => s.load)
 
   useEffect(() => {
     load()
   }, [load])
 
-  const isCreating   = playerName === ''
+  // Either a brand-new player, or a prestige run waiting on this journey's starter.
+  const isCreating   = playerName === '' || awaitingStarter
   const isFullscreen = isCreating || FULLSCREEN_SCREENS.has(currentScreen)
 
   if (isFullscreen) {

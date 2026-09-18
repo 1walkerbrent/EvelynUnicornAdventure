@@ -1,9 +1,11 @@
-import { useEffect, useMemo, useRef } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { useGameStore } from '../state/store'
 import { ZONES } from '../content/zones'
 import { CHAMPION } from '../content/guardians'
 import { isZoneUnlocked, isZoneComplete, isChampionUnlocked } from '../engine/progression'
 import worldMapImg from '../assets/backgrounds/world-map.jpg'
+import PrestigeDialog from '../components/PrestigeDialog'
+import { CHAMPION_SPECIES } from '../content/creatures'
 
 // Visual scrolling path map (replaces the old list). Zone nodes are absolutely
 // positioned on top of the baked-in golden path in world-map.jpg — the % below
@@ -39,6 +41,8 @@ export default function WorldMap() {
   const areasDone        = useGameStore((s) => s.areasDone)
   const badges           = useGameStore((s) => s.badges)
   const championDefeated = useGameStore((s) => s.championDefeated)
+  const party            = useGameStore((s) => s.party)
+  const prestigeCount    = useGameStore((s) => s.prestigeCount)
   const openZone         = useGameStore((s) => s.openZone)
   const openExplore      = useGameStore((s) => s.openExplore)
   const setScreen        = useGameStore((s) => s.setScreen)
@@ -48,6 +52,12 @@ export default function WorldMap() {
   const nodeRefs    = useRef<Record<string, HTMLDivElement | null>>({})
 
   const championOpen = isChampionUnlocked(areasDone)
+
+  // §15: a new journey is only offered once she has actually won AND is holding
+  // the trophy — there would be nothing to carry over otherwise.
+  const hasTrophy = party.some((c) => c.speciesId === CHAMPION_SPECIES.id)
+  const canPrestige = championDefeated && hasTrophy
+  const [showPrestige, setShowPrestige] = useState(false)
 
   // Furthest unlocked, not-yet-cleared zone (the frontier) — the auto-scroll
   // target. If everything is cleared, fall to the Champion (if open) or Zone 6.
@@ -196,6 +206,31 @@ export default function WorldMap() {
           })}
         </div>
       </div>
+
+      {/* §15 New Game+ — only after the Champion has actually been beaten. */}
+      {canPrestige && (
+        <div className="absolute bottom-3 left-3 right-3 z-30 px-4 py-3 rounded-2xl shadow-xl
+                        bg-purple-900/90 backdrop-blur-sm border border-amber-400/40
+                        flex items-center justify-between gap-3">
+          <div className="min-w-0">
+            <p className="text-amber-300 text-sm font-bold">🏆 Champion!</p>
+            <p className="text-purple-300 text-xs truncate">
+              {prestigeCount > 0
+                ? `You're on Journey ${prestigeCount + 1}. Ready for another?`
+                : 'Start over and keep Aurelune.'}
+            </p>
+          </div>
+          <button
+            onClick={() => setShowPrestige(true)}
+            className="flex-shrink-0 bg-amber-400 hover:bg-amber-300 active:bg-amber-500
+                       text-purple-950 font-bold px-4 py-3 rounded-xl text-sm transition-colors shadow-lg"
+          >
+            ✨ New Journey
+          </button>
+        </div>
+      )}
+
+      {showPrestige && <PrestigeDialog onClose={() => setShowPrestige(false)} />}
     </div>
   )
 }
