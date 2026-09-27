@@ -10,9 +10,13 @@
  *   Band 4 (Z4) — 3-digit, 2 steps
  *   Band 5 (Z5) — 3-digit, 2–3 steps
  *   Band 6 (Z6) — 3-digit, 2–3 steps, extraneous number in hint only
+ *
+ * A share of problems (MULTIPLICATION_SHARE) are beginner multiplication facts
+ * instead, drawn from the same band — see multiplicationGenerator.ts.
  */
 import type { MathProblem } from './problems'
 import { bandForDifficulty } from './difficulty'
+import { generateMultiplicationProblem, MULTIPLICATION_SHARE } from './multiplicationGenerator'
 
 type Rng = () => number
 type Op = '+' | '−'
@@ -167,8 +171,16 @@ function generateBanded(band: 2 | 3 | 4 | 5 | 6, rng: Rng): MathProblem {
 // PUBLIC ENTRY — routes by effective difficulty
 // ════════════════════════════════════════════════════════════════════════════
 
-export function generateMathProblem(difficulty: number, rng: Rng = Math.random): MathProblem {
+/** Addition/subtraction only — the §9 bands with no multiplication mixed in. */
+export function generateAddSubProblem(difficulty: number, rng: Rng = Math.random): MathProblem {
   const band = bandForDifficulty(difficulty)
   if (band === 1) return generateBand1(difficulty, rng)
   return generateBanded(band, rng)
+}
+
+export function generateMathProblem(difficulty: number, rng: Rng = Math.random): MathProblem {
+  if (rng() < MULTIPLICATION_SHARE) {
+    return generateMultiplicationProblem(bandForDifficulty(difficulty), rng)
+  }
+  return generateAddSubProblem(difficulty, rng)
 }

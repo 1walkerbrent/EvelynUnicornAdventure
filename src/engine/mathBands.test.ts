@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { buildMathSpec, generateMathProblem } from './mathGenerator'
+import { buildMathSpec, generateAddSubProblem } from './mathGenerator'
 import type { MathSpec } from './mathGenerator'
 
 // Expected answer digit-range per band (§9 ramp).
@@ -108,7 +108,7 @@ describe('band 6 — extraneous info', () => {
   })
 })
 
-describe('generateMathProblem — routing & rendered output', () => {
+describe('generateAddSubProblem — routing & rendered output', () => {
   // Representative difficulty inside each zone band.
   const cases: Array<{ diff: number; band: number }> = [
     { diff: 5,  band: 2 },
@@ -122,7 +122,7 @@ describe('generateMathProblem — routing & rendered output', () => {
     it(`difficulty ${diff} (band ${band}) → positive in-range integer answer with prose + hint`, () => {
       const [lo, hi] = BAND_RANGE[band]
       for (let i = 0; i < 100; i++) {
-        const p = generateMathProblem(diff)
+        const p = generateAddSubProblem(diff)
         expect(p.type).toBe('math')
         expect(Number.isInteger(p.correctAnswer)).toBe(true)
         expect(p.correctAnswer).toBeGreaterThanOrEqual(lo)
@@ -136,7 +136,7 @@ describe('generateMathProblem — routing & rendered output', () => {
   it('higher bands produce larger average answers than band 2', () => {
     const mean = (diff: number) => {
       let sum = 0
-      for (let i = 0; i < 200; i++) sum += generateMathProblem(diff).correctAnswer
+      for (let i = 0; i < 200; i++) sum += generateAddSubProblem(diff).correctAnswer
       return sum / 200
     }
     expect(mean(13)).toBeGreaterThan(mean(5))   // 3-digit band vs 2-digit band

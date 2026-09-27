@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest'
 import { effectiveDifficulty, ZONE_BANDS } from './difficulty'
-import { generateMathProblem } from './mathGenerator'
+import { generateAddSubProblem } from './mathGenerator'
 import { generateLogicProblem } from './logicGenerator'
 
 // Seeded PRNG (mulberry32) so statistical assertions are deterministic and never
@@ -43,17 +43,17 @@ describe('effectiveDifficulty', () => {
 
 // ── Math generator invariants (200 samples) ──────────────────────────────────
 
-describe('generateMathProblem — hard invariants over 200 samples', () => {
+describe('generateAddSubProblem — hard invariants over 200 samples', () => {
   it('answer is always strictly positive', () => {
     for (let i = 0; i < 200; i++) {
-      const p = generateMathProblem(2)
+      const p = generateAddSubProblem(2)
       expect(p.correctAnswer).toBeGreaterThan(0)
     }
   })
 
   it('answer is always within 2-digit range (Zone 1: [10, 99])', () => {
     for (let i = 0; i < 200; i++) {
-      const p = generateMathProblem(2)
+      const p = generateAddSubProblem(2)
       expect(p.correctAnswer).toBeGreaterThanOrEqual(10)
       expect(p.correctAnswer).toBeLessThanOrEqual(99)
     }
@@ -61,7 +61,7 @@ describe('generateMathProblem — hard invariants over 200 samples', () => {
 
   it('answer is always an integer', () => {
     for (let i = 0; i < 200; i++) {
-      const p = generateMathProblem(2)
+      const p = generateAddSubProblem(2)
       expect(Number.isInteger(p.correctAnswer)).toBe(true)
     }
   })
@@ -70,7 +70,7 @@ describe('generateMathProblem — hard invariants over 200 samples', () => {
     // For subtraction templates: a > b always, so the first large number appears before the smaller.
     // We just verify both numbers from the hint appear in the prompt.
     for (let i = 0; i < 200; i++) {
-      const p = generateMathProblem(2)
+      const p = generateAddSubProblem(2)
       // Hint always contains the operand numbers in the format "... X ... Y ..."
       expect(p.hint.length).toBeGreaterThan(10)
       expect(p.prompt).toContain('__')   // bare-equation format: "a + b = __"
@@ -89,8 +89,8 @@ describe('generateMathProblem — hard invariants over 200 samples', () => {
     let sumDiff3 = 0
     const N = 300
     for (let i = 0; i < N; i++) {
-      sumDiff1 += generateMathProblem(1, rng1).correctAnswer
-      sumDiff3 += generateMathProblem(3, rng3).correctAnswer
+      sumDiff1 += generateAddSubProblem(1, rng1).correctAnswer
+      sumDiff3 += generateAddSubProblem(3, rng3).correctAnswer
     }
     expect(sumDiff3 / N).toBeGreaterThan(sumDiff1 / N)
   })
@@ -168,7 +168,7 @@ describe('anti-repeat — no immediate consecutive repeats', () => {
   it('math: 12 consecutive problems never repeat the immediately preceding template', () => {
     let prev: string | null = null
     for (let i = 0; i < 12; i++) {
-      const p = generateMathProblem(2)
+      const p = generateAddSubProblem(2)
       // Use a fragment of the prompt as a proxy for the template identity
       const fragment = p.prompt.slice(0, 20)
       if (prev !== null) expect(fragment).not.toBe(prev)

@@ -338,6 +338,23 @@ Bare equations with no story wrapper. All answers are positive integers; subtrac
 | 5 | 3-digit, one operation, blank at end |
 | 6 | two 3-digit operations, blank at end |
 
+### Multiplication (mixed into math)
+
+Beginner 3rd-grade multiplication facts (CCSS 3.OA), added because she has started multiplication in class. Not a separate category: **30% of math problems** (`MULTIPLICATION_SHARE`) are a multiplication fact instead of an addition/subtraction problem, in Quest, Practice and Hunt alike. Since multiplication is part of math, it uses the **math** reinforcement weighting. `src/engine/multiplicationGenerator.ts`; each generator's `generateAddSubProblem` / `generateHuntAddSubProblem` still produces addition/subtraction only.
+
+Fact families follow the usual classroom order, keyed by band (zone). One factor is always from the band's focus set; the other is 1–10 (1–5 in band 1). Both orders are shown, so 3 × 4 and 4 × 3 both come up. Nothing goes past 10 × 10.
+
+| Band | Focus facts | Form |
+|---|---|---|
+| 1 | ×1, ×2, ×10 (by 1–5) | `a × b = __` |
+| 2 | ×1, ×2, ×5, ×10 | `a × b = __` |
+| 3 | ×2, ×3, ×4, ×5, ×10 | `a × b = __` |
+| 4 | adds ×0, ×6 | `a × b = __` |
+| 5 | all facts 0–10 | `a × b = __` |
+| 6 | all facts 0–10 | 40% missing-factor `a × __ = c` (the bridge to division) |
+
+**Hint** (after the 3rd wrong answer, §10) teaches with skip-counting instead of stating the fact: *"Count by 4s, 3 times: 4, 8, 12. So 3 × 4 = 12"*. It counts by the bigger factor, so the list stays short. ×0 and ×1 are explained as rules. In the missing-factor form, the known factor is never 0, because `0 × __ = 0` has no single answer.
+
 ### Logic generator
 
 A **pool of templates with swappable variables** per band group — a deduction like "the pony is behind one of three flowers; not the tallest, not the leftmost" shuffles which attributes and which answer each time, yielding dozens of variations from a handful of templates. ≥8 templates per band group (not all position-elimination style), shuffled by the anti-repeat tracker. Bands route: difficulty ≤3 → band12 (3 choices), ≤7 → band34 (4 choices), else → band56 (5 choices).
@@ -524,7 +541,7 @@ Build Zone 1 end-to-end before anything else, with placeholder art (colored shap
     - **Instance IDs (§5).** Added a stable per-creature `id` (`newCreatureId()` in `engine/creature.ts`), set at every creation site (`store.makeCreature`, `CharacterCreation`, `Quest`, `ExploreHunt`). The active team and picker now key by `Creature.id` instead of `speciesId` — `defaultActiveTeam`/`resolveBattleTeam`/`recommendTeamVsElement` (`engine/team.ts`), `TeamPicker`, `Party`, and `Trial`. `speciesId` is unchanged and still drives art/stats/element/name. **Save bumped to v7:** migration backfills ids on pre-id creatures and remaps a legacy speciesId-based `activeTeam` to instance ids (idempotent). Unblocks same-species duplicates from breeding / New Game+ (§15).
     - **Dead HP display removed.** `PartyCard` dropped the `HP {currentHp}/{heart}` line — it was always `x/x` (battles rebuild ponies at full HP via `buildBattlePony`; level-ups heal to full). The card now shows just `Pwr · Spd`. `Creature.currentHp` is **kept** (still read/written by `addXp` in `leveling.ts`); only the always-redundant display was removed.
     - Tests: same-species coexistence + id-based resolution (`team.test.ts`), migration backfill/remap/idempotency (`save.test.ts`). Full suite (242 tests) + build clean.
-- **M3c — Spelling category ✅ DONE (current milestone):** a **fourth** puzzle category (§9), audio-first and drag-and-drop. Additive — no change to the XP economy, difficulty formula, progression, or combat.
+- **M3c — Spelling category ✅ DONE:** a **fourth** puzzle category (§9), audio-first and drag-and-drop. Additive — no change to the XP economy, difficulty formula, progression, or combat.
   - **Type + bank.** `SpellingProblem` (`problems.ts`) joins the `Problem` union. `src/content/spellingBank.ts` holds 90 zone-themed words (15 per band), each with a spoken sentence and a phonics hint.
   - **Generator.** `spellingGenerator.ts` — band lookup + per-band anti-repeat, and a `scrambleWord` that can never return the word in order.
   - **Audio.** `engine/speech.ts` wraps the Web Speech API. No audio assets. `isSpeechAvailable()` + `availableCategories()` drop spelling on devices that cannot speak.
@@ -532,7 +549,8 @@ Build Zone 1 end-to-end before anything else, with placeholder art (colored shap
   - **Wiring.** `'spelling'` joins `ALL_CATEGORIES` in `puzzleSelector.ts`, so reinforcement weighting covers it for free. Appears in Practice and Hunt. **No save version bump** — the category union widens without changing the persisted shape.
   - Tests: `spelling.test.ts` (scramble guarantees, band routing, anti-repeat, bank integrity) plus reworked `puzzleSelector.test.ts` for four categories. 267 tests passing, build clean.
 - **M3 — Polish:** balance tuning (the 1.5/0.5 dial), audio, save backup UX, content top-ups to the Explore pool.
-- **M4 — Prestige / New Game+ ✅ DONE (current milestone):** the §15 restart, built as the same-difficulty variant. `engine/prestige.ts` (pure: `isCarriedThroughPrestige`, `resetToCap`, `prestigeParty`), a `store.prestige()` action, a two-step `<PrestigeDialog>` reached from a pinned bar on the world map, and an `awaitingStarter` flow that returns her to character creation for a fresh starter without re-asking her name. Save bumped to **v8** (`prestigeCount`, `awaitingStarter`; v7→v8 migration). Carries only Champion trophies, reset to the new cap. See §18. 293 tests passing, lint and build clean.
+- **M4 — Prestige / New Game+ ✅ DONE:** the §15 restart, built as the same-difficulty variant. `engine/prestige.ts` (pure: `isCarriedThroughPrestige`, `resetToCap`, `prestigeParty`), a `store.prestige()` action, a two-step `<PrestigeDialog>` reached from a pinned bar on the world map, and an `awaitingStarter` flow that returns her to character creation for a fresh starter without re-asking her name. Save bumped to **v8** (`prestigeCount`, `awaitingStarter`; v7→v8 migration). Carries only Champion trophies, reset to the new cap. See §18. 293 tests passing, lint and build clean.
+- **M3d — Beginner multiplication ✅ DONE (current milestone):** 3rd-grade multiplication facts mixed into the math category at 30% (see §9 *Multiplication*). `engine/multiplicationGenerator.ts` holds the fact families per band, with the skip-counting hint and band 6's missing-factor form. Both public math entries (`generateMathProblem`, `generateHuntMathProblem`) roll the mix-in first. The addition/subtraction-only paths are exported as `generateAddSubProblem` / `generateHuntAddSubProblem`, and the existing band tests now call those. **No save or UI change**: the answer box already takes 0, and `×` renders as plain text. Tests: `multiplication.test.ts`. 324 tests passing, build clean.
 
 ---
 

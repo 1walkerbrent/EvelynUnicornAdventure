@@ -12,8 +12,12 @@
  *   Z4 — two operations, 2-digit, blank at end
  *   Z5 — 3-digit, one operation, blank at end
  *   Z6 — two operations, 3-digit, blank at end
+ *
+ * A share of problems (MULTIPLICATION_SHARE) are beginner multiplication facts
+ * for the zone instead — see multiplicationGenerator.ts.
  */
 import type { MathProblem } from './problems'
+import { generateMultiplicationProblem, MULTIPLICATION_SHARE } from './multiplicationGenerator'
 
 type Rng = () => number
 
@@ -142,14 +146,28 @@ const MAKERS: Record<1 | 2 | 3 | 4 | 5 | 6, (rng: Rng) => MathProblem> = {
   6: makeZ6,
 }
 
+function clampZone(zoneNumber: number): 1 | 2 | 3 | 4 | 5 | 6 {
+  return Math.max(1, Math.min(6, zoneNumber)) as 1 | 2 | 3 | 4 | 5 | 6
+}
+
 /**
- * Generate a Hunt-difficulty bare-equation math problem for the given zone (1-6).
+ * Addition/subtraction only, for the given zone (1-6).
  * Guaranteed: positive answer, subtraction is always larger − smaller, no negatives.
  */
+export function generateHuntAddSubProblem(
+  zoneNumber: number,
+  rng: Rng = Math.random,
+): MathProblem {
+  return MAKERS[clampZone(zoneNumber)](rng)
+}
+
+/** Generate a Hunt-difficulty bare-equation math problem for the given zone (1-6). */
 export function generateHuntMathProblem(
   zoneNumber: number,
   rng: Rng = Math.random,
 ): MathProblem {
-  const zone = Math.max(1, Math.min(6, zoneNumber)) as 1 | 2 | 3 | 4 | 5 | 6
-  return MAKERS[zone](rng)
+  if (rng() < MULTIPLICATION_SHARE) {
+    return generateMultiplicationProblem(clampZone(zoneNumber), rng)
+  }
+  return generateHuntAddSubProblem(zoneNumber, rng)
 }
