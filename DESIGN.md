@@ -642,7 +642,7 @@ Two ponies visit the **Moonwell**, and a glowing egg hatches into a **foal**. In
 **Who can hatch**
 - Both parents must be **level 5+**. **Guardian signature ponies can hatch, at a premium** (the user's call). Their guaranteed 3/3/3 IVs make them the strongest parents in the game, so pairing with one is a deliberate, expensive choice rather than a free shortcut. Aurelune (the Champion trophy) can't hatch: a legendary foal would undercut the one-of-a-kind finale.
 - After hatching, both parents **rest for 3 battle wins** (stored as a `battlesWon` threshold), so she can't repeat one pairing over and over.
-- Costs **30 Stardust**, **+40 for each Guardian signature parent**: 30 for an ordinary pair, 70 with one Guardian pony, 110 for two. The preview shows the price before she commits, so "is this Guardian worth 40 extra?" becomes part of the decision.
+- Costs **15 Stardust**, **+20 for each Guardian signature parent**: 15 for an ordinary pair, 35 with one Guardian pony, 55 for two (halved from the first draft, per the user). The preview shows the price before she commits, so "is this Guardian worth 20 extra?" becomes part of the decision.
 
 **What the foal gets**
 1. **Species and element from the *lead* parent**, whom she chooses. The foal uses the lead's sprite at a smaller size, so no new art is needed.
