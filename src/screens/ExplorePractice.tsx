@@ -1,12 +1,9 @@
 import { useState } from 'react'
 import { useGameStore } from '../state/store'
 import { ZONE_BY_ID } from '../content/zones'
-import { generateMathProblem } from '../engine/mathGenerator'
-import { generateLogicProblem } from '../engine/logicGenerator'
-import { generateComprehensionProblem } from '../engine/comprehensionGenerator'
-import { generateSpellingProblem } from '../engine/spellingGenerator'
-import { selectProblemCategory, availableCategories } from '../engine/puzzleSelector'
+import { makeExplorePuzzle } from '../engine/puzzleFocus'
 import { isSpeechAvailable } from '../engine/speech'
+import PuzzleFocusPicker from '../components/PuzzleFocusPicker'
 import { effectiveDifficulty } from '../engine/difficulty'
 import { zoneNumber } from '../engine/progression'
 import { XP_PER_CORRECT_ANSWER } from '../engine/leveling'
@@ -14,9 +11,9 @@ import { stardustForSolve, STARDUST_PER_SOLVE } from '../engine/achievements'
 import type { Problem } from '../engine/problems'
 import ProblemCard from '../components/ProblemCard'
 
-// Explore → Practice (§8): pure learning/leveling. Weighted category selection
-// (math/logic/comprehension/spelling) with reinforcement doubling for weak
-// categories. Spelling drops out on devices with no speech synthesis.
+// Explore → Practice (§8): pure learning/leveling. Serves her chosen puzzle focus
+// (§9) — or, on "Mix it up", weighted category selection with reinforcement
+// doubling for weak categories. Spelling drops out on devices with no speech.
 export default function ExplorePractice() {
   const party                = useGameStore((s) => s.party)
   const awardXpToParty       = useGameStore((s) => s.awardXpToParty)
@@ -31,16 +28,15 @@ export default function ExplorePractice() {
   const partyLevel = party.reduce((m, c) => Math.max(m, c.level), 1)
 
   function makeProblem(): Problem {
-    const diff     = effectiveDifficulty(num, partyLevel)
-    const category = selectProblemCategory(
-      recentPuzzleAttempts,
-      Math.random,
-      availableCategories(isSpeechAvailable()),
-    )
-    if (category === 'math')     return generateMathProblem(diff)
-    if (category === 'logic')    return generateLogicProblem(diff)
-    if (category === 'spelling') return generateSpellingProblem(diff)
-    return generateComprehensionProblem(diff)
+    return makeExplorePuzzle({
+      // Read live: the picker's onChange runs before this component re-renders.
+      focus:           useGameStore.getState().practiceFocus,
+      mode:            'practice',
+      zoneNumber:      num,
+      difficulty:      effectiveDifficulty(num, partyLevel),
+      recentAttempts:  recentPuzzleAttempts,
+      speechAvailable: isSpeechAvailable(),
+    })
   }
 
   const [round, setRound]     = useState(0)
@@ -62,6 +58,7 @@ export default function ExplorePractice() {
   }
 
   const typeLabel =
+    problem.type === 'math' && problem.multiplication ? 'A times-table fact' :
     problem.type === 'math'          ? 'A number problem' :
     problem.type === 'logic'         ? 'A story puzzle'   :
     problem.type === 'spelling'      ? 'A spelling word'  :
@@ -75,6 +72,8 @@ export default function ExplorePractice() {
           {typeLabel} · solving earns your team XP
         </p>
       </div>
+
+      <PuzzleFocusPicker size="compact" onChange={another} />
 
       {solved ? (
         <div className="space-y-4 text-center">

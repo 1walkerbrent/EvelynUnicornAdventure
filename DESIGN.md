@@ -298,6 +298,8 @@ Problems are **generated from rules, never stored as a fixed list** — a hand-w
 | **Practice** (Explore) | Zone-progression bands | Zone-progression bands | ✓ weighted | ✓ weighted |
 | **Hunt** (pre-battle puzzle) | Hunt bands (simpler) | Zone-progression bands | ✓ weighted | ✓ weighted |
 
+**Puzzle focus (her choice).** The Explore hub asks "What do you want to practice?" with six themed tiles: 🎲 Mix it up (default) · 🔢 Math · ✖️ Times Tables · 🔤 Spelling · 📖 Reading · 🔍 Story Puzzles. One tap picks one; a single choice is simpler for her than toggles. The choice applies to **both Practice and the Hunt warm-up**, and it is saved (`practiceFocus`, an optional save field that defaults to `mix`, so no version bump). Practice repeats the choice as a compact chip strip at the top, so she can switch without backing out; switching swaps the current puzzle. **Mix it up** is the adaptive weighted selection below. Any other focus serves only that kind. **Times Tables** is multiplication only, at the zone's fact band; **Math** keeps the usual + − × mix. Her answers still feed the reinforcement window, and Stardust/XP/trophies are identical whatever she picks. Spelling is hidden without speech, and a saved Spelling focus falls back to the mix on such a device. `engine/puzzleFocus.ts` (`makeExplorePuzzle`) and `components/PuzzleFocusPicker.tsx`.
+
 **Quests** are fixed in shape but not in content. Each zone's first quest is always math. The second is a coin flip between a story/logic puzzle and a spelling word (`pickSecondQuestCategory` in `puzzleSelector.ts`), re-flipped on each visit until it's solved. Quests don't feed the reinforcement weighting, but they do count toward trophies and Stardust (§19).
 
 ### Reinforcement weighting

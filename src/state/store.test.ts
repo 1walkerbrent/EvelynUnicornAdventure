@@ -291,3 +291,21 @@ describe('hatching + the Meadow', () => {
     expect(sig!.trophy).toBe(true)
   })
 })
+
+describe('practice focus', () => {
+  beforeEach(() => {
+    localStorage.clear()
+    useGameStore.getState().resetGame()
+  })
+
+  it('defaults to mix and is saved when changed', () => {
+    expect(useGameStore.getState().practiceFocus).toBe('mix')
+    useGameStore.getState().setPlayerName('Evelyn')
+    useGameStore.getState().setPracticeFocus('times')
+    const saved = JSON.parse(localStorage.getItem('evelyn_unicorn_adventure')!)
+    expect(saved.practiceFocus).toBe('times')
+    useGameStore.setState({ practiceFocus: 'mix' })
+    useGameStore.getState().load()
+    expect(useGameStore.getState().practiceFocus).toBe('times')
+  })
+})

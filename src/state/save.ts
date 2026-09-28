@@ -6,6 +6,8 @@ import { ALL_CATEGORIES } from '../engine/puzzleSelector'
 import type { LifetimeStats } from '../engine/achievements'
 import { sanitizeLifetime, applySpeciesSeen, TROPHY_SPECIES } from '../engine/achievements'
 import { VARIANT_BY_ID } from '../engine/hatching'
+import type { PuzzleFocus } from '../engine/puzzleFocus'
+import { isPuzzleFocus } from '../engine/puzzleFocus'
 
 export interface SaveData {
   version: 10
@@ -30,6 +32,8 @@ export interface SaveData {
   lifetime: LifetimeStats
   /** Unlocked achievement id → ISO date earned (§19). Survives prestige. */
   achievements: Record<string, string>
+  /** What she chose to practice in Explore (§9). Absent → 'mix'. No version bump: optional, defaulted. */
+  practiceFocus?: PuzzleFocus
   /** Last zone she was viewing (restored on load for convenience). */
   lastZoneId?: string
 }
@@ -132,6 +136,7 @@ interface SaveDataV5 {
   stardust?: number
   lifetime?: unknown
   achievements?: unknown
+  practiceFocus?: unknown
   lastZoneId?: string
 }
 
@@ -155,6 +160,7 @@ function migrateV5(d: SaveDataV5): PersistedState {
     stardust:             Math.max(0, Math.floor(Number(d.stardust) || 0)),
     lifetime:             sanitizeLifetime(d.lifetime),
     achievements:         sanitizeAchievements(d.achievements),
+    practiceFocus:        isPuzzleFocus(d.practiceFocus) ? d.practiceFocus : 'mix',
   }
 }
 

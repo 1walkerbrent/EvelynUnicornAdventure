@@ -351,3 +351,17 @@ describe('migrateSave — hatching fields (save v10)', () => {
     expect(s.party[1].parents).toBeUndefined()
   })
 })
+
+describe('migrateSave — practice focus', () => {
+  const base = {
+    version: 10, playerName: 'Evelyn', party: [], areasDone: [], championDefeated: false,
+    activeTeam: [], trialLossStreaks: {}, recentPuzzleAttempts: [], prestigeCount: 0, awaitingStarter: false,
+  }
+  it('round-trips a chosen focus', () => {
+    expect(migrateSave({ ...base, practiceFocus: 'spelling' })!.practiceFocus).toBe('spelling')
+  })
+  it('defaults a missing or unknown focus to mix', () => {
+    expect(migrateSave(base)!.practiceFocus).toBe('mix')
+    expect(migrateSave({ ...base, practiceFocus: 'karate' })!.practiceFocus).toBe('mix')
+  })
+})

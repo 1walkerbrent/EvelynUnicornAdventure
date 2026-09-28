@@ -10,11 +10,7 @@ import { resolveBattleTeam } from '../engine/team'
 import { XP_PER_BATTLE_WIN } from '../engine/leveling'
 import { effectiveDifficulty } from '../engine/difficulty'
 import { zoneNumber } from '../engine/progression'
-import { generateHuntMathProblem } from '../engine/huntMathGenerator'
-import { generateLogicProblem } from '../engine/logicGenerator'
-import { generateComprehensionProblem } from '../engine/comprehensionGenerator'
-import { generateSpellingProblem } from '../engine/spellingGenerator'
-import { selectProblemCategory, availableCategories } from '../engine/puzzleSelector'
+import { makeExplorePuzzle, FOCUS_BY_ID } from '../engine/puzzleFocus'
 import { isSpeechAvailable } from '../engine/speech'
 import type { Problem } from '../engine/problems'
 import BattleScreen from '../components/BattleScreen'
@@ -34,6 +30,7 @@ export default function ExploreHunt() {
   const recentPuzzleAttempts = useGameStore((s) => s.recentPuzzleAttempts)
   const recordPuzzleAttempt  = useGameStore((s) => s.recordPuzzleAttempt)
   const recordSolve          = useGameStore((s) => s.recordSolve)
+  const practiceFocus        = useGameStore((s) => s.practiceFocus)
 
   const zone       = selectedZoneId ? ZONE_BY_ID[selectedZoneId] : undefined
   const num        = zone ? zoneNumber(zone.id) : 1
@@ -47,19 +44,16 @@ export default function ExploreHunt() {
 
   const species = encounter ? SPECIES_BY_ID[encounter.speciesId] : undefined
 
-  // Generate the warm-up puzzle once on mount. Hunt uses simpler math bands.
-  const huntPuzzle = useState<Problem>(() => {
-    const diff     = effectiveDifficulty(num, partyLevel)
-    const category = selectProblemCategory(
-      recentPuzzleAttempts,
-      Math.random,
-      availableCategories(isSpeechAvailable()),
-    )
-    if (category === 'math')     return generateHuntMathProblem(num)
-    if (category === 'logic')    return generateLogicProblem(diff)
-    if (category === 'spelling') return generateSpellingProblem(diff)
-    return generateComprehensionProblem(diff)
-  })[0]
+  // Generate the warm-up puzzle once on mount, in her chosen focus (§9). Hunt
+  // uses the simpler Hunt math bands.
+  const huntPuzzle = useState<Problem>(() => makeExplorePuzzle({
+    focus:           practiceFocus,
+    mode:            'hunt',
+    zoneNumber:      num,
+    difficulty:      effectiveDifficulty(num, partyLevel),
+    recentAttempts:  recentPuzzleAttempts,
+    speechAvailable: isSpeechAvailable(),
+  }))[0]
 
   const [phase, setPhase] = useState<'puzzle' | 'battle'>('puzzle')
 
@@ -104,6 +98,11 @@ export default function ExploreHunt() {
           <p className="text-purple-400 text-sm mt-1">
             Solve this warm-up, then go catch <span className="text-white font-semibold">{species.name}</span>!
           </p>
+          {practiceFocus !== 'mix' && (
+            <p className="text-purple-300 text-xs mt-1">
+              {FOCUS_BY_ID[practiceFocus].emoji} {FOCUS_BY_ID[practiceFocus].label} warm-up · change it on the Explore screen
+            </p>
+          )}
         </div>
         <ProblemCard
           problem={huntPuzzle}

@@ -1,8 +1,10 @@
 import { useGameStore } from '../state/store'
 import { ZONE_BY_ID } from '../content/zones'
+import PuzzleFocusPicker from '../components/PuzzleFocusPicker'
 
 // Explore entry point (§8): the player explicitly chooses PRACTICE (learn/level,
-// no pony) or HUNT (battle to tame). Two clear pillars, not a random roll.
+// no pony) or HUNT (battle to tame). Two clear pillars, not a random roll. Above
+// them, she picks what kind of puzzle she wants (§9) — it applies to both.
 export default function ExploreHub() {
   const selectedZoneId = useGameStore((s) => s.selectedZoneId)
   const setScreen      = useGameStore((s) => s.setScreen)
@@ -16,6 +18,11 @@ export default function ExploreHub() {
         <h2 className="text-2xl font-bold text-yellow-300">Explore {regionName}</h2>
         <p className="text-purple-400 text-sm mt-1">Choose how you'd like to explore.</p>
       </div>
+
+      <section className="bg-purple-900/30 border border-purple-700/40 rounded-3xl p-3 space-y-2.5">
+        <h3 className="text-white font-bold px-1">✨ What do you want to practice?</h3>
+        <PuzzleFocusPicker />
+      </section>
 
       <button
         onClick={() => setScreen('explorePractice')}

@@ -15,6 +15,7 @@ import { prestigeParty } from '../engine/prestige'
 import { hatchBlockReason, hatchCost, hatchFoal, releaseBlockReason, releaseValue, REST_WINS } from '../engine/hatching'
 import type { PuzzleAttempt } from '../engine/puzzleSelector'
 import type { Problem } from '../engine/problems'
+import type { PuzzleFocus } from '../engine/puzzleFocus'
 import type { LifetimeStats, BattleSummary } from '../engine/achievements'
 import {
   emptyLifetime, applySolve, applyBattleWin, applySpeciesSeen, applyDayPlayed, localDay,
@@ -58,6 +59,8 @@ interface GameStore {
   lifetime: LifetimeStats
   /** §19 — unlocked achievement id → ISO date. Survives prestige. */
   achievements: Record<string, string>
+  /** §9 — what she chose to practice in Explore; 'mix' is the adaptive default. */
+  practiceFocus: PuzzleFocus
   // ui — not persisted: achievements waiting to pop up, oldest first
   toastQueue: string[]
   // derived from areasDone — not persisted
@@ -80,6 +83,7 @@ interface GameStore {
   /** Any battle won: lifetime stats + Stardust (§19). */
   recordBattleWin: (summary: BattleSummary) => void
   dismissToast: () => void
+  setPracticeFocus: (focus: PuzzleFocus) => void
   /**
    * Hatch a foal at the Moonwell (§20). Returns the foal, or null if the pair
    * can't hatch (a parent not ready, same pony twice, or not enough Stardust).
@@ -145,6 +149,7 @@ export const useGameStore = create<GameStore>()((set, get) => {
       stardust:             s.stardust,
       lifetime:             s.lifetime,
       achievements:         s.achievements,
+      practiceFocus:        s.practiceFocus,
       lastZoneId:           s.selectedZoneId ?? undefined,
     })
   }
@@ -188,6 +193,7 @@ export const useGameStore = create<GameStore>()((set, get) => {
     stardust:              0,
     lifetime:              emptyLifetime(),
     achievements:          {},
+    practiceFocus:         'mix',
     toastQueue:            [],
     badges:                0,
     levelCap:         levelCapForBadges(0),
@@ -253,6 +259,11 @@ export const useGameStore = create<GameStore>()((set, get) => {
     },
 
     dismissToast: () => set({ toastQueue: get().toastQueue.slice(1) }),
+
+    setPracticeFocus: (practiceFocus) => {
+      set({ practiceFocus })
+      persist()
+    },
 
     hatch: (leadId, partnerId) => {
       const { party, stardust, lifetime } = get()
@@ -409,6 +420,7 @@ export const useGameStore = create<GameStore>()((set, get) => {
         stardust:             0,
         lifetime:             emptyLifetime(),
         achievements:         {},
+        practiceFocus:        'mix',
         toastQueue:           [],
         badges:               0,
         levelCap:             levelCapForBadges(0),
@@ -434,6 +446,7 @@ export const useGameStore = create<GameStore>()((set, get) => {
           stardust:              saved.stardust,
           lifetime:              saved.lifetime,
           achievements:          saved.achievements,
+          practiceFocus:         saved.practiceFocus ?? 'mix',
           selectedZoneId:        saved.lastZoneId ?? null,
           currentScreen:         'worldMap',
           ...derive(saved.areasDone),
