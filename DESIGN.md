@@ -640,9 +640,9 @@ Rewards: bronze 10, silver 25, gold 60, one-off "special" 20 (Perfect Pony 40). 
 Two ponies visit the **Moonwell**, and a glowing egg hatches into a **foal**. In the game this is always called *hatching*. The design goal: **choosing the pair should take thought.** Every pairing trades off element, stats and rare-color chances.
 
 **Who can hatch**
-- Both parents must be **level 5+**. Guardian signatures and Aurelune can't hatch ("too busy guarding"). Their guaranteed 3/3/3 would make perfect foals trivial.
+- Both parents must be **level 5+**. **Guardian signature ponies can hatch, at a premium** (the user's call). Their guaranteed 3/3/3 IVs make them the strongest parents in the game, so pairing with one is a deliberate, expensive choice rather than a free shortcut. Aurelune (the Champion trophy) can't hatch: a legendary foal would undercut the one-of-a-kind finale.
 - After hatching, both parents **rest for 3 battle wins** (stored as a `battlesWon` threshold), so she can't repeat one pairing over and over.
-- Costs **30 Stardust**.
+- Costs **30 Stardust**, **+40 for each Guardian signature parent**: 30 for an ordinary pair, 70 with one Guardian pony, 110 for two. The preview shows the price before she commits, so "is this Guardian worth 40 extra?" becomes part of the decision.
 
 **What the foal gets**
 1. **Species and element from the *lead* parent**, whom she chooses. The foal uses the lead's sprite at a smaller size, so no new art is needed.
@@ -663,7 +663,7 @@ Two ponies visit the **Moonwell**, and a glowing egg hatches into a **foal**. In
 
 **New journeys.** Foals do **not** carry over. Only Champion trophies do (§18), per the user's call. Recipe discoveries and hatching trophies do carry.
 
-**Hatching trophies (to add):** First Foal · Foal ladder (1/5/15 hatched) · one per rare color · Kind Heart (first Meadow release). Perfect Pony (§19) becomes the natural long-term hatching goal.
+**Hatching trophies (to add):** First Foal · Foal ladder (1/5/15 hatched) · one per rare color · Kind Heart (first Meadow release). Perfect Pony (§19) becomes the natural long-term hatching goal. Guardian parents make it reachable but costly, which is the intended trade. Perfect Pony must then exclude only ponies that *joined* as trophies, not a foal of a Guardian species. So M5b adds a `trophy: true` flag set at award time (migration backfills it on existing signature and Aurelune ponies, which could only have come from Trials and the Champion), and the check switches from species to that flag.
 
-**Save v10 (planned):** `Creature.variant?`, `Creature.parents?` (instance ids, for flavor), `Creature.restUntil?` (battle-win count). Lifetime stats gain `hatched`, `released` and `variantsFound`.
+**Save v10 (planned):** `Creature.variant?`, `Creature.parents?` (instance ids, for flavor), `Creature.restUntil?` (battle-win count), `Creature.trophy?`. Lifetime stats gain `hatched`, `released` and `variantsFound`.
 
