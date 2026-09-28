@@ -74,7 +74,7 @@ export default function CharacterCreation() {
   // ── Step 1: Pick your pony ───────────────────────────────────────────────
   if (step === 'pick') {
     return (
-      <div className="min-h-screen relative flex flex-col">
+      <div className="h-full relative flex flex-col">
         <img src={charCreationBg} alt="" className="absolute inset-0 w-full h-full object-cover object-center" aria-hidden="true" />
         <div className="absolute inset-0 bg-black/50" />
         <div className="relative z-10 flex-1 overflow-y-auto p-4 space-y-5">
@@ -132,7 +132,7 @@ export default function CharacterCreation() {
   const stats  = getStats(picked.tier, 3, starterIvs)
 
   return (
-    <div className="min-h-screen relative flex flex-col">
+    <div className="h-full relative flex flex-col">
       <img src={charCreationBg} alt="" className="absolute inset-0 w-full h-full object-cover object-center" aria-hidden="true" />
       <div className="absolute inset-0 bg-black/50" />
       <div className="relative z-10 flex-1 overflow-y-auto p-4 space-y-5">

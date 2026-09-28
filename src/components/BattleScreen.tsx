@@ -335,7 +335,7 @@ export default function BattleScreen({
   const backgroundUrl = resolveBackground(backgroundId)
   return (
     <div
-      className="relative h-screen w-screen overflow-hidden select-none"
+      className="relative h-full w-full overflow-hidden select-none"
       style={{
         // A matched backdrop covers the stage full-bleed; otherwise fall back to
         // the original green gradient so battles without art still read cleanly.

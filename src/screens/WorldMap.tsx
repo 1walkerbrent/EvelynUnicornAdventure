@@ -10,7 +10,14 @@ import { CHAMPION_SPECIES } from '../content/creatures'
 // Visual scrolling path map (replaces the old list). Zone nodes are absolutely
 // positioned on top of the baked-in golden path in world-map.jpg — the % below
 // are hand-tuned to sit each node on the dirt road. The image keeps its natural
-// ~9:16 portrait ratio (width:100%, height:auto) and the container scrolls it.
+// ~9:16 portrait ratio and the container scrolls it.
+//
+// The frame's height is fixed from the image's aspect ratio up front, NOT from the
+// loaded image. When it came from the image, the scroll area started at 0 height
+// and grew once the JPG arrived — and iPad Safari doesn't always repaint a
+// scroller whose content grows after first layout, so the map rendered cut off
+// partway down. A fixed ratio means the layout is final on the first frame.
+const MAP_ASPECT = '768 / 1344'   // world-map.jpg's pixel size — update if the art changes
 
 const ELEMENT_EMOJI: Record<string, string> = {
   neutral: '🏡', earth: '🪨', water: '💧', fire: '🔥', air: '💨', spirit: '✨',
@@ -48,7 +55,6 @@ export default function WorldMap() {
   const setScreen        = useGameStore((s) => s.setScreen)
 
   const scrollerRef = useRef<HTMLDivElement>(null)
-  const imgRef      = useRef<HTMLImageElement>(null)
   const nodeRefs    = useRef<Record<string, HTMLDivElement | null>>({})
 
   const championOpen = isChampionUnlocked(areasDone)
@@ -73,8 +79,8 @@ export default function WorldMap() {
     return 'z6'
   }, [areasDone, championOpen, championDefeated])
 
-  // Center the focus node once the image has laid out (its height drives the
-  // %-based node positions and the scrollable height).
+  // Center the focus node. The frame's height is known before the image loads
+  // (see MAP_ASPECT), so this can run straight away on mount.
   function centerFocus() {
     const scroller = scrollerRef.current
     const node = nodeRefs.current[focusId]
@@ -84,9 +90,8 @@ export default function WorldMap() {
     scroller.scrollTop += (nRect.top - sRect.top) - scroller.clientHeight / 2 + nRect.height / 2
   }
 
-  // Handle the cached-image case where onLoad may not fire after mount.
   useEffect(() => {
-    if (imgRef.current?.complete) centerFocus()
+    centerFocus()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
@@ -99,14 +104,12 @@ export default function WorldMap() {
       </div>
 
       <div ref={scrollerRef} className="h-full w-full overflow-y-auto overflow-x-hidden">
-        <div className="relative w-full">
+        <div className="relative w-full" style={{ aspectRatio: MAP_ASPECT }}>
           <img
-            ref={imgRef}
             src={worldMapImg}
             alt="World map"
-            className="block w-full h-auto select-none pointer-events-none"
+            className="absolute inset-0 w-full h-full select-none pointer-events-none"
             draggable={false}
-            onLoad={centerFocus}
           />
 
           {NODE_LAYOUT.map(({ id, top, left, side }) => {
@@ -177,14 +180,15 @@ export default function WorldMap() {
                   </div>
                 )}
 
-                {/* Floating name + status label (alternating side) */}
+                {/* Floating name + status label (alternating side). No backdrop-blur
+                    here: 14 blur layers inside a scroller left unpainted patches on iPad. */}
                 <div className={`absolute top-1/2 -translate-y-1/2 flex flex-col gap-0.5 pointer-events-none
                                  ${side === 'left' ? 'right-full mr-2 items-end' : 'left-full ml-2 items-start'}`}>
-                  <span className="whitespace-nowrap bg-black/65 text-white text-xs font-bold
-                                   px-2 py-0.5 rounded-full backdrop-blur-sm">
+                  <span className="whitespace-nowrap bg-black/70 text-white text-xs font-bold
+                                   px-2 py-0.5 rounded-full">
                     {name}
                   </span>
-                  <span className={`whitespace-nowrap bg-black/55 text-[10px] px-2 py-0.5 rounded-full backdrop-blur-sm
+                  <span className={`whitespace-nowrap bg-black/65 text-[10px] px-2 py-0.5 rounded-full
                                     ${cleared ? 'text-yellow-300' : unlocked ? 'text-sky-200' : 'text-purple-300'}`}>
                     {status}
                   </span>

@@ -57,7 +57,7 @@ export default function ZoneView() {
   const huntBgUrl  = HUNT_BG[`hunt-${selectedZoneId}`]
 
   return (
-    <div className="min-h-screen relative">
+    <div className="min-h-full relative">
       {huntBgUrl && (
         <>
           <img src={huntBgUrl} alt="" className="absolute inset-0 w-full h-full object-cover object-center" aria-hidden="true" />

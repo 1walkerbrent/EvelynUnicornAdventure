@@ -11,7 +11,7 @@ export default function Nav() {
   const setScreen = useGameStore((s) => s.setScreen)
 
   return (
-    <nav className="flex border-t border-purple-800 bg-purple-900/90 backdrop-blur-sm flex-shrink-0">
+    <nav className="safe-bottom flex border-t border-purple-800 bg-purple-900/90 backdrop-blur-sm flex-shrink-0">
       {TABS.map(({ screen, label, icon }) => (
         <button
           key={screen}

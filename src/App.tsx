@@ -33,7 +33,7 @@ export default function App() {
 
   if (isFullscreen) {
     return (
-      <div className="h-screen w-screen bg-purple-950 text-white overflow-hidden">
+      <div className="app-height w-full safe-top safe-bottom safe-x bg-purple-950 text-white overflow-hidden">
         {isCreating                          ? <CharacterCreation /> :
          currentScreen === 'provingGlade'    ? <ProvingGlade /> :
          currentScreen === 'trial'           ? <Trial /> :
@@ -45,13 +45,13 @@ export default function App() {
   }
 
   return (
-    <div className="h-screen w-screen flex flex-col bg-purple-950 text-white overflow-hidden">
-      <header className="flex-shrink-0 px-6 py-2 bg-purple-900/80 border-b border-purple-800">
-        <p className="text-base font-bold text-yellow-300 tracking-wide">
+    <div className="app-height w-full safe-x flex flex-col bg-purple-950 text-white overflow-hidden">
+      <header className="flex-shrink-0 safe-top bg-purple-900/80 border-b border-purple-800">
+        <p className="px-6 py-2 text-base font-bold text-yellow-300 tracking-wide">
           🦄 Evelyn's Unicorn Adventure
         </p>
       </header>
-      <main className="flex-1 overflow-y-auto">
+      <main className="flex-1 min-h-0 overflow-y-auto">
         {currentScreen === 'worldMap'        && <WorldMap />}
         {currentScreen === 'zone'            && <ZoneView />}
         {currentScreen === 'quest'           && <Quest />}
