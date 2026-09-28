@@ -4,6 +4,7 @@ import {
   updatePuzzleAttempts,
   availableCategories,
   ALL_CATEGORIES,
+  pickSecondQuestCategory,
 } from './puzzleSelector'
 import type { PuzzleAttempt, PuzzleCategory } from './puzzleSelector'
 
@@ -164,5 +165,23 @@ describe('updatePuzzleAttempts', () => {
   it('records spelling attempts', () => {
     const result = updatePuzzleAttempts([], 'spelling', false)
     expect(result[0]).toEqual({ category: 'spelling', correct: false })
+  })
+})
+
+describe('pickSecondQuestCategory', () => {
+  it('flips between logic and spelling', () => {
+    expect(pickSecondQuestCategory(true, () => 0.2)).toBe('spelling')
+    expect(pickSecondQuestCategory(true, () => 0.8)).toBe('logic')
+  })
+
+  it('is roughly even over many quests', () => {
+    let spelling = 0
+    for (let i = 0; i < 2000; i++) if (pickSecondQuestCategory(true) === 'spelling') spelling++
+    expect(spelling / 2000).toBeGreaterThan(0.44)
+    expect(spelling / 2000).toBeLessThan(0.56)
+  })
+
+  it('always gives logic on a device that cannot speak', () => {
+    expect(pickSecondQuestCategory(false, () => 0)).toBe('logic')
   })
 })

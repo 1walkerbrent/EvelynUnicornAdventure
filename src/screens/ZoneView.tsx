@@ -50,7 +50,7 @@ export default function ZoneView() {
       return g ? `Trial — battle ${g.name}` : 'Trial battle'
     }
     if (area.kind === 'battle') return 'Battle rival trainer Pip!'
-    return idx === 0 ? 'A math quest — a pony is hiding here' : 'A story puzzle — follow the clues'
+    return idx === 0 ? 'A math quest — a pony is hiding here' : 'A puzzle quest — a story or a spelling word'
   }
 
   const questAreas = zone.areas.filter((a) => a.kind === 'quest')

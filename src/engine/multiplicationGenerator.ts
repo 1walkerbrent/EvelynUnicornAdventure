@@ -19,7 +19,7 @@ type Rng = () => number
 export type MultBand = 1 | 2 | 3 | 4 | 5 | 6
 
 /** Share of math problems that are multiplication, once it is mixed in. */
-export const MULTIPLICATION_SHARE = 0.3
+export const MULTIPLICATION_SHARE = 0.5
 
 interface MultParams {
   /** The fact families practised in this band — one factor always comes from here. */

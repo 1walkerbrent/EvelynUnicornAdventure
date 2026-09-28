@@ -4,6 +4,9 @@ import { SPECIES_BY_ID } from '../content/creatures'
 import { ZONE_BY_ID } from '../content/zones'
 import { generateMathProblem } from '../engine/mathGenerator'
 import { generateLogicProblem } from '../engine/logicGenerator'
+import { generateSpellingProblem } from '../engine/spellingGenerator'
+import { pickSecondQuestCategory } from '../engine/puzzleSelector'
+import { isSpeechAvailable } from '../engine/speech'
 import { effectiveDifficulty } from '../engine/difficulty'
 import { zoneNumber } from '../engine/progression'
 import { XP_PER_CORRECT_ANSWER } from '../engine/leveling'
@@ -15,7 +18,8 @@ import ProblemCard from '../components/ProblemCard'
 import CreatureSprite from '../components/CreatureSprite'
 
 // One reusable quest screen for every zone (replaces the old Brindlewood/Sunflower
-// screens). Area 1 = generated MATH, Area 2 = generated STORY/LOGIC (§9), with the
+// screens). Area 1 = generated MATH, Area 2 = a coin flip between STORY/LOGIC and
+// SPELLING (§9), re-flipped on each visit until solved, with the
 // existing retry/3rd-attempt-hint rules from <ProblemCard>.
 export default function Quest() {
   const party          = useGameStore((s) => s.party)
@@ -32,18 +36,20 @@ export default function Quest() {
   const zone = selectedZoneId ? ZONE_BY_ID[selectedZoneId] : undefined
   const area = zone?.areas.find((a) => a.id === selectedAreaId)
 
-  // Area 1 of the zone is Math; Area 2 is Story/Logic.
+  // Area 1 of the zone is Math; Area 2 is Story/Logic or Spelling.
   const questAreas = zone?.areas.filter((a) => a.kind === 'quest') ?? []
   const isMath = area ? questAreas.findIndex((a) => a.id === area.id) === 0 : true
 
   const partyLevel = party.reduce((m, c) => Math.max(m, c.level), 1)
   const rewardLevel = Math.min(Math.max(partyLevel, 1), levelCap)
 
-  const [problem] = useState<Problem>(() =>
-    isMath
-      ? generateMathProblem(effectiveDifficulty(zone ? zoneNumber(zone.id) : 1, partyLevel))
-      : generateLogicProblem(effectiveDifficulty(zone ? zoneNumber(zone.id) : 1, partyLevel)),
-  )
+  const [problem] = useState<Problem>(() => {
+    const diff = effectiveDifficulty(zone ? zoneNumber(zone.id) : 1, partyLevel)
+    if (isMath) return generateMathProblem(diff)
+    return pickSecondQuestCategory(isSpeechAvailable()) === 'spelling'
+      ? generateSpellingProblem(diff)
+      : generateLogicProblem(diff)
+  })
 
   const alreadyDone = area ? areasDone.includes(area.id) : false
   const [solved, setSolved] = useState(false)
@@ -138,8 +144,9 @@ export default function Quest() {
       <div>
         <h2 className="text-2xl font-bold text-yellow-300">{area.name}</h2>
         <p className="text-purple-400 text-sm mt-1">
-          {isMath ? 'Solve the problem to befriend the pony hiding here…'
-                  : 'Read the clues to find the pony hiding here…'}
+          {problem.type === 'math'     ? 'Solve the problem to befriend the pony hiding here…'
+           : problem.type === 'spelling' ? 'Spell the word to befriend the pony hiding here…'
+           :                               'Read the clues to find the pony hiding here…'}
         </p>
       </div>
 

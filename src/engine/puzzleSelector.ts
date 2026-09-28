@@ -51,6 +51,18 @@ export function selectProblemCategory(
   return categories[categories.length - 1]
 }
 
+/**
+ * The puzzle for a zone's second quest: a coin flip between a story/logic puzzle
+ * and a spelling word, so quests aren't always the same shape. Spelling needs
+ * speech (see `availableCategories`), so a device without it always gets logic.
+ */
+export function pickSecondQuestCategory(
+  speechAvailable: boolean,
+  rng: () => number = Math.random,
+): 'logic' | 'spelling' {
+  return speechAvailable && rng() < 0.5 ? 'spelling' : 'logic'
+}
+
 /** Push a new attempt and trim to the last 10. */
 export function updatePuzzleAttempts(
   attempts: PuzzleAttempt[],
