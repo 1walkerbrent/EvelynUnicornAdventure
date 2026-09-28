@@ -3,9 +3,11 @@ import { rollIvs } from '../engine/ivs'
 import { newCreatureId } from '../engine/creature'
 import type { PuzzleAttempt, PuzzleCategory } from '../engine/puzzleSelector'
 import { ALL_CATEGORIES } from '../engine/puzzleSelector'
+import type { LifetimeStats } from '../engine/achievements'
+import { sanitizeLifetime, applySpeciesSeen } from '../engine/achievements'
 
 export interface SaveData {
-  version: 8
+  version: 9
   playerName: string
   party: Creature[]
   /** Completed area ids — the single source of truth for progression. */
@@ -21,21 +23,34 @@ export interface SaveData {
   prestigeCount: number
   /** True between starting a new journey and picking that run's starter pony. */
   awaitingStarter: boolean
+  /** Stardust balance (§19) — earned by learning, spent on hatching. Survives prestige. */
+  stardust: number
+  /** Lifetime counters the achievements read (§19). Survives prestige. */
+  lifetime: LifetimeStats
+  /** Unlocked achievement id → ISO date earned (§19). Survives prestige. */
+  achievements: Record<string, string>
   /** Last zone she was viewing (restored on load for convenience). */
   lastZoneId?: string
 }
 
 const SAVE_KEY = 'evelyn_unicorn_adventure'
-const VERSION = 8 as const
+const VERSION = 9 as const
 
 /** Save schema versions this build can read (current + migratable predecessors). */
-const READABLE_VERSIONS = [8, 7, 6, 5, 4, 3, 2]
+const READABLE_VERSIONS = [9, 8, 7, 6, 5, 4, 3, 2]
 
 export type PersistedState = Omit<SaveData, 'version'>
 
 const M2E_DEFAULTS = { activeTeam: [] as string[], trialLossStreaks: {} as Record<string, number> }
 const PUZZLE_DEFAULTS = { recentPuzzleAttempts: [] as PuzzleAttempt[] }
 const PRESTIGE_DEFAULTS = { prestigeCount: 0, awaitingStarter: false }
+
+function sanitizeAchievements(raw: unknown): Record<string, string> {
+  if (typeof raw !== 'object' || raw === null || Array.isArray(raw)) return {}
+  return Object.fromEntries(
+    Object.entries(raw as Record<string, unknown>).filter(([, v]) => typeof v === 'string'),
+  ) as Record<string, string>
+}
 
 /**
  * Keep only well-formed attempts, so a hand-edited or older save can't feed
@@ -91,6 +106,10 @@ interface SaveDataV5 {
   /** Present from v8 onward. */
   prestigeCount?: number
   awaitingStarter?: boolean
+  /** Present from v9 onward. */
+  stardust?: number
+  lifetime?: unknown
+  achievements?: unknown
   lastZoneId?: string
 }
 
@@ -110,6 +129,10 @@ function migrateV5(d: SaveDataV5): PersistedState {
     // v8 (§15 prestige). A pre-v8 save is a first journey by definition.
     prestigeCount:        Math.max(0, Math.floor(Number(d.prestigeCount) || 0)),
     awaitingStarter:      d.awaitingStarter === true,
+    // v9 (§19 achievements). Absent before v9 → zero balance, empty stats.
+    stardust:             Math.max(0, Math.floor(Number(d.stardust) || 0)),
+    lifetime:             sanitizeLifetime(d.lifetime),
+    achievements:         sanitizeAchievements(d.achievements),
   }
 }
 
@@ -136,6 +159,7 @@ function migrateV4(d: SaveDataV4): PersistedState {
     lastZoneId:       d.lastZoneId,
     ...PUZZLE_DEFAULTS,
     ...PRESTIGE_DEFAULTS,
+    ...achievementDefaults(),
   }
 }
 
@@ -159,6 +183,7 @@ function migrateV3(d: SaveDataV3): PersistedState {
     ...M2E_DEFAULTS,
     ...PUZZLE_DEFAULTS,
     ...PRESTIGE_DEFAULTS,
+    ...achievementDefaults(),
   }
 }
 
@@ -187,7 +212,24 @@ function migrateV2(d: SaveDataV2): PersistedState {
     ...M2E_DEFAULTS,
     ...PUZZLE_DEFAULTS,
     ...PRESTIGE_DEFAULTS,
+    ...achievementDefaults(),
   }
+}
+
+function achievementDefaults() {
+  return { stardust: 0, lifetime: sanitizeLifetime(undefined), achievements: {} as Record<string, string> }
+}
+
+/**
+ * Seed the lifetime stats that can be recovered from the save itself (idempotent),
+ * so a pre-v9 player isn't told she has met zero ponies or never won: the Pony
+ * Book gets every pony she owns, and a finished game counts as Champion wins.
+ * Counters with no history (puzzles solved, battles won) start at 0.
+ */
+function backfillLifetime(state: PersistedState, party: Creature[]): LifetimeStats {
+  const seen = applySpeciesSeen(state.lifetime, party.map((c) => c.speciesId))
+  const knownWins = state.prestigeCount + (state.championDefeated ? 1 : 0)
+  return { ...seen, championWins: Math.max(seen.championWins, knownWins) }
 }
 
 export function saveGame(data: PersistedState): void {
@@ -206,7 +248,7 @@ export function migrateSave(parsed: unknown): PersistedState | null {
   // v8/v7/v6/v5 share the same superset shape (v7 adds Creature.id + id-based
   // activeTeam, both handled by the universal backfill below; v8 adds the
   // prestige fields, defaulted in migrateV5).
-  if (version === 8 || version === 7 || version === 6 || version === 5) state = migrateV5(parsed as SaveDataV5)
+  if (version === 9 || version === 8 || version === 7 || version === 6 || version === 5) state = migrateV5(parsed as SaveDataV5)
   else if (version === 4)   state = migrateV4(parsed as SaveDataV4)
   else if (version === 3)   state = migrateV3(parsed as SaveDataV3)
   else if (version === 2)   state = migrateV2(parsed as SaveDataV2)
@@ -215,7 +257,12 @@ export function migrateSave(parsed: unknown): PersistedState | null {
   // Universal backfill (runs for every readable version, idempotent): give each
   // creature an IV set and an instance id, then remap the active team to ids.
   const party = state.party.map(withIvs).map(withId)
-  return { ...state, party, activeTeam: remapActiveTeam(party, state.activeTeam) }
+  return {
+    ...state,
+    party,
+    activeTeam: remapActiveTeam(party, state.activeTeam),
+    lifetime: backfillLifetime(state, party),
+  }
 }
 
 export function loadGame(): PersistedState | null {

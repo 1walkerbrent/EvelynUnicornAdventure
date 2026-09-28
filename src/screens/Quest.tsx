@@ -24,6 +24,7 @@ export default function Quest() {
   const addToParty     = useGameStore((s) => s.addToParty)
   const awardXpToParty = useGameStore((s) => s.awardXpToParty)
   const completeArea   = useGameStore((s) => s.completeArea)
+  const recordSolve    = useGameStore((s) => s.recordSolve)
   const openZone       = useGameStore((s) => s.openZone)
   const selectedZoneId = useGameStore((s) => s.selectedZoneId)
   const selectedAreaId = useGameStore((s) => s.selectedAreaId)
@@ -64,7 +65,8 @@ export default function Quest() {
   const reward  = SPECIES_BY_ID[area.rewardSpeciesId]
   const rStats  = getStats(reward.tier, rewardLevel, rewardIvs)
 
-  function handleSolve() {
+  function handleSolve(misses: number) {
+    recordSolve(problem, misses)
     if (!alreadyDone) {
       addToParty({
         id:        newCreatureId(),

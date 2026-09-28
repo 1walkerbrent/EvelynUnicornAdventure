@@ -10,7 +10,8 @@ const ENCOURAGEMENT = [
 
 interface Props {
   problem: Problem
-  onSolve: () => void
+  /** `misses` = wrong tries before the right answer (0 = first try). */
+  onSolve: (misses: number) => void
   /** Called after every attempt (right or wrong) so the parent can record it. */
   onAttempt?: (correct: boolean) => void
 }
@@ -32,7 +33,7 @@ export default function ProblemCard({ problem, onSolve, onAttempt }: Props) {
 
   function handleCorrect() {
     onAttempt?.(true)
-    onSolve()
+    onSolve(attempts)
   }
 
   function handleMathSubmit() {

@@ -270,3 +270,51 @@ describe('migrateSave — prestige fields (save v8)', () => {
     expect(migrateSave(v8Save({}))!.awaitingStarter).toBe(false)
   })
 })
+
+describe('migrateSave — achievements + Stardust (save v9)', () => {
+  const party = [
+    { speciesId: 'aurelune', nickname: 'A', level: 4, currentHp: 10, xp: 0, id: 'c1', ivs: { heart: 3, power: 3, speed: 3 } },
+    { speciesId: 'boulderhoof', nickname: 'B', level: 4, currentHp: 10, xp: 0, id: 'c2', ivs: { heart: 3, power: 3, speed: 3 } },
+  ]
+  function v8Save(extra: Record<string, unknown> = {}) {
+    return {
+      version: 8, playerName: 'Evelyn', party, areasDone: [], championDefeated: true,
+      activeTeam: [], trialLossStreaks: {}, recentPuzzleAttempts: [], prestigeCount: 1, awaitingStarter: false,
+      ...extra,
+    }
+  }
+
+  it('a v8 save starts with no Stardust and no trophies', () => {
+    const s = migrateSave(v8Save())!
+    expect(s.stardust).toBe(0)
+    expect(s.achievements).toEqual({})
+    expect(s.lifetime.solved.math).toBe(0)
+  })
+
+  it('backfills the Pony Book from the party and Champion wins from progress', () => {
+    const s = migrateSave(v8Save())!
+    expect(s.lifetime.speciesSeen).toEqual(expect.arrayContaining(['aurelune', 'boulderhoof']))
+    expect(s.lifetime.championWins).toBe(2)   // one earlier journey + beaten again this one
+  })
+
+  it('round-trips v9 fields', () => {
+    const lifetime = { solved: { math: 12 }, speciesSeen: ['aurelune'], championWins: 5 }
+    const s = migrateSave({ ...v8Save(), version: 9, stardust: 42, lifetime, achievements: { 'badge-1': '2026-09-01' } })!
+    expect(s.stardust).toBe(42)
+    expect(s.lifetime.solved.math).toBe(12)
+    expect(s.lifetime.championWins).toBe(5)
+    expect(s.achievements).toEqual({ 'badge-1': '2026-09-01' })
+  })
+
+  it('drops malformed trophy entries and a negative balance', () => {
+    const s = migrateSave({ ...v8Save(), version: 9, stardust: -10, achievements: { ok: '2026-09-01', bad: 3 } })!
+    expect(s.stardust).toBe(0)
+    expect(s.achievements).toEqual({ ok: '2026-09-01' })
+  })
+
+  it('an old v4 save gets the defaults too', () => {
+    const s = migrateSave(v4Save([ponyNoIvs('aurelune')]))!
+    expect(s.stardust).toBe(0)
+    expect(s.lifetime.speciesSeen).toEqual(['aurelune'])
+  })
+})

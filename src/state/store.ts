@@ -14,6 +14,12 @@ import { bumpStreak, clearStreak } from '../engine/team'
 import { updatePuzzleAttempts } from '../engine/puzzleSelector'
 import { prestigeParty } from '../engine/prestige'
 import type { PuzzleAttempt } from '../engine/puzzleSelector'
+import type { Problem } from '../engine/problems'
+import type { LifetimeStats, BattleSummary } from '../engine/achievements'
+import {
+  emptyLifetime, applySolve, applyBattleWin, applySpeciesSeen, applyDayPlayed, localDay,
+  stardustForSolve, newlyEarned, STARDUST_PER_BATTLE_WIN,
+} from '../engine/achievements'
 
 export type Screen =
   | 'worldMap'
@@ -27,6 +33,7 @@ export type Screen =
   | 'explorePractice'
   | 'exploreHunt'
   | 'party'
+  | 'trophies'
 
 interface GameStore {
   // persisted
@@ -44,6 +51,14 @@ interface GameStore {
   prestigeCount: number
   /** True from starting a new journey until that run's starter is picked. */
   awaitingStarter: boolean
+  /** §19 — earned by learning, spent on hatching. Survives prestige. */
+  stardust: number
+  /** §19 — lifetime counters the achievements read. Survives prestige. */
+  lifetime: LifetimeStats
+  /** §19 — unlocked achievement id → ISO date. Survives prestige. */
+  achievements: Record<string, string>
+  // ui — not persisted: achievements waiting to pop up, oldest first
+  toastQueue: string[]
   // derived from areasDone — not persisted
   badges: number
   levelCap: number
@@ -53,11 +68,17 @@ interface GameStore {
   selectedAreaId: string | null
   // actions
   setPlayerName: (name: string) => void
-  addToParty: (creature: Creature) => void
+  /** `tamed` counts it toward the Pony Whisperer trophy (Hunt catches only). */
+  addToParty: (creature: Creature, opts?: { tamed?: boolean }) => void
   awardXpToParty: (amount: number) => void
   setActiveTeam: (ids: string[]) => void
   recordTrialLoss: (guardianId: string) => void
   recordPuzzleAttempt: (category: PuzzleAttempt['category'], correct: boolean) => void
+  /** A puzzle solved in any mode: lifetime stats + Stardust (§19). */
+  recordSolve: (problem: Problem, misses: number) => void
+  /** Any battle won: lifetime stats + Stardust (§19). */
+  recordBattleWin: (summary: BattleSummary) => void
+  dismissToast: () => void
   completeArea: (areaId: string) => void
   winTrial: (zoneId: string) => void
   winChampion: () => void
@@ -73,7 +94,35 @@ interface GameStore {
 }
 
 export const useGameStore = create<GameStore>()((set, get) => {
+  // Unlock any achievement whose condition is now met: stamp the date, pay its
+  // Stardust, and queue its pop-up. Runs before every save, so no action has to
+  // know which trophies it might affect.
+  function settleAchievements() {
+    const s = get()
+    const earned = newlyEarned(
+      {
+        lifetime:      s.lifetime,
+        party:         s.party,
+        badges:        s.badges,
+        prestigeCount: s.prestigeCount,
+        elementOf:     (id) => SPECIES_BY_ID[id]?.element,
+      },
+      s.achievements,
+    )
+    if (earned.length === 0) return
+    const now = new Date().toISOString()
+    set({
+      achievements: { ...s.achievements, ...Object.fromEntries(earned.map((a) => [a.id, now])) },
+      stardust:     s.stardust + earned.reduce((sum, a) => sum + a.reward, 0),
+      toastQueue:   [...s.toastQueue, ...earned.map((a) => a.id)],
+    })
+  }
+
   function persist() {
+    // Count today as a played day (a no-op after the first save of the day).
+    const lifetime = applyDayPlayed(get().lifetime, localDay())
+    if (lifetime !== get().lifetime) set({ lifetime })
+    settleAchievements()
     const s = get()
     saveGame({
       playerName:           s.playerName,
@@ -85,6 +134,9 @@ export const useGameStore = create<GameStore>()((set, get) => {
       recentPuzzleAttempts: s.recentPuzzleAttempts,
       prestigeCount:        s.prestigeCount,
       awaitingStarter:      s.awaitingStarter,
+      stardust:             s.stardust,
+      lifetime:             s.lifetime,
+      achievements:         s.achievements,
       lastZoneId:           s.selectedZoneId ?? undefined,
     })
   }
@@ -122,6 +174,10 @@ export const useGameStore = create<GameStore>()((set, get) => {
     recentPuzzleAttempts:  [],
     prestigeCount:         0,
     awaitingStarter:       false,
+    stardust:              0,
+    lifetime:              emptyLifetime(),
+    achievements:          {},
+    toastQueue:            [],
     badges:                0,
     levelCap:         levelCapForBadges(0),
     currentScreen:    'worldMap',
@@ -132,8 +188,12 @@ export const useGameStore = create<GameStore>()((set, get) => {
     // ends the "pick this journey's starter" state on a prestige run.
     setPlayerName: (name) => { set({ playerName: name, awaitingStarter: false }); persist() },
 
-    addToParty: (creature) => {
-      set({ party: [...get().party, creature] })
+    addToParty: (creature, opts) => {
+      const l = applySpeciesSeen(get().lifetime, [creature.speciesId])
+      set({
+        party:    [...get().party, creature],
+        lifetime: opts?.tamed ? { ...l, tamed: l.tamed + 1 } : l,
+      })
       persist()
     },
 
@@ -161,6 +221,28 @@ export const useGameStore = create<GameStore>()((set, get) => {
       persist()
     },
 
+    recordSolve: (problem, misses) => {
+      set({
+        lifetime: applySolve(get().lifetime, {
+          category:         problem.type,
+          misses,
+          isMultiplication: problem.type === 'math' && problem.multiplication === true,
+        }),
+        stardust: get().stardust + stardustForSolve(misses),
+      })
+      persist()
+    },
+
+    recordBattleWin: (summary) => {
+      set({
+        lifetime: applyBattleWin(get().lifetime, summary),
+        stardust: get().stardust + STARDUST_PER_BATTLE_WIN,
+      })
+      persist()
+    },
+
+    dismissToast: () => set({ toastQueue: get().toastQueue.slice(1) }),
+
     // Mark a quest/area complete (re-derives badges + cap for Trial areas).
     completeArea: (areaId) => {
       const areasDone = get().areasDone.includes(areaId)
@@ -182,7 +264,9 @@ export const useGameStore = create<GameStore>()((set, get) => {
       const { badges, levelCap } = derive(areasDone)
 
       let party = get().party
+      let lifetime = get().lifetime
       if (zone.signatureSpeciesId) {
+        lifetime = applySpeciesSeen(lifetime, [zone.signatureSpeciesId])
         const guardian = zone.guardianId ? GUARDIAN_BY_ID[zone.guardianId] : undefined
         const aceLevel = guardian?.team.find(t => t.speciesId === zone.signatureSpeciesId)?.level ?? levelCap
         // Guardian-signature trophies join with max IVs (§5) — these are earned.
@@ -190,12 +274,17 @@ export const useGameStore = create<GameStore>()((set, get) => {
       }
       party = xpParty(party, XP_PER_BATTLE_WIN, levelCap)
 
+      // No losses to this Guardian since the last win → a Flawless Trial (§19).
+      if (zone.guardianId && !get().trialLossStreaks[zone.guardianId]) {
+        lifetime = { ...lifetime, perfectTrials: lifetime.perfectTrials + 1 }
+      }
+
       // Reset this Guardian's loss streak on a win (M2e safety net clears).
       const trialLossStreaks = zone.guardianId
         ? clearStreak(get().trialLossStreaks, zone.guardianId)
         : get().trialLossStreaks
 
-      set({ areasDone, badges, levelCap, party, trialLossStreaks })
+      set({ areasDone, badges, levelCap, party, trialLossStreaks, lifetime })
       persist()
     },
 
@@ -208,7 +297,8 @@ export const useGameStore = create<GameStore>()((set, get) => {
         XP_PER_BATTLE_WIN,
         cap,
       )
-      set({ party, championDefeated: true })
+      const l = applySpeciesSeen(get().lifetime, ['aurelune'])
+      set({ party, championDefeated: true, lifetime: { ...l, championWins: l.championWins + 1 } })
       persist()
     },
 
@@ -262,6 +352,10 @@ export const useGameStore = create<GameStore>()((set, get) => {
         activeTeam:           [],
         trialLossStreaks:     {},
         recentPuzzleAttempts: [],
+        stardust:             0,
+        lifetime:             emptyLifetime(),
+        achievements:         {},
+        toastQueue:           [],
         badges:               0,
         levelCap:             levelCapForBadges(0),
         currentScreen:        'worldMap',
@@ -283,10 +377,15 @@ export const useGameStore = create<GameStore>()((set, get) => {
           recentPuzzleAttempts:  saved.recentPuzzleAttempts ?? [],
           prestigeCount:         saved.prestigeCount ?? 0,
           awaitingStarter:       saved.awaitingStarter ?? false,
+          stardust:              saved.stardust,
+          lifetime:              saved.lifetime,
+          achievements:          saved.achievements,
           selectedZoneId:        saved.lastZoneId ?? null,
           currentScreen:         'worldMap',
           ...derive(saved.areasDone),
         })
+        // Counts today and unlocks anything an older save had already earned.
+        persist()
       }
     },
   }

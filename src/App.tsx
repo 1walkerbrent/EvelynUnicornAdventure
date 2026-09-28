@@ -12,7 +12,9 @@ import ExploreHub from './screens/ExploreHub'
 import ExplorePractice from './screens/ExplorePractice'
 import ExploreHunt from './screens/ExploreHunt'
 import Party from './screens/Party'
+import Trophies from './screens/Trophies'
 import Nav from './components/Nav'
+import AchievementToast from './components/AchievementToast'
 
 // Immersive full-screen experiences (no header/nav chrome).
 const FULLSCREEN_SCREENS = new Set(['provingGlade', 'trial', 'champion', 'gameComplete', 'exploreHunt'])
@@ -22,6 +24,8 @@ export default function App() {
   const currentScreen = useGameStore((s) => s.currentScreen)
   const awaitingStarter = useGameStore((s) => s.awaitingStarter)
   const load          = useGameStore((s) => s.load)
+  const stardust      = useGameStore((s) => s.stardust)
+  const setScreen     = useGameStore((s) => s.setScreen)
 
   useEffect(() => {
     load()
@@ -40,6 +44,7 @@ export default function App() {
          currentScreen === 'champion'        ? <Champion /> :
          currentScreen === 'exploreHunt'     ? <ExploreHunt /> :
          currentScreen === 'gameComplete'    ? <GameComplete /> : null}
+        <AchievementToast />
       </div>
     )
   }
@@ -47,9 +52,18 @@ export default function App() {
   return (
     <div className="app-height w-full safe-x flex flex-col bg-purple-950 text-white overflow-hidden">
       <header className="flex-shrink-0 safe-top bg-purple-900/80 border-b border-purple-800">
-        <p className="px-6 py-2 text-base font-bold text-yellow-300 tracking-wide">
-          🦄 Evelyn's Unicorn Adventure
-        </p>
+        <div className="px-6 py-2 flex items-center justify-between gap-3">
+          <p className="text-base font-bold text-yellow-300 tracking-wide truncate">
+            🦄 Evelyn's Unicorn Adventure
+          </p>
+          <button
+            onClick={() => setScreen('trophies')}
+            className="flex-shrink-0 text-sm font-bold text-amber-200 bg-black/30 rounded-full px-3 py-0.5"
+            aria-label={`${stardust} Stardust — open Trophies`}
+          >
+            ✨ {stardust}
+          </button>
+        </div>
       </header>
       <main className="flex-1 min-h-0 overflow-y-auto">
         {currentScreen === 'worldMap'        && <WorldMap />}
@@ -58,8 +72,10 @@ export default function App() {
         {currentScreen === 'exploreHub'      && <ExploreHub />}
         {currentScreen === 'explorePractice' && <ExplorePractice />}
         {currentScreen === 'party'           && <Party />}
+        {currentScreen === 'trophies'        && <Trophies />}
       </main>
       <Nav />
+      <AchievementToast />
     </div>
   )
 }

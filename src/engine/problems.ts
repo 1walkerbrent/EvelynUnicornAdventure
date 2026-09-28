@@ -3,6 +3,8 @@ export interface MathProblem {
   prompt: string
   correctAnswer: number
   hint: string
+  /** Set on multiplication facts, so achievements can count them (§19). */
+  multiplication?: true
 }
 
 export interface LogicProblem {

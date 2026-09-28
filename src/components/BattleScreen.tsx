@@ -6,6 +6,7 @@ import {
 import type { BattlePony, BattleState } from '../engine/battle'
 import { getTypeMultiplier } from '../engine/combat'
 import CreatureSprite from './CreatureSprite'
+import { useGameStore } from '../state/store'
 
 // Arena/hunt backdrops, keyed by filename without extension (same build-time
 // discovery pattern as CreatureSprite). Drop a correctly-named PNG in
@@ -125,6 +126,9 @@ export default function BattleScreen({
   // pointerup doesn't clobber the selection). Event handlers read the ref;
   // anything rendered reads `dragTileId` below, which is set in lockstep with it.
   const dragFrom    = useRef<string | null>(null)
+  // ×2 hits her ponies land this attempt — reported on a win for achievements (§19).
+  const superHits   = useRef(0)
+  const recordBattleWin = useGameStore((s) => s.recordBattleWin)
 
   // ── executeAttack — runs lunge → flash → HP drain → idle ─────────────────
   const executeAttack = useCallback((
@@ -133,6 +137,7 @@ export default function BattleScreen({
     targetId: string,
   ) => {
     const { state: newState, event } = applyAttack(snap, attackerId, targetId)
+    if (snap.activePhase === 'player' && event.multiplier === 'super') superHits.current += 1
     setAttackingId(attackerId)
 
     // After lunge peak (~380 ms), show impact
@@ -289,6 +294,7 @@ export default function BattleScreen({
 
   // ── Retry: restore both teams to full HP ─────────────────────────────────
   function handleRetry() {
+    superHits.current = 0
     setBattleState(createBattleState(
       initPlayers.map(p => ({ ...p, currentHp: p.maxHp })),
       initEnemies.map(p => ({ ...p, currentHp: p.maxHp })),
@@ -546,7 +552,14 @@ export default function BattleScreen({
           <h2 className="text-3xl font-bold text-yellow-300">{victoryTitle}</h2>
           <p className="text-purple-300 italic text-sm px-2">{victoryMessage}</p>
           <button
-            onClick={onVictory}
+            onClick={() => {
+              recordBattleWin({
+                superHits: superHits.current,
+                survivors: battleState.playerPonies.filter((p) => p.currentHp > 0).length,
+                elements:  initPlayers.map((p) => p.element),
+              })
+              onVictory()
+            }}
             className="w-full bg-yellow-400 hover:bg-yellow-300 text-purple-950
                        font-bold py-4 rounded-2xl text-lg transition-colors"
           >

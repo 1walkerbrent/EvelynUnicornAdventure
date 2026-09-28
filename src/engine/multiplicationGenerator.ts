@@ -80,6 +80,7 @@ export function generateMultiplicationProblem(band: MultBand, rng: Rng = Math.ra
       prompt: `${a} × __ = ${product}`,
       correctAnswer: b,
       hint: `How many ${a}s make ${product}? ${multiplicationHint(a, b)}`,
+      multiplication: true,
     }
   }
 
@@ -88,5 +89,6 @@ export function generateMultiplicationProblem(band: MultBand, rng: Rng = Math.ra
     prompt: `${a} × ${b} = __`,
     correctAnswer: product,
     hint: multiplicationHint(a, b),
+    multiplication: true,
   }
 }

@@ -33,6 +33,7 @@ export default function ExploreHunt() {
   const selectedZoneId       = useGameStore((s) => s.selectedZoneId)
   const recentPuzzleAttempts = useGameStore((s) => s.recentPuzzleAttempts)
   const recordPuzzleAttempt  = useGameStore((s) => s.recordPuzzleAttempt)
+  const recordSolve          = useGameStore((s) => s.recordSolve)
 
   const zone       = selectedZoneId ? ZONE_BY_ID[selectedZoneId] : undefined
   const num        = zone ? zoneNumber(zone.id) : 1
@@ -106,7 +107,7 @@ export default function ExploreHunt() {
         </div>
         <ProblemCard
           problem={huntPuzzle}
-          onSolve={() => setPhase('battle')}
+          onSolve={(misses) => { recordSolve(huntPuzzle, misses); setPhase('battle') }}
           onAttempt={(correct) => recordPuzzleAttempt(huntPuzzle.type, correct)}
         />
         <button
@@ -136,7 +137,7 @@ export default function ExploreHunt() {
       currentHp: stats.heart,
       xp:        0,
       ivs,
-    })
+    }, { tamed: true })
     awardXpToParty(XP_PER_BATTLE_WIN)
     setScreen('exploreHub')
   }

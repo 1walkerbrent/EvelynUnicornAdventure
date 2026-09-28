@@ -10,6 +10,7 @@ import { isSpeechAvailable } from '../engine/speech'
 import { effectiveDifficulty } from '../engine/difficulty'
 import { zoneNumber } from '../engine/progression'
 import { XP_PER_CORRECT_ANSWER } from '../engine/leveling'
+import { stardustForSolve, STARDUST_PER_SOLVE } from '../engine/achievements'
 import type { Problem } from '../engine/problems'
 import ProblemCard from '../components/ProblemCard'
 
@@ -23,6 +24,7 @@ export default function ExplorePractice() {
   const selectedZoneId       = useGameStore((s) => s.selectedZoneId)
   const recentPuzzleAttempts = useGameStore((s) => s.recentPuzzleAttempts)
   const recordPuzzleAttempt  = useGameStore((s) => s.recordPuzzleAttempt)
+  const recordSolve          = useGameStore((s) => s.recordSolve)
 
   const zone = selectedZoneId ? ZONE_BY_ID[selectedZoneId] : undefined
   const num  = zone ? zoneNumber(zone.id) : 1
@@ -44,9 +46,12 @@ export default function ExplorePractice() {
   const [round, setRound]     = useState(0)
   const [problem, setProblem] = useState<Problem>(() => makeProblem())
   const [solved, setSolved]   = useState(false)
+  const [dustEarned, setDustEarned] = useState(0)
 
-  function handleSolve() {
+  function handleSolve(misses: number) {
     awardXpToParty(XP_PER_CORRECT_ANSWER)
+    recordSolve(problem, misses)
+    setDustEarned(stardustForSolve(misses))
     setSolved(true)
   }
 
@@ -76,6 +81,10 @@ export default function ExplorePractice() {
           <div className="text-5xl pt-2">🌟</div>
           <h3 className="text-xl font-bold text-green-300">Correct!</h3>
           <p className="text-purple-300">Your whole team earned <span className="text-yellow-300 font-bold">+{XP_PER_CORRECT_ANSWER} XP</span>.</p>
+          <p className="text-purple-300">
+            You found <span className="text-amber-200 font-bold">+{dustEarned} ✨ Stardust</span>
+            {dustEarned > STARDUST_PER_SOLVE && <span className="text-amber-300"> — first try bonus!</span>}
+          </p>
           <button
             onClick={another}
             className="w-full bg-yellow-400 hover:bg-yellow-300 text-purple-950 font-bold py-4 rounded-2xl text-lg transition-colors"

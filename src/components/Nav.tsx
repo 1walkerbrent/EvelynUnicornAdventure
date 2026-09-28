@@ -4,6 +4,7 @@ import type { Screen } from '../state/store'
 const TABS: Array<{ screen: Screen; label: string; icon: string }> = [
   { screen: 'worldMap', label: 'World Map', icon: '🗺️' },
   { screen: 'party',    label: 'Party',     icon: '🦄' },
+  { screen: 'trophies', label: 'Trophies',  icon: '🏆' },
 ]
 
 export default function Nav() {

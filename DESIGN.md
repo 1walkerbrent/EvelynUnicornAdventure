@@ -550,7 +550,9 @@ Build Zone 1 end-to-end before anything else, with placeholder art (colored shap
   - Tests: `spelling.test.ts` (scramble guarantees, band routing, anti-repeat, bank integrity) plus reworked `puzzleSelector.test.ts` for four categories. 267 tests passing, build clean.
 - **M3 — Polish:** balance tuning (the 1.5/0.5 dial), audio, save backup UX, content top-ups to the Explore pool.
 - **M4 — Prestige / New Game+ ✅ DONE:** the §15 restart, built as the same-difficulty variant. `engine/prestige.ts` (pure: `isCarriedThroughPrestige`, `resetToCap`, `prestigeParty`), a `store.prestige()` action, a two-step `<PrestigeDialog>` reached from a pinned bar on the world map, and an `awaitingStarter` flow that returns her to character creation for a fresh starter without re-asking her name. Save bumped to **v8** (`prestigeCount`, `awaitingStarter`; v7→v8 migration). Carries only Champion trophies, reset to the new cap. See §18. 293 tests passing, lint and build clean.
-- **M3d — Beginner multiplication ✅ DONE (current milestone):** 3rd-grade multiplication facts mixed into the math category at 30% (see §9 *Multiplication*). `engine/multiplicationGenerator.ts` holds the fact families per band, with the skip-counting hint and band 6's missing-factor form. Both public math entries (`generateMathProblem`, `generateHuntMathProblem`) roll the mix-in first. The addition/subtraction-only paths are exported as `generateAddSubProblem` / `generateHuntAddSubProblem`, and the existing band tests now call those. **No save or UI change**: the answer box already takes 0, and `×` renders as plain text. Tests: `multiplication.test.ts`. 324 tests passing, build clean.
+- **M3d — Beginner multiplication ✅ DONE:** 3rd-grade multiplication facts mixed into the math category at 30% (see §9 *Multiplication*). `engine/multiplicationGenerator.ts` holds the fact families per band, with the skip-counting hint and band 6's missing-factor form. Both public math entries (`generateMathProblem`, `generateHuntMathProblem`) roll the mix-in first. The addition/subtraction-only paths are exported as `generateAddSubProblem` / `generateHuntAddSubProblem`, and the existing band tests now call those. **No save or UI change**: the answer box already takes 0, and `×` renders as plain text. Tests: `multiplication.test.ts`. 324 tests passing, build clean.
+- **M5a — Achievements + Stardust ✅ DONE (current milestone):** the §19 Trophy Shelf and the Stardust currency. `engine/achievements.ts` (pure): lifetime counters, the Stardust rates, and 43 trophies, each a predicate over a snapshot. `store.persist()` runs `settleAchievements()` before every save, so no action needs to know which trophies it affects. New hooks: `recordSolve(problem, misses)`, called from Quest, Practice and the Hunt warm-up; `recordBattleWin(summary)`, called from `<BattleScreen>`'s victory button; and `addToParty(c, { tamed })`. `<ProblemCard>`'s `onSolve` now passes the miss count, and multiplication problems carry `multiplication: true`. UI: `screens/Trophies.tsx` (third nav tab, one card per ladder), code-drawn `components/Medal.tsx`, `components/AchievementToast.tsx`, and a ✨ balance in the header. **Save v9** (`stardust`, `lifetime`, `achievements`); the migration backfills the Pony Book from the party and Champion wins from progress, so an existing save unlocks what it has already earned on first load. 357 tests passing, lint and build clean.
+- **M5b — Hatching + the Meadow (next):** see §20.
 
 ---
 
@@ -558,8 +560,8 @@ Build Zone 1 end-to-end before anything else, with placeholder art (colored shap
 
 Framed as expansion / unlock-style content once v1 is proven and loved:
 - **Owlicorns and Pegasi** as new families (new art, family-specific flavor).
-- **Breeding:** offspring inherit element from parents; the "unique variant" payoff is a **palette swap** (e.g. Starlight or Shadow coloring), so it adds depth with near-zero new base art.
-- **Achievements / unlock milestones.**
+- **Breeding — DESIGNED as Hatching (see §20), not yet built.** Original note: offspring inherit element from parents; the "unique variant" payoff is a **palette swap** (e.g. Starlight or Shadow coloring), so it adds depth with near-zero new base art.
+- **Achievements / unlock milestones — ✅ BUILT (see §19).**
 - **New Game+ / prestige — ✅ BUILT (see §18).** The *same-difficulty* restart shipped. The **harder** variant is still deferred: it would apply a global level offset that every problem generator reads (§9), scaling the math up with no new content.
 
 ### Combat turn-order refinements (revisit when next touching battle)
@@ -606,8 +608,62 @@ Beating Grand Champion Vesper unlocks a **new journey**: the whole game resets, 
 
 **What resets.** `areasDone`, `championDefeated`, `activeTeam`, `trialLossStreaks`, and every non-trophy pony. `badges`/`levelCap` follow automatically, since they are derived from `areasDone`.
 
-**What deliberately does *not* reset.** `playerName`, and the rolling `recentPuzzleAttempts` window — that history describes *how she learns*, not how far she has progressed, so the §9 reinforcement weighting stays calibrated across journeys.
+**What deliberately does *not* reset.** `playerName`, Stardust, unlocked trophies and lifetime stats (§19), and the rolling `recentPuzzleAttempts` window — that history describes *how she learns*, not how far she has progressed, so the §9 reinforcement weighting stays calibrated across journeys.
 
 **New starter.** `awaitingStarter` (persisted) routes her back into `<CharacterCreation>` without clearing her name: the screen reads "Journey N!", hides the name field, and she picks a fresh starter from all five elements. `setPlayerName` clears the flag as the last step of creation.
 
 **Save v8** adds `prestigeCount` and `awaitingStarter`, with a v7→v8 migration that defaults every earlier save to a first journey and coerces a corrupted counter to a sane integer.
+
+---
+
+## 19. Achievements + Stardust
+
+**Stardust** ✨ is the one currency. She earns it by *learning*: every correct puzzle in any mode (Quest, Practice, Hunt warm-up) pays **1**, plus **1 more on the first try**. Every battle won pays **2**, and each trophy pays out a lump sum. It is spent on Hatching (§20). This deliberately makes Practice worth doing even when the party doesn't need XP. Rates are constants at the top of `engine/achievements.ts`.
+
+**Trophies** live on the Trophy Shelf (third nav tab). Each is a predicate over a snapshot: lifetime counters plus current party, badges and journey count. Unlocking is "which predicates just became true", checked before every save (`settleAchievements` in the store). Newly earned trophies stamp a date, pay Stardust, and queue a pop-up (`AchievementToast`, one at a time, tap to skip).
+
+| Family | Trophies |
+|---|---|
+| Learning | Number Ninja (math solves 10/50/200) · **Times Table Tamer** (multiplication facts right *in a row, first try* 5/10/20) · Word Wizard (spelling 10/50/150) · Bookworm (reading 10/50/150) · Clue Detective (logic 10/50/150) · Sharp Mind (first-try solves 20/100/300) · Adventurer (days played 3/10/30, counted as distinct days, never streaks, so skipping a day costs nothing) |
+| Collecting | Pony Whisperer (Hunt tames 1/10/25) · Pony Book (species ever owned 10/20/all) · Rainbow Friends (all five elements at once) · *secret* Perfect Pony (a non-trophy 3/3/3 pony) |
+| Battle | Brave Heart (wins 5/25/100) · Super Effective! (win with a ×2 hit) · Type Master (20 such wins) · Rainbow Team (win with three elements) · Never Give Up (win with one pony standing) · Flawless Trial (beat a Guardian with no loss since the last win) |
+| Journey | First Badge · Halfway Hero (3 badges) · Badge Master (5) · Champion! · *secret* A New Journey · *secret* Legend (third journey) |
+
+Rewards: bronze 10, silver 25, gold 60, one-off "special" 20 (Perfect Pony 40). A bronze/silver/gold ladder shows as **one card**: the best medal so far, pips for the steps, and a progress bar toward the next. Secret trophies read "???" until earned.
+
+**What survives a new journey (§15/§18):** Stardust, trophies and lifetime stats all carry over. They describe how she learns, not how far this run has got. Badge trophies stay unlocked even though badges reset.
+
+**Save v9** adds `stardust`, `lifetime` and `achievements` (id → ISO date). Migration backfills what the save can prove: the Pony Book from the current party, and Champion wins from `prestigeCount` + `championDefeated`. Puzzle and battle counters start at 0, since there is no history for them.
+
+## 20. Hatching + the Meadow (designed — M5b, not yet built)
+
+Two ponies visit the **Moonwell**, and a glowing egg hatches into a **foal**. In the game this is always called *hatching*. The design goal: **choosing the pair should take thought.** Every pairing trades off element, stats and rare-color chances.
+
+**Who can hatch**
+- Both parents must be **level 5+**. Guardian signatures and Aurelune can't hatch ("too busy guarding"). Their guaranteed 3/3/3 would make perfect foals trivial.
+- After hatching, both parents **rest for 3 battle wins** (stored as a `battlesWon` threshold), so she can't repeat one pairing over and over.
+- Costs **30 Stardust**.
+
+**What the foal gets**
+1. **Species and element from the *lead* parent**, whom she chooses. The foal uses the lead's sprite at a smaller size, so no new art is needed.
+2. **Stats blended from both parents:** each of Heart / Power / Speed copies one parent's IV at random. Then a **sparkle** roll can add +1 (cap 3): 15% normally, **25% if both parents share an element**. That's a real trade-off: pure pairs sparkle more, while mixed pairs can cover each other's weak stats.
+3. **Level 1**, 0 XP. It grows through the normal shared XP.
+4. **A rare color, sometimes.** One roll, checked in this order:
+   - ✨ **Starlight:** both parents have a 3 in the same stat (30%).
+   - 🌑 **Shadow:** the parents are opposites, with one hitting the other ×2 on the attack wheel (20%).
+   - 🌙 **Moonlit** (Water + Spirit) · 🌅 **Sunburst** (Fire + Earth) · 🌌 **Aurora** (Air + Water): 15% each. These are the *non*-×2 pairs, so they never overlap Shadow.
+
+   Variants are a `variant` field on `Creature`, drawn as a CSS color filter over the existing sprite (hue / saturation / brightness), so they need **no new art files**. They're cosmetic only, and every variant is a Pony Book entry of its own.
+
+**Deciding with information.** Before she pays, a preview shows each stat's possible range ("Speed: 2 or 3"), the sparkle chance, and every rare-color chance for this exact pair. A **Recipe Book** lists the variants as silhouettes with riddle clues ("Two ponies who never get along…") until she discovers each one. Discoveries are lifetime, so they survive prestige.
+
+**Where foals live.** Foals join the **party** like any other pony, benched outside her 3-pony active team, and share XP as usual.
+
+**The Meadow (release for Stardust).** From the Party screen she can **send a pony to the Meadow** for Stardust: **5 + 1 per 2 levels**. Kid-friendly framing: the pony goes to live happily in the Pony Meadow. Guards: not a member of the active team, not a trophy, never her last pony, and a confirm step. Releasing a species she caught makes it catchable in Hunts again (Hunts skip owned species).
+
+**New journeys.** Foals do **not** carry over. Only Champion trophies do (§18), per the user's call. Recipe discoveries and hatching trophies do carry.
+
+**Hatching trophies (to add):** First Foal · Foal ladder (1/5/15 hatched) · one per rare color · Kind Heart (first Meadow release). Perfect Pony (§19) becomes the natural long-term hatching goal.
+
+**Save v10 (planned):** `Creature.variant?`, `Creature.parents?` (instance ids, for flavor), `Creature.restUntil?` (battle-win count). Lifetime stats gain `hatched`, `released` and `variantsFound`.
+
