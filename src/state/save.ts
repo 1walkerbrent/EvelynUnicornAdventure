@@ -4,10 +4,11 @@ import { newCreatureId } from '../engine/creature'
 import type { PuzzleAttempt, PuzzleCategory } from '../engine/puzzleSelector'
 import { ALL_CATEGORIES } from '../engine/puzzleSelector'
 import type { LifetimeStats } from '../engine/achievements'
-import { sanitizeLifetime, applySpeciesSeen } from '../engine/achievements'
+import { sanitizeLifetime, applySpeciesSeen, TROPHY_SPECIES } from '../engine/achievements'
+import { VARIANT_BY_ID } from '../engine/hatching'
 
 export interface SaveData {
-  version: 9
+  version: 10
   playerName: string
   party: Creature[]
   /** Completed area ids — the single source of truth for progression. */
@@ -34,10 +35,10 @@ export interface SaveData {
 }
 
 const SAVE_KEY = 'evelyn_unicorn_adventure'
-const VERSION = 9 as const
+const VERSION = 10 as const
 
 /** Save schema versions this build can read (current + migratable predecessors). */
-const READABLE_VERSIONS = [9, 8, 7, 6, 5, 4, 3, 2]
+const READABLE_VERSIONS = [10, 9, 8, 7, 6, 5, 4, 3, 2]
 
 export type PersistedState = Omit<SaveData, 'version'>
 
@@ -71,6 +72,27 @@ function sanitizeAttempts(raw: unknown): PuzzleAttempt[] {
 
 function withIvs(c: Creature): Creature {
   return c.ivs ? c : { ...c, ivs: rollIvs() }
+}
+
+/**
+ * v10 (§20): keep only well-formed hatching fields, and flag trophies. Before
+ * hatching existed, a Guardian-signature or Aurelune pony could only have joined
+ * as a trophy, so a pre-v10 save flags them by species. A v10+ save already
+ * carries the flag — and a hatched foal of those species must NOT gain it.
+ */
+function withHatchingFields(c: Creature, preV10: boolean): Creature {
+  const out: Creature = { ...c }
+  delete out.trophy
+  delete out.variant
+  delete out.restUntil
+  delete out.parents
+  if (c.trophy === true || (preV10 && TROPHY_SPECIES.has(c.speciesId))) out.trophy = true
+  if (typeof c.variant === 'string' && c.variant in VARIANT_BY_ID) out.variant = c.variant
+  if (Number.isFinite(c.restUntil) && (c.restUntil as number) > 0) out.restUntil = Math.floor(c.restUntil as number)
+  if (Array.isArray(c.parents) && c.parents.length === 2 && c.parents.every((x) => typeof x === 'string')) {
+    out.parents = [c.parents[0], c.parents[1]]
+  }
+  return out
 }
 
 /** Backfill a stable instance id (§ instance IDs). Idempotent — keeps any existing id. */
@@ -248,7 +270,7 @@ export function migrateSave(parsed: unknown): PersistedState | null {
   // v8/v7/v6/v5 share the same superset shape (v7 adds Creature.id + id-based
   // activeTeam, both handled by the universal backfill below; v8 adds the
   // prestige fields, defaulted in migrateV5).
-  if (version === 9 || version === 8 || version === 7 || version === 6 || version === 5) state = migrateV5(parsed as SaveDataV5)
+  if (version === 10 || version === 9 || version === 8 || version === 7 || version === 6 || version === 5) state = migrateV5(parsed as SaveDataV5)
   else if (version === 4)   state = migrateV4(parsed as SaveDataV4)
   else if (version === 3)   state = migrateV3(parsed as SaveDataV3)
   else if (version === 2)   state = migrateV2(parsed as SaveDataV2)
@@ -256,7 +278,8 @@ export function migrateSave(parsed: unknown): PersistedState | null {
 
   // Universal backfill (runs for every readable version, idempotent): give each
   // creature an IV set and an instance id, then remap the active team to ids.
-  const party = state.party.map(withIvs).map(withId)
+  const preV10 = typeof version === 'number' && version < 10
+  const party = state.party.map(withIvs).map(withId).map((c) => withHatchingFields(c, preV10))
   return {
     ...state,
     party,

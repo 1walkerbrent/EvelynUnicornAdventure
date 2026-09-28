@@ -11,7 +11,11 @@ import type { Guardian } from '../content/guardians'
 export function buildPlayerTeam(party: Creature[]): BattlePony[] {
   return party.slice(0, 3).map((c, i) => {
     const sp = SPECIES_BY_ID[c.speciesId]
-    return { ...buildBattlePony(`player-${i}`, c.nickname || sp.name, sp.element, sp.tier, c.level, c.ivs), speciesId: sp.id }
+    return {
+      ...buildBattlePony(`player-${i}`, c.nickname || sp.name, sp.element, sp.tier, c.level, c.ivs),
+      speciesId: sp.id,
+      variant: c.variant,
+    }
   })
 }
 

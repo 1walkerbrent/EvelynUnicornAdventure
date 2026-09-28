@@ -430,7 +430,7 @@ export default function BattleScreen({
                   style={{ borderRadius: '50%' }}
                 />
               )}
-              <CreatureSprite element={pony.element} size={SPRITE_SIZE} speciesId={pony.speciesId} />
+              <CreatureSprite element={pony.element} size={SPRITE_SIZE} speciesId={pony.speciesId} variant={pony.variant} />
             </div>
 
             <span
@@ -489,7 +489,7 @@ export default function BattleScreen({
                 />
               )}
               <div style={{ transform: 'scaleX(-1)' }}>
-                <CreatureSprite element={pony.element} size={SPRITE_SIZE} speciesId={pony.speciesId} />
+                <CreatureSprite element={pony.element} size={SPRITE_SIZE} speciesId={pony.speciesId} variant={pony.variant} />
               </div>
             </div>
 

@@ -1,4 +1,5 @@
-import type { Element } from '../engine/types'
+import type { Element, VariantId } from '../engine/types'
+import { VARIANT_BY_ID } from '../engine/hatching'
 
 // Real pony art, keyed by speciesId (= PNG filename without extension). Sprites
 // are discovered at build time from src/assets/ponies/, so adding a new pony is
@@ -36,9 +37,12 @@ interface Props {
   color?: string
   size?: number
   speciesId?: string
+  /** Rare hatched color (§20): a CSS filter over the normal art, so no new files. */
+  variant?: VariantId
 }
 
-export default function CreatureSprite({ element, color, size = 64, speciesId }: Props) {
+export default function CreatureSprite({ element, color, size = 64, speciesId, variant }: Props) {
+  const filter = variant ? VARIANT_BY_ID[variant]?.filter : undefined
   // Starters with real art render their PNG; everything else uses the placeholder.
   const sprite = speciesId ? SPRITE_BY_SPECIES[speciesId] : undefined
   if (sprite) {
@@ -49,7 +53,7 @@ export default function CreatureSprite({ element, color, size = 64, speciesId }:
         draggable={false}
         // pointer-events:none so the native image drag can't hijack the wrapper's
         // custom drag-to-target gesture — the wrapper <div> owns all pointer input.
-        style={{ width: size, height: size, objectFit: 'contain', pointerEvents: 'none' }}
+        style={{ width: size, height: size, objectFit: 'contain', pointerEvents: 'none', filter }}
         className="flex-shrink-0 select-none"
       />
     )
@@ -60,7 +64,7 @@ export default function CreatureSprite({ element, color, size = 64, speciesId }:
 
   return (
     <div
-      style={{ width: size, height: size, backgroundColor: bg, fontSize: emojiSize }}
+      style={{ width: size, height: size, backgroundColor: bg, fontSize: emojiSize, filter }}
       className="rounded-full flex items-center justify-center shadow-lg flex-shrink-0"
       aria-label={`${element} unicorn placeholder`}
       role="img"

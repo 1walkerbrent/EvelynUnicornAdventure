@@ -1,7 +1,7 @@
 import { describe, it, expect, beforeEach } from 'vitest'
 import { useGameStore } from './store'
 import { ZONE_BY_ID } from '../content/zones'
-import { ACHIEVEMENT_BY_ID } from '../engine/achievements'
+import { ACHIEVEMENT_BY_ID, ACHIEVEMENTS } from '../engine/achievements'
 
 // Guardian-signature ponies are trophies (§5): they always join with max IVs.
 describe('winTrial — signature pony joins with max IVs (3/3/3)', () => {
@@ -201,5 +201,93 @@ describe('achievements + Stardust', () => {
     useGameStore.setState({ toastQueue: ['a', 'b'] })
     useGameStore.getState().dismissToast()
     expect(useGameStore.getState().toastQueue).toEqual(['b'])
+  })
+})
+
+// §20 — hatching and the Meadow change the party, Stardust and lifetime stats together.
+describe('hatching + the Meadow', () => {
+  beforeEach(() => {
+    localStorage.clear()
+    useGameStore.getState().resetGame()
+  })
+
+  function adult(id: string, speciesId: string, extra: Record<string, unknown> = {}) {
+    return { id, speciesId, nickname: id, level: 6, currentHp: 10, xp: 0, ivs: { heart: 1, power: 1, speed: 1 }, ...extra }
+  }
+
+  function setup(stardust: number) {
+    useGameStore.setState({
+      party: [adult('a', 'marina-mist'), adult('b', 'ember-spark'), adult('c', 'sky-dancer'), adult('d', 'stella-dream')],
+      activeTeam: ['a', 'b', 'c'],
+      stardust,
+    })
+  }
+
+  it('hatching adds a foal, charges Stardust, rests both parents and counts toward trophies', () => {
+    setup(100)
+    const foal = useGameStore.getState().hatch('a', 'd')
+    expect(foal).not.toBeNull()
+    const s = useGameStore.getState()
+    expect(s.party).toHaveLength(5)
+    expect(s.party.at(-1)!.parents).toEqual(['a', 'd'])
+    expect(s.party.find((c) => c.id === 'a')!.restUntil).toBe(3)
+    expect(s.party.find((c) => c.id === 'd')!.restUntil).toBe(3)
+    expect(s.lifetime.hatched).toBe(1)
+    expect(s.achievements['foals-bronze']).toBeDefined()
+    // 100 − 15 to hatch, + 10 for Moonwell Friend bronze (+ any rare-color trophy)
+    const colorBonus = foal!.variant ? 20 : 0
+    expect(s.stardust).toBe(100 - 15 + 10 + colorBonus)
+  })
+
+  it('refuses without enough Stardust, or while a parent rests', () => {
+    setup(5)
+    expect(useGameStore.getState().hatch('a', 'd')).toBeNull()
+    useGameStore.setState({ stardust: 100 })
+    useGameStore.getState().hatch('a', 'd')
+    expect(useGameStore.getState().hatch('a', 'b')).toBeNull()   // 'a' is resting
+  })
+
+  it('three battle wins wake a resting parent', () => {
+    setup(100)
+    useGameStore.getState().hatch('a', 'd')
+    for (let i = 0; i < 3; i++) {
+      useGameStore.getState().recordBattleWin({ superHits: 0, survivors: 3, elements: ['water'] })
+    }
+    expect(useGameStore.getState().hatch('a', 'b')).not.toBeNull()
+  })
+
+  it('refuses the same pony twice', () => {
+    setup(100)
+    expect(useGameStore.getState().hatch('a', 'a')).toBeNull()
+  })
+
+  it('a Guardian trophy can hatch, at the higher price', () => {
+    setup(100)
+    // Pretend every trophy is already earned, so only the hatch itself moves Stardust.
+    const all = Object.fromEntries(ACHIEVEMENTS.map((x) => [x.id, '2026-01-01']))
+    useGameStore.setState({
+      party: [...useGameStore.getState().party, adult('g', 'boulderhoof', { trophy: true })],
+      achievements: all,
+    })
+    useGameStore.getState().hatch('d', 'g')
+    expect(useGameStore.getState().lifetime.hatched).toBe(1)
+    expect(useGameStore.getState().stardust).toBe(100 - 35)
+  })
+
+  it('the Meadow pays Stardust for a benched pony and refuses the battle team', () => {
+    setup(0)
+    expect(useGameStore.getState().release('a')).toBe(0)          // on the team
+    const paid = useGameStore.getState().release('d')             // benched, level 6
+    expect(paid).toBe(8)
+    const s = useGameStore.getState()
+    expect(s.party.map((c) => c.id)).not.toContain('d')
+    expect(s.lifetime.released).toBe(1)
+    expect(s.achievements['kind-heart']).toBeDefined()
+  })
+
+  it('trophies are flagged when awarded', () => {
+    useGameStore.getState().winTrial('z2')
+    const sig = useGameStore.getState().party.find((c) => c.speciesId === ZONE_BY_ID['z2'].signatureSpeciesId)
+    expect(sig!.trophy).toBe(true)
   })
 })

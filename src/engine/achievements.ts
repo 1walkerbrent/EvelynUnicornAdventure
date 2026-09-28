@@ -9,6 +9,7 @@ import type { Creature, Element } from './types'
 import type { PuzzleCategory } from './puzzleSelector'
 import { ALL_SPECIES, CHAMPION_SPECIES } from '../content/creatures'
 import { ZONES } from '../content/zones'
+import { VARIANTS } from './hatching'
 
 // ── Stardust economy (tunable) ───────────────────────────────────────────────
 
@@ -46,6 +47,12 @@ export interface LifetimeStats {
   championWins: number
   /** Every species she has ever owned — the Pony Book. */
   speciesSeen: string[]
+  /** Foals hatched at the Moonwell (§20). */
+  hatched: number
+  /** Ponies sent to the Meadow (§20). */
+  released: number
+  /** Rare colors she has hatched — the Recipe Book (§20). */
+  variantsFound: string[]
   /** Distinct days she has played. */
   daysPlayed: number
   /** Local YYYY-MM-DD of the last counted day. */
@@ -67,6 +74,9 @@ export function emptyLifetime(): LifetimeStats {
     perfectTrials: 0,
     championWins: 0,
     speciesSeen: [],
+    hatched: 0,
+    released: 0,
+    variantsFound: [],
     daysPlayed: 0,
     lastDay: '',
   }
@@ -99,6 +109,11 @@ export function sanitizeLifetime(raw: unknown): LifetimeStats {
     championWins:   n(r.championWins),
     speciesSeen:    Array.isArray(r.speciesSeen)
       ? [...new Set(r.speciesSeen.filter((s): s is string => typeof s === 'string'))]
+      : [],
+    hatched:        n(r.hatched),
+    released:       n(r.released),
+    variantsFound:  Array.isArray(r.variantsFound)
+      ? [...new Set(r.variantsFound.filter((s): s is string => typeof s === 'string'))]
       : [],
     daysPlayed:     n(r.daysPlayed),
     lastDay:        typeof r.lastDay === 'string' ? r.lastDay : '',
@@ -168,7 +183,7 @@ export function applyDayPlayed(l: LifetimeStats, day: string): LifetimeStats {
 // ── The trophies ─────────────────────────────────────────────────────────────
 
 export type Tier = 'bronze' | 'silver' | 'gold' | 'special'
-export type Family = 'learning' | 'collecting' | 'battle' | 'journey'
+export type Family = 'learning' | 'collecting' | 'hatching' | 'battle' | 'journey'
 
 export interface Snapshot {
   lifetime: LifetimeStats
@@ -233,15 +248,19 @@ function elementsOwned(s: Snapshot): number {
   return ELEMENTS.filter((e) => owned.has(e)).length
 }
 
-/** Guardian signatures + the Champion's Aurelune always join with max IVs (§5). */
-const TROPHY_SPECIES = new Set<string>([
+/**
+ * Species that only ever JOIN as trophies (Guardian signatures + Aurelune, max
+ * IVs, §5). Used by the save migration to backfill `Creature.trophy`; everything
+ * else reads the flag, since a hatched foal of these species is not a trophy.
+ */
+export const TROPHY_SPECIES = new Set<string>([
   CHAMPION_SPECIES.id,
   ...ZONES.flatMap((z) => (z.signatureSpeciesId ? [z.signatureSpeciesId] : [])),
 ])
 
-/** A 3/3/3 pony she got by luck (or, later, by hatching) — not a guaranteed-max trophy. */
+/** A 3/3/3 pony she got by luck or by hatching — not a guaranteed-max trophy. */
 function hasPerfectPony(s: Snapshot): boolean {
-  return s.party.some((c) => !TROPHY_SPECIES.has(c.speciesId)
+  return s.party.some((c) => !c.trophy
     && c.ivs?.heart === 3 && c.ivs.power === 3 && c.ivs.speed === 3)
 }
 
@@ -275,6 +294,20 @@ export const ACHIEVEMENTS: Achievement[] = [
   one({ id: 'perfect-pony', family: 'collecting', tier: 'special', name: 'Perfect Pony', icon: '💎',
     description: 'Own a pony with perfect 3 / 3 / 3 stars (trophies don’t count)',
     progress: (s) => (hasPerfectPony(s) ? 1 : 0), secret: true, reward: 40 }),
+
+  // ── Hatching (§20) ──
+  ...ladder({ id: 'foals', family: 'hatching', name: 'Moonwell Friend', icon: '🥚' },
+    (s) => s.lifetime.hatched, [1, 5, 15], (n) => n === 1 ? 'Hatch your first foal' : `Hatch ${n} foals`),
+  ...VARIANTS.map((v) => one({
+    id: `variant-${v.id}`, family: 'hatching', tier: 'special', name: `${v.name} Foal`, icon: v.emoji,
+    description: `Hatch a ${v.name} foal`, secret: true,
+    progress: (s) => (s.lifetime.variantsFound.includes(v.id) ? 1 : 0),
+  })),
+  one({ id: 'rainbow-recipes', family: 'hatching', tier: 'gold', name: 'Recipe Master', icon: '📜',
+    description: 'Find every rare color', progress: (s) => s.lifetime.variantsFound.length,
+    target: VARIANTS.length }),
+  one({ id: 'kind-heart', family: 'hatching', tier: 'special', name: 'Kind Heart', icon: '🌼',
+    description: 'Send a pony to live in the Meadow', progress: (s) => s.lifetime.released }),
 
   // ── Battle ──
   ...ladder({ id: 'brave', family: 'battle', name: 'Brave Heart', icon: '⚔️' },

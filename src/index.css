@@ -114,3 +114,38 @@
 .spell-shake {
   animation: spellShake 0.5s ease-in-out;
 }
+
+/* ── Moonwell: egg wobbles, glows, then the foal pops out (§20) ───────────── */
+
+@keyframes eggWobble {
+  0%, 100% { transform: rotate(0deg); }
+  15%      { transform: rotate(-9deg); }
+  30%      { transform: rotate(8deg); }
+  45%      { transform: rotate(-12deg); }
+  60%      { transform: rotate(11deg); }
+  75%      { transform: rotate(-6deg) scale(1.05); }
+  90%      { transform: rotate(4deg) scale(1.12); }
+}
+
+.egg-wobble {
+  animation: eggWobble 0.9s ease-in-out infinite;
+}
+
+@keyframes foalReveal {
+  0%   { opacity: 0; transform: scale(0.3) translateY(20px); }
+  60%  { opacity: 1; transform: scale(1.15) translateY(-6px); }
+  100% { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+.foal-reveal {
+  animation: foalReveal 0.7s cubic-bezier(0.2, 0.9, 0.3, 1.2) forwards;
+}
+
+@keyframes moonGlow {
+  0%, 100% { box-shadow: 0 0 24px 4px rgba(196, 181, 253, 0.35); }
+  50%      { box-shadow: 0 0 40px 12px rgba(196, 181, 253, 0.6); }
+}
+
+.moon-glow {
+  animation: moonGlow 3s ease-in-out infinite;
+}

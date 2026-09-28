@@ -11,6 +11,7 @@ import Medal from '../components/Medal'
 const FAMILIES: Array<{ id: Family; title: string }> = [
   { id: 'learning',   title: '📚 Learning' },
   { id: 'collecting', title: '🦄 Collecting' },
+  { id: 'hatching',   title: '🥚 Hatching' },
   { id: 'battle',     title: '⚔️ Battle' },
   { id: 'journey',    title: '🗺️ Journey' },
 ]

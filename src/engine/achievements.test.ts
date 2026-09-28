@@ -142,12 +142,14 @@ describe('unlock conditions', () => {
     expect(isEarned(a, snap({ party: [...four, pony(byElement('earth'))] }))).toBe(true)
   })
 
-  it('Perfect Pony ignores max-IV trophies but counts a lucky 3/3/3', () => {
+  it('Perfect Pony ignores trophies but counts a lucky 3/3/3 — even a hatched Guardian-species foal', () => {
     const a = ACHIEVEMENT_BY_ID['perfect-pony']
     const max = { heart: 3, power: 3, speed: 3 }
-    expect(isEarned(a, snap({ party: [pony('aurelune', max), pony('boulderhoof', max)] }))).toBe(false)
+    const trophies = [{ ...pony('aurelune', max), trophy: true as const }, { ...pony('boulderhoof', max), trophy: true as const }]
+    expect(isEarned(a, snap({ party: trophies }))).toBe(false)
     const common = ALL_SPECIES.find((s) => s.tier === 1)!.id
     expect(isEarned(a, snap({ party: [pony(common, max)] }))).toBe(true)
+    expect(isEarned(a, snap({ party: [pony('boulderhoof', max)] }))).toBe(true)
   })
 
   it('badge trophies follow the badge count', () => {

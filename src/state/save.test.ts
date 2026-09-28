@@ -318,3 +318,36 @@ describe('migrateSave — achievements + Stardust (save v9)', () => {
     expect(s.lifetime.speciesSeen).toEqual(['aurelune'])
   })
 })
+
+describe('migrateSave — hatching fields (save v10)', () => {
+  function save(version: number, party: unknown[]) {
+    return {
+      version, playerName: 'Evelyn', party, areasDone: [], championDefeated: false,
+      activeTeam: [], trialLossStreaks: {}, recentPuzzleAttempts: [], prestigeCount: 0, awaitingStarter: false,
+    }
+  }
+  const pony = (speciesId: string, extra: Record<string, unknown> = {}) =>
+    ({ id: `c_${speciesId}`, speciesId, nickname: speciesId, level: 5, currentHp: 10, xp: 0, ivs: { heart: 1, power: 1, speed: 1 }, ...extra })
+
+  it('a pre-v10 save flags Guardian signatures and Aurelune as trophies', () => {
+    const s = migrateSave(save(9, [pony('boulderhoof'), pony('aurelune'), pony('marina-mist')]))!
+    expect(s.party.map((c) => c.trophy)).toEqual([true, true, undefined])
+  })
+
+  it('a v10 hatched foal of a Guardian species stays unflagged', () => {
+    const s = migrateSave(save(10, [pony('boulderhoof', { parents: ['x', 'y'] })]))!
+    expect(s.party[0].trophy).toBeUndefined()
+    expect(s.party[0].parents).toEqual(['x', 'y'])
+  })
+
+  it('keeps valid hatching fields and drops junk', () => {
+    const s = migrateSave(save(10, [
+      pony('marina-mist', { variant: 'moonlit', restUntil: 7 }),
+      pony('ember-spark', { variant: 'glitter', restUntil: 'soon', parents: ['only-one'] }),
+    ]))!
+    expect(s.party[0]).toMatchObject({ variant: 'moonlit', restUntil: 7 })
+    expect(s.party[1].variant).toBeUndefined()
+    expect(s.party[1].restUntil).toBeUndefined()
+    expect(s.party[1].parents).toBeUndefined()
+  })
+})

@@ -1,4 +1,4 @@
-import type { Element, Ivs } from './types'
+import type { Element, Ivs, VariantId } from './types'
 import { getStats } from './stats'
 import { ZERO_IVS } from './ivs'
 import { getTypeMultiplier } from './combat'
@@ -168,6 +168,8 @@ export interface BattlePony {
   // Source species (when known) so the UI can show real art; undefined for
   // generic/placeholder ponies, which fall back to the element emoji-circle.
   speciesId?: string
+  /** Rare hatched color (§20), purely cosmetic. */
+  variant?: VariantId
   name: string
   element: Element
   maxHp: number

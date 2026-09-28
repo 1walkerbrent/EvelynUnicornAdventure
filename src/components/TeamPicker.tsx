@@ -83,6 +83,8 @@ export default function TeamPicker({ party, initialSelection, opponentElement, o
                       element={sp.element}
                       color={c.accentColor ?? sp.spritePlaceholderColor}
                       size={28}
+                      speciesId={sp.id}
+                      variant={c.variant}
                     />
                     <span className="flex-1 text-sm font-semibold text-white truncate">
                       {c.nickname || sp.name}
@@ -153,6 +155,8 @@ export default function TeamPicker({ party, initialSelection, opponentElement, o
                   element={sp.element}
                   color={c.accentColor ?? sp.spritePlaceholderColor}
                   size={44}
+                  speciesId={sp.id}
+                  variant={c.variant}
                 />
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2">

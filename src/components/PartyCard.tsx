@@ -4,11 +4,14 @@ import { SPECIES_BY_ID } from '../content/creatures'
 import { getStats } from '../engine/stats'
 import { xpProgress } from '../engine/leveling'
 import CreatureSprite from './CreatureSprite'
+import { useGameStore } from '../state/store'
+import { isFoal, restWinsLeft, VARIANT_BY_ID } from '../engine/hatching'
 
 // One party-interface card (M2f). Dumb presentation: all XP display values come
 // from the pure `xpProgress` derive — this card never touches the XP economy.
 export default function PartyCard({ creature, levelCap, active }: { creature: Creature; levelCap: number; active?: boolean }) {
   const species = SPECIES_BY_ID[creature.speciesId]
+  const battlesWon = useGameStore((s) => s.lifetime.battlesWon)
 
   // One-shot level-up pulse: flash the bar briefly whenever the level ticks up.
   const [pulsing, setPulsing] = useState(false)
@@ -29,15 +32,22 @@ export default function PartyCard({ creature, levelCap, active }: { creature: Cr
   const { level, xpIntoLevel, xpForNextLevel, atCap } = xpProgress(creature, levelCap)
   const fillPct = atCap ? 100 : Math.min(100, (xpIntoLevel / xpForNextLevel) * 100)
   const pulseClass = pulsing ? ' level-pulse' : ''
+  const foal    = isFoal(creature)
+  const resting = restWinsLeft(creature, battlesWon)
+  const variant = creature.variant ? VARIANT_BY_ID[creature.variant] : undefined
 
   return (
     <div className="bg-purple-900/60 rounded-2xl p-3 flex items-center gap-3">
-      <CreatureSprite
-        element={species.element}
-        color={creature.accentColor ?? species.spritePlaceholderColor}
-        size={56}
-        speciesId={species.id}
-      />
+      {/* Fixed-size slot so a foal's smaller sprite doesn't shift the card */}
+      <div className="w-14 h-14 flex items-center justify-center flex-shrink-0">
+        <CreatureSprite
+          element={species.element}
+          color={creature.accentColor ?? species.spritePlaceholderColor}
+          size={foal ? 40 : 56}
+          speciesId={species.id}
+          variant={creature.variant}
+        />
+      </div>
       <div className="flex-1 min-w-0">
         <div className="flex items-baseline justify-between gap-2">
           <span className="font-bold text-white truncate">
@@ -52,7 +62,13 @@ export default function PartyCard({ creature, levelCap, active }: { creature: Cr
             <span className="text-yellow-300 text-sm font-bold">Lv.{level}</span>
           </span>
         </div>
-        <div className="text-purple-300 text-xs capitalize">{species.element}</div>
+        <div className="text-purple-300 text-xs flex flex-wrap items-center gap-x-1.5">
+          <span className="capitalize">{species.element}</span>
+          {variant && <span className="text-amber-200">{variant.emoji} {variant.name}</span>}
+          {foal && <span className="text-pink-300">🥚 Foal</span>}
+          {creature.trophy && <span className="text-yellow-300">🏆 Trophy</span>}
+          {resting > 0 && <span className="text-sky-300">💤 Resting ({resting} {resting === 1 ? 'win' : 'wins'})</span>}
+        </div>
         <div className="text-purple-400 text-xs mt-0.5">
           Pwr {stats.power} · Spd {stats.speed}
         </div>

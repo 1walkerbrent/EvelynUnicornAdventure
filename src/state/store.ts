@@ -8,11 +8,11 @@ import { addXp, levelCapForBadges, XP_PER_BATTLE_WIN } from '../engine/leveling'
 import { getStats } from '../engine/stats'
 import { newCreatureId } from '../engine/creature'
 import { MAX_IVS } from '../engine/ivs'
-import type { Ivs } from '../engine/types'
 import { finalAreaId, badgeCount } from '../engine/progression'
-import { bumpStreak, clearStreak } from '../engine/team'
+import { bumpStreak, clearStreak, resolveBattleTeam } from '../engine/team'
 import { updatePuzzleAttempts } from '../engine/puzzleSelector'
 import { prestigeParty } from '../engine/prestige'
+import { hatchBlockReason, hatchCost, hatchFoal, releaseBlockReason, releaseValue, REST_WINS } from '../engine/hatching'
 import type { PuzzleAttempt } from '../engine/puzzleSelector'
 import type { Problem } from '../engine/problems'
 import type { LifetimeStats, BattleSummary } from '../engine/achievements'
@@ -34,6 +34,7 @@ export type Screen =
   | 'exploreHunt'
   | 'party'
   | 'trophies'
+  | 'moonwell'
 
 interface GameStore {
   // persisted
@@ -79,6 +80,13 @@ interface GameStore {
   /** Any battle won: lifetime stats + Stardust (§19). */
   recordBattleWin: (summary: BattleSummary) => void
   dismissToast: () => void
+  /**
+   * Hatch a foal at the Moonwell (§20). Returns the foal, or null if the pair
+   * can't hatch (a parent not ready, same pony twice, or not enough Stardust).
+   */
+  hatch: (leadId: string, partnerId: string) => Creature | null
+  /** Send a pony to the Meadow for Stardust (§20). Returns the Stardust paid, or 0 if refused. */
+  release: (creatureId: string) => number
   completeArea: (areaId: string) => void
   winTrial: (zoneId: string) => void
   winChampion: () => void
@@ -150,12 +158,15 @@ export const useGameStore = create<GameStore>()((set, get) => {
     })
   }
 
-  // Build a fresh party member from a species at a level (clamped to the cap).
-  // Callers pass the IVs — signature/Champion trophies use MAX_IVS (§5).
-  function makeCreature(speciesId: string, level: number, ivs: Ivs): Creature {
+  // Build a trophy pony — a Guardian signature or the Champion's Aurelune: max
+  // IVs (§5), and the `trophy` flag hatching and the Meadow read (§20).
+  function makeTrophy(speciesId: string, level: number): Creature {
     const sp = SPECIES_BY_ID[speciesId]
-    const stats = getStats(sp.tier, level, ivs)
-    return { id: newCreatureId(), speciesId, nickname: sp.name, level, currentHp: stats.heart, xp: 0, ivs }
+    const stats = getStats(sp.tier, level, MAX_IVS)
+    return {
+      id: newCreatureId(), speciesId, nickname: sp.name, level, currentHp: stats.heart, xp: 0,
+      ivs: MAX_IVS, trophy: true,
+    }
   }
 
   // Recompute badges + cap from the completed-areas set (single source of truth).
@@ -243,6 +254,49 @@ export const useGameStore = create<GameStore>()((set, get) => {
 
     dismissToast: () => set({ toastQueue: get().toastQueue.slice(1) }),
 
+    hatch: (leadId, partnerId) => {
+      const { party, stardust, lifetime } = get()
+      const lead    = party.find((c) => c.id === leadId)
+      const partner = party.find((c) => c.id === partnerId)
+      if (!lead || !partner || leadId === partnerId) return null
+      if (hatchBlockReason(lead, lifetime.battlesWon) || hatchBlockReason(partner, lifetime.battlesWon)) return null
+      const cost = hatchCost(lead, partner)
+      if (stardust < cost) return null
+
+      const foal = hatchFoal(lead, partner)
+      const restUntil = lifetime.battlesWon + REST_WINS
+      const found = foal.variant && !lifetime.variantsFound.includes(foal.variant)
+        ? [...lifetime.variantsFound, foal.variant]
+        : lifetime.variantsFound
+      const l = applySpeciesSeen(lifetime, [foal.speciesId])
+      set({
+        party: [
+          ...party.map((c) => (c.id === leadId || c.id === partnerId ? { ...c, restUntil } : c)),
+          foal,
+        ],
+        stardust: stardust - cost,
+        lifetime: { ...l, hatched: l.hatched + 1, variantsFound: found },
+      })
+      persist()
+      return foal
+    },
+
+    release: (creatureId) => {
+      const { party, activeTeam, stardust, lifetime } = get()
+      const pony = party.find((c) => c.id === creatureId)
+      const activeIds = new Set(resolveBattleTeam(party, activeTeam).map((c) => c.id))
+      if (!pony || releaseBlockReason(pony, party, activeIds)) return 0
+      const paid = releaseValue(pony)
+      set({
+        party:      party.filter((c) => c.id !== creatureId),
+        activeTeam: activeTeam.filter((id) => id !== creatureId),
+        stardust:   stardust + paid,
+        lifetime:   { ...lifetime, released: lifetime.released + 1 },
+      })
+      persist()
+      return paid
+    },
+
     // Mark a quest/area complete (re-derives badges + cap for Trial areas).
     completeArea: (areaId) => {
       const areasDone = get().areasDone.includes(areaId)
@@ -270,7 +324,7 @@ export const useGameStore = create<GameStore>()((set, get) => {
         const guardian = zone.guardianId ? GUARDIAN_BY_ID[zone.guardianId] : undefined
         const aceLevel = guardian?.team.find(t => t.speciesId === zone.signatureSpeciesId)?.level ?? levelCap
         // Guardian-signature trophies join with max IVs (§5) — these are earned.
-        party = [...party, makeCreature(zone.signatureSpeciesId, Math.min(aceLevel, levelCap), MAX_IVS)]
+        party = [...party, makeTrophy(zone.signatureSpeciesId, Math.min(aceLevel, levelCap))]
       }
       party = xpParty(party, XP_PER_BATTLE_WIN, levelCap)
 
@@ -293,7 +347,7 @@ export const useGameStore = create<GameStore>()((set, get) => {
       const cap = get().levelCap
       // The legendary Aurelune is the ultimate trophy — max IVs (§5).
       const party = xpParty(
-        [...get().party, makeCreature('aurelune', Math.min(15, cap), MAX_IVS)],
+        [...get().party, makeTrophy('aurelune', Math.min(15, cap))],
         XP_PER_BATTLE_WIN,
         cap,
       )

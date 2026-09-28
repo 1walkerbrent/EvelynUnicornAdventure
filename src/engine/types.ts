@@ -44,4 +44,18 @@ export interface Creature {
    * absent at compute time). Guardian-signature trophies get max IVs (3/3/3).
    */
   ivs?: Ivs
+  /**
+   * Set on ponies that JOINED as trophies — Guardian signatures and the Champion's
+   * Aurelune (§5/§20). Species alone can't say this once foals exist: a hatched
+   * Boulderhoof is an ordinary pony. Migration backfills it from species (v10).
+   */
+  trophy?: true
+  /** Rare hatched color (§20) — drawn as a filter over the normal sprite. */
+  variant?: VariantId
+  /** Instance ids of the two parents, for a hatched foal (§20). */
+  parents?: [string, string]
+  /** Rests from hatching until lifetime battlesWon reaches this (§20). */
+  restUntil?: number
 }
+
+export type VariantId = 'starlight' | 'shadow' | 'moonlit' | 'sunburst' | 'aurora'

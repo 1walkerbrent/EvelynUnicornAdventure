@@ -13,6 +13,7 @@ import ExplorePractice from './screens/ExplorePractice'
 import ExploreHunt from './screens/ExploreHunt'
 import Party from './screens/Party'
 import Trophies from './screens/Trophies'
+import Moonwell from './screens/Moonwell'
 import Nav from './components/Nav'
 import AchievementToast from './components/AchievementToast'
 
@@ -73,6 +74,7 @@ export default function App() {
         {currentScreen === 'explorePractice' && <ExplorePractice />}
         {currentScreen === 'party'           && <Party />}
         {currentScreen === 'trophies'        && <Trophies />}
+        {currentScreen === 'moonwell'        && <Moonwell />}
       </main>
       <Nav />
       <AchievementToast />

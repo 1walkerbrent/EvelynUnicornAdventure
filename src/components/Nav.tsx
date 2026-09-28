@@ -21,7 +21,9 @@ export default function Nav() {
             // Zone/quest/explore screens belong to the world-map tab flow
             (screen === 'worldMap'
               ? ['worldMap', 'zone', 'quest', 'exploreHub', 'explorePractice'].includes(currentScreen)
-              : currentScreen === screen)
+              : screen === 'party'
+                ? currentScreen === 'party' || currentScreen === 'moonwell'
+                : currentScreen === screen)
               ? 'text-yellow-300'
               : 'text-purple-400 hover:text-purple-200'
           }`}

@@ -3,6 +3,7 @@ import type { ChangeEvent } from 'react'
 import { useGameStore } from '../state/store'
 import PartyCard from '../components/PartyCard'
 import TeamPicker from '../components/TeamPicker'
+import MeadowDialog from '../components/MeadowDialog'
 import { resolveBattleTeam, shouldShowPicker } from '../engine/team'
 import { exportSave, importSave } from '../state/save'
 import { SPECIES_BY_ID } from '../content/creatures'
@@ -33,6 +34,7 @@ export default function Party() {
   const levelCap      = useGameStore((s) => s.levelCap)
   const load          = useGameStore((s) => s.load)
   const resetGame     = useGameStore((s) => s.resetGame)
+  const setScreen     = useGameStore((s) => s.setScreen)
   const fileInputRef  = useRef<HTMLInputElement>(null)
 
   const [confirmReset,  setConfirmReset]  = useState(false)
@@ -40,6 +42,7 @@ export default function Party() {
   const [filter,        setFilter]        = useState<FilterType>('all')
   const [sort,          setSort]          = useState<SortType>('level-desc')
   const [typeChartOpen, setTypeChartOpen] = useState(false)
+  const [meadowOpen,    setMeadowOpen]    = useState(false)
 
   const activeIds = new Set(resolveBattleTeam(party, activeTeam).map((c) => c.id))
   const canPick   = shouldShowPicker(party)
@@ -206,6 +209,26 @@ export default function Party() {
             )}
           </div>
 
+          {/* Hatching + Meadow (§20) */}
+          <div className="grid grid-cols-2 gap-2">
+            <button
+              onClick={() => setScreen('moonwell')}
+              className="min-h-[52px] bg-gradient-to-br from-indigo-600 to-fuchsia-600 hover:brightness-110
+                         text-white font-bold rounded-2xl shadow-lg"
+            >
+              🥚 Moonwell
+              <span className="block text-[10px] font-medium text-indigo-100">Hatch a foal</span>
+            </button>
+            <button
+              onClick={() => setMeadowOpen(true)}
+              className="min-h-[52px] bg-gradient-to-br from-green-600 to-emerald-700 hover:brightness-110
+                         text-white font-bold rounded-2xl shadow-lg"
+            >
+              🌼 Meadow
+              <span className="block text-[10px] font-medium text-green-100">Trade a pony for ✨</span>
+            </button>
+          </div>
+
           {/* Battle team — always visible, unaffected by filter */}
           {canPick && (
             <div className="flex items-center justify-between bg-purple-900/40 rounded-2xl px-3 py-2">
@@ -241,6 +264,8 @@ export default function Party() {
           )}
         </div>
       )}
+
+      {meadowOpen && <MeadowDialog onClose={() => setMeadowOpen(false)} />}
 
       {pickerOpen && (
         <TeamPicker
