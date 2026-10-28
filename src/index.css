@@ -48,10 +48,14 @@
   100% { opacity: 0; transform: translateY(-56px) scale(0.9); }
 }
 
+/* Animates `scale`, not `transform`, so it never wipes out an element's own
+   transform. Elements centered with left-1/2 use `[translate:-50%_0]` instead
+   of -translate-x-1/2: browsers apply translate after scale, so the pop stays
+   in place rather than drifting while it grows. */
 @keyframes popIn {
-  0%   { opacity: 0; transform: scale(0.6); }
-  70%  { transform: scale(1.1); }
-  100% { opacity: 1; transform: scale(1); }
+  0%   { opacity: 0; scale: 0.6; }
+  70%  { scale: 1.1; }
+  100% { opacity: 1; scale: 1; }
 }
 
 .battle-bob {

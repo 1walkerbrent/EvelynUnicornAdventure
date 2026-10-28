@@ -382,20 +382,23 @@ export default function BattleScreen({
       </div>
 
       {/* ── Turn hint (bottom center) ─────────────────────────────────── */}
+      {/* w-max: a left-1/2 box only gets half the stage to wrap in. Popping-in
+          pills center with the `translate` property, which composes with the
+          pop's `scale` (see popIn in index.css); a transform would drift. */}
       {phase === 'playerPhase' && !selectedId && (
-        <div className="absolute bottom-5 left-1/2 -translate-x-1/2 bg-yellow-400/90 text-yellow-900
+        <div className="absolute bottom-5 left-1/2 [translate:-50%_0] w-max max-w-[calc(100%-2rem)] text-center bg-yellow-400/90 text-yellow-900
                         font-bold text-sm px-5 py-2 rounded-full shadow pointer-events-none battle-pop-in">
           Pick any glowing pony, then tap an enemy! ({readyIds.length} ready)
         </div>
       )}
       {phase === 'playerPhase' && selectedId && (
-        <div className="absolute bottom-5 left-1/2 -translate-x-1/2 bg-orange-500/90 text-white
+        <div className="absolute bottom-5 left-1/2 [translate:-50%_0] w-max max-w-[calc(100%-2rem)] text-center bg-orange-500/90 text-white
                         font-bold text-sm px-5 py-2 rounded-full shadow pointer-events-none battle-pop-in">
           Now tap an enemy to attack!
         </div>
       )}
       {enemyActingName && (
-        <div className="absolute bottom-5 left-1/2 -translate-x-1/2 bg-purple-800/80 text-white
+        <div className="absolute bottom-5 left-1/2 -translate-x-1/2 w-max max-w-[calc(100%-2rem)] text-center bg-purple-800/80 text-white
                         text-sm px-5 py-2 rounded-full shadow pointer-events-none">
           {enemyActingName} attacks!
         </div>
@@ -419,7 +422,7 @@ export default function BattleScreen({
             {/* Badge: ready ponies invite a tap; the selected one is locked in */}
             {isReady && (
               <div
-                className={`absolute -top-8 left-1/2 -translate-x-1/2 z-20 text-xs font-bold
+                className={`absolute -top-8 left-1/2 [translate:-50%_0] z-20 text-xs font-bold
                             px-3 py-0.5 rounded-full whitespace-nowrap shadow battle-pop-in
                             ${isSelected ? 'bg-orange-500 text-white' : 'bg-yellow-400 text-yellow-900'}`}
                 style={{ textShadow: '0 1px 3px rgba(0,0,0,0.8), 0 0 6px rgba(0,0,0,0.5)' }}
@@ -482,7 +485,7 @@ export default function BattleScreen({
           >
             {/* Damage preview label */}
             {preview && (
-              <div className="absolute -top-8 left-1/2 -translate-x-1/2 z-20
+              <div className="absolute -top-8 left-1/2 [translate:-50%_0] z-20
                               bg-orange-700/95 text-white text-xs font-bold
                               px-3 py-0.5 rounded-full whitespace-nowrap shadow battle-pop-in">
                 {preview}
