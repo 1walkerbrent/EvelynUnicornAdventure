@@ -22,6 +22,7 @@ import {
   emptyLifetime, applySolve, applyBattleWin, applySpeciesSeen, applyDayPlayed, localDay,
   stardustForSolve, newlyEarned, STARDUST_PER_BATTLE_WIN,
 } from '../engine/achievements'
+import type { TourId } from '../onboarding/tours'
 
 export type Screen =
   | 'worldMap'
@@ -64,6 +65,10 @@ interface GameStore {
   achievements: Record<string, string>
   /** §9 — what she chose to practice in Explore; 'mix' is the adaptive default. */
   practiceFocus: PuzzleFocus
+  /** §22 — onboarding tours finished or skipped. Survives prestige. */
+  toursDone: TourId[]
+  // ui — not persisted: the tour on screen, if any
+  activeTour: TourId | null
   // ui — not persisted: achievements waiting to pop up, oldest first
   toastQueue: string[]
   // derived from areasDone — not persisted
@@ -87,6 +92,12 @@ interface GameStore {
   recordBattleWin: (summary: BattleSummary) => void
   dismissToast: () => void
   setPracticeFocus: (focus: PuzzleFocus) => void
+  /** Show a tour unless it is already done or another tour is showing. */
+  startTour: (tour: TourId) => void
+  /** Close the showing tour (finished or skipped) and remember it. */
+  finishTour: () => void
+  /** Replay Tours (§22): forget every finished tour and start the intro on the World Map. */
+  replayTours: () => void
   /**
    * Hatch a foal at the Moonwell (§20). Returns the foal, or null if the pair
    * can't hatch (a parent not ready, same pony twice, or not enough Stardust).
@@ -129,6 +140,8 @@ function freshAdventure() {
     lifetime:             emptyLifetime(),
     achievements:         {} as Record<string, string>,
     practiceFocus:        'mix' as PuzzleFocus,
+    toursDone:            [] as TourId[],
+    activeTour:           null as TourId | null,
     toastQueue:           [] as string[],
     badges:               0,
     levelCap:             levelCapForBadges(0),
@@ -185,6 +198,7 @@ export const useGameStore = create<GameStore>()((set, get) => {
       lifetime:             s.lifetime,
       achievements:         s.achievements,
       practiceFocus:        s.practiceFocus,
+      toursDone:            s.toursDone,
       lastZoneId:           s.selectedZoneId ?? undefined,
     })
   }
@@ -406,6 +420,24 @@ export const useGameStore = create<GameStore>()((set, get) => {
 
     save: () => persist(),
 
+    startTour: (tour) => {
+      const s = get()
+      if (s.activeTour !== null || s.toursDone.includes(tour)) return
+      set({ activeTour: tour })
+    },
+
+    finishTour: () => {
+      const { activeTour, toursDone } = get()
+      if (activeTour === null) return
+      set({ activeTour: null, toursDone: toursDone.includes(activeTour) ? toursDone : [...toursDone, activeTour] })
+      persist()
+    },
+
+    replayTours: () => {
+      set({ toursDone: [], activeTour: null, currentScreen: 'worldMap' })
+      persist()
+    },
+
     // §15 New Game+. Everything resets except the Champion trophies, which come
     // along at the FRESH cap (level 4) — same difficulty curve as a first run,
     // but she keeps the proof she won. The rolling puzzle history deliberately
@@ -453,6 +485,7 @@ export const useGameStore = create<GameStore>()((set, get) => {
         lifetime:             saved.lifetime,
         achievements:         saved.achievements,
         practiceFocus:        saved.practiceFocus ?? 'mix',
+        toursDone:            saved.toursDone,
         selectedZoneId:       saved.lastZoneId ?? null,
         ...derive(saved.areasDone),
       })

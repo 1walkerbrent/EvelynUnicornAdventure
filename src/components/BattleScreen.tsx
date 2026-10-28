@@ -7,6 +7,7 @@ import type { BattlePony, BattleState } from '../engine/battle'
 import { getTypeMultiplier } from '../engine/combat'
 import CreatureSprite from './CreatureSprite'
 import { useGameStore } from '../state/store'
+import { useHelpOverride } from '../onboarding/helpScreen'
 
 // Arena/hunt backdrops, keyed by filename without extension (same build-time
 // discovery pattern as CreatureSprite). Drop a correctly-named PNG in
@@ -129,6 +130,18 @@ export default function BattleScreen({
   // ×2 hits her ponies land this attempt — reported on a win for achievements (§19).
   const superHits   = useRef(0)
   const recordBattleWin = useGameStore((s) => s.recordBattleWin)
+  const startTour       = useGameStore((s) => s.startTour)
+
+  // §22: the help button shows battle tips while a battle is on screen, and the
+  // battle tour runs the first time it is her turn. Enemies only move after she
+  // acts, so the tour can't cost her a turn.
+  useEffect(() => {
+    useHelpOverride.setState({ screen: 'battle' })
+    return () => useHelpOverride.setState({ screen: null })
+  }, [])
+  useEffect(() => {
+    if (phase === 'playerPhase') startTour('battle')
+  }, [phase, startTour])
 
   // ── executeAttack — runs lunge → flash → HP drain → idle ─────────────────
   const executeAttack = useCallback((
@@ -363,7 +376,8 @@ export default function BattleScreen({
       <div className="absolute top-3 left-5 text-sm font-semibold text-green-900/50 pointer-events-none">
         Your team
       </div>
-      <div className="absolute top-3 right-5 text-sm font-semibold text-green-900/50 pointer-events-none">
+      {/* Left of the help button, which floats in the top-right corner (§22). */}
+      <div className="absolute top-3 right-20 text-sm font-semibold text-green-900/50 pointer-events-none">
         {enemyLabel}'s team
       </div>
 
@@ -398,6 +412,7 @@ export default function BattleScreen({
         return (
           <div
             key={pony.id}
+            data-tour="battle-team"
             className="absolute flex flex-col items-center gap-1"
             style={PLAYER_POS[i]}
           >
@@ -439,7 +454,7 @@ export default function BattleScreen({
             >
               {pony.name}
             </span>
-            <HpBar current={pony.currentHp} max={pony.maxHp} color={hpColor} fainted={fainted} />
+            <HpBar current={pony.currentHp} max={pony.maxHp} color={hpColor} fainted={fainted} tour={i === 0 ? 'battle-hp' : undefined} />
           </div>
         )
       })}
@@ -461,6 +476,7 @@ export default function BattleScreen({
         return (
           <div
             key={pony.id}
+            data-tour="battle-enemies"
             className="absolute flex flex-col items-center gap-1"
             style={ENEMY_POS[i]}
           >
@@ -604,12 +620,12 @@ export default function BattleScreen({
 
 // ── Small reusable sub-components ─────────────────────────────────────────────
 
-function HpBar({ current, max, color, fainted }: {
-  current: number; max: number; color: string; fainted: boolean
+function HpBar({ current, max, color, fainted, tour }: {
+  current: number; max: number; color: string; fainted: boolean; tour?: string
 }) {
   const pct = max > 0 ? Math.max(0, current / max) * 100 : 0
   return (
-    <div className="w-20 text-center">
+    <div className="w-20 text-center" data-tour={tour}>
       <div
         className="text-xs font-medium mb-0.5 text-white"
         style={{ textShadow: '0 1px 3px rgba(0,0,0,0.8)' }}

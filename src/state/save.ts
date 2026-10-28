@@ -10,9 +10,11 @@ import type { PuzzleFocus } from '../engine/puzzleFocus'
 import { isPuzzleFocus } from '../engine/puzzleFocus'
 import { resolveBattleTeam } from '../engine/team'
 import { badgeCount } from '../engine/progression'
+import { TOUR_IDS, isTourId } from '../onboarding/tours'
+import type { TourId } from '../onboarding/tours'
 
 export interface SaveData {
-  version: 10
+  version: 11
   playerName: string
   party: Creature[]
   /** Completed area ids — the single source of truth for progression. */
@@ -38,15 +40,19 @@ export interface SaveData {
   practiceFocus?: PuzzleFocus
   /** Last zone she was viewing (restored on load for convenience). */
   lastZoneId?: string
+  /** Onboarding tours she has finished or skipped (§22). Survives prestige. */
+  toursDone: TourId[]
 }
 
 const SAVE_KEY = 'evelyn_unicorn_adventure'
-const VERSION = 10 as const
+const VERSION = 11 as const
 
 /** Save schema versions this build can read (current + migratable predecessors). */
-const READABLE_VERSIONS = [10, 9, 8, 7, 6, 5, 4, 3, 2]
+const READABLE_VERSIONS = [11, 10, 9, 8, 7, 6, 5, 4, 3, 2]
 
 export type PersistedState = Omit<SaveData, 'version'>
+// What the per-version migrations build; migrateSave adds the rest.
+type Migrated = Omit<PersistedState, 'toursDone'>
 
 const M2E_DEFAULTS = { activeTeam: [] as string[], trialLossStreaks: {} as Record<string, number> }
 const PUZZLE_DEFAULTS = { recentPuzzleAttempts: [] as PuzzleAttempt[] }
@@ -140,9 +146,11 @@ interface SaveDataV5 {
   achievements?: unknown
   practiceFocus?: unknown
   lastZoneId?: string
+  /** Present from v11 onward. */
+  toursDone?: unknown
 }
 
-function migrateV5(d: SaveDataV5): PersistedState {
+function migrateV5(d: SaveDataV5): Migrated {
   return {
     playerName:           d.playerName ?? '',
     party:                d.party ?? [],
@@ -178,7 +186,7 @@ interface SaveDataV4 {
   lastZoneId?: string
 }
 
-function migrateV4(d: SaveDataV4): PersistedState {
+function migrateV4(d: SaveDataV4): Migrated {
   return {
     playerName:       d.playerName ?? '',
     party:            d.party ?? [],
@@ -203,7 +211,7 @@ interface SaveDataV3 {
   lastZoneId?: string
 }
 
-function migrateV3(d: SaveDataV3): PersistedState {
+function migrateV3(d: SaveDataV3): Migrated {
   return {
     playerName:       d.playerName ?? '',
     party:            d.party ?? [],
@@ -229,7 +237,7 @@ interface SaveDataV2 {
   zone2Unlocked: boolean
 }
 
-function migrateV2(d: SaveDataV2): PersistedState {
+function migrateV2(d: SaveDataV2): Migrated {
   const areasDone: string[] = []
   if (d.brindlewoodDone) areasDone.push('brindlewood')
   if (d.sunflowerDone)   areasDone.push('sunflower')
@@ -256,7 +264,7 @@ function achievementDefaults() {
  * Book gets every pony she owns, and a finished game counts as Champion wins.
  * Counters with no history (puzzles solved, battles won) start at 0.
  */
-function backfillLifetime(state: PersistedState, party: Creature[]): LifetimeStats {
+function backfillLifetime(state: Migrated, party: Creature[]): LifetimeStats {
   const seen = applySpeciesSeen(state.lifetime, party.map((c) => c.speciesId))
   const knownWins = state.prestigeCount + (state.championDefeated ? 1 : 0)
   return { ...seen, championWins: Math.max(seen.championWins, knownWins) }
@@ -271,11 +279,11 @@ export function migrateSave(parsed: unknown): PersistedState | null {
   if (typeof parsed !== 'object' || parsed === null) return null
   const version = (parsed as { version?: number }).version
 
-  let state: PersistedState | null = null
+  let state: Migrated | null = null
   // v8/v7/v6/v5 share the same superset shape (v7 adds Creature.id + id-based
   // activeTeam, both handled by the universal backfill below; v8 adds the
   // prestige fields, defaulted in migrateV5).
-  if (version === 10 || version === 9 || version === 8 || version === 7 || version === 6 || version === 5) state = migrateV5(parsed as SaveDataV5)
+  if (version === 11 || version === 10 || version === 9 || version === 8 || version === 7 || version === 6 || version === 5) state = migrateV5(parsed as SaveDataV5)
   else if (version === 4)   state = migrateV4(parsed as SaveDataV4)
   else if (version === 3)   state = migrateV3(parsed as SaveDataV3)
   else if (version === 2)   state = migrateV2(parsed as SaveDataV2)
@@ -290,7 +298,15 @@ export function migrateSave(parsed: unknown): PersistedState | null {
     party,
     activeTeam: remapActiveTeam(party, state.activeTeam),
     lifetime: backfillLifetime(state, party),
+    // v11 (§22). Every older save belongs to someone already playing, so they
+    // skip the tours; Replay Tours on the Party screen brings them back.
+    toursDone: version === 11 ? sanitizeTours((parsed as { toursDone?: unknown }).toursDone) : [...TOUR_IDS],
   }
+}
+
+function sanitizeTours(raw: unknown): TourId[] {
+  if (!Array.isArray(raw)) return []
+  return [...new Set(raw.filter(isTourId))]
 }
 
 // ── Save slots ──────────────────────────────────────────────────────────────

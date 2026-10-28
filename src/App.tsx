@@ -16,6 +16,17 @@ import Trophies from './screens/Trophies'
 import Moonwell from './screens/Moonwell'
 import Nav from './components/Nav'
 import AchievementToast from './components/AchievementToast'
+import HelpButton from './onboarding/HelpButton'
+import TourOverlay from './onboarding/TourOverlay'
+
+// Full-screen layouts have no header, so the help button floats in the same
+// top-right corner the header puts it in.
+const FLOATING_HELP: React.CSSProperties = {
+  position: 'fixed',
+  top:   'calc(env(safe-area-inset-top) + 8px)',
+  right: 'calc(env(safe-area-inset-right) + 8px)',
+  zIndex: 40,
+}
 
 // Immersive full-screen experiences (no header/nav chrome).
 const FULLSCREEN_SCREENS = new Set(['provingGlade', 'trial', 'champion', 'gameComplete', 'exploreHunt'])
@@ -36,6 +47,7 @@ export default function App() {
     return (
       <div className="app-height w-full safe-top safe-bottom safe-x bg-purple-950 text-white overflow-hidden">
         <SlotPicker />
+        <HelpButton style={FLOATING_HELP} />
       </div>
     )
   }
@@ -49,7 +61,9 @@ export default function App() {
          currentScreen === 'champion'        ? <Champion /> :
          currentScreen === 'exploreHunt'     ? <ExploreHunt /> :
          currentScreen === 'gameComplete'    ? <GameComplete /> : null}
+        <HelpButton style={FLOATING_HELP} />
         <AchievementToast />
+        <TourOverlay />
       </div>
     )
   }
@@ -57,17 +71,18 @@ export default function App() {
   return (
     <div className="app-height w-full safe-x flex flex-col bg-purple-950 text-white overflow-hidden">
       <header className="flex-shrink-0 safe-top bg-purple-900/80 border-b border-purple-800">
-        <div className="px-6 py-2 flex items-center justify-between gap-3">
+        <div className="pl-6 pr-2 py-1 flex items-center gap-3">
           <p className="text-base font-bold text-yellow-300 tracking-wide truncate">
             🦄 Evelyn's Unicorn Adventure
           </p>
           <button
             onClick={() => setScreen('trophies')}
-            className="flex-shrink-0 text-sm font-bold text-amber-200 bg-black/30 rounded-full px-3 py-0.5"
+            className="ml-auto flex-shrink-0 text-sm font-bold text-amber-200 bg-black/30 rounded-full px-3 py-0.5"
             aria-label={`${stardust} Stardust — open Trophies`}
           >
             ✨ {stardust}
           </button>
+          <HelpButton />
         </div>
       </header>
       <main className="flex-1 min-h-0 overflow-y-auto">
@@ -82,6 +97,7 @@ export default function App() {
       </main>
       <Nav />
       <AchievementToast />
+      <TourOverlay />
     </div>
   )
 }

@@ -53,6 +53,7 @@ export default function WorldMap() {
   const openZone         = useGameStore((s) => s.openZone)
   const openExplore      = useGameStore((s) => s.openExplore)
   const setScreen        = useGameStore((s) => s.setScreen)
+  const startTour        = useGameStore((s) => s.startTour)
 
   const scrollerRef = useRef<HTMLDivElement>(null)
   const nodeRefs    = useRef<Record<string, HTMLDivElement | null>>({})
@@ -92,13 +93,16 @@ export default function WorldMap() {
 
   useEffect(() => {
     centerFocus()
+    // The intro tour (§22), the first time a new game reaches the map. A no-op
+    // once it is done, and older saves start with it done.
+    startTour('intro')
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   return (
     <div className="relative h-full w-full bg-purple-950">
       {/* Badge counter — pinned so it stays visible while the map scrolls. */}
-      <div className="absolute top-3 right-3 z-30 bg-black/60 text-yellow-300 font-bold
+      <div data-tour="map-badges" className="absolute top-3 right-3 z-30 bg-black/60 text-yellow-300 font-bold
                       text-sm px-3 py-1.5 rounded-full shadow-lg pointer-events-none backdrop-blur-sm">
         🏅 {badges}/5
       </div>
@@ -146,6 +150,7 @@ export default function WorldMap() {
               >
                 {/* Node circle */}
                 <button
+                  data-tour={id === 'z1' ? 'map-first-land' : undefined}
                   onClick={onNode}
                   disabled={!unlocked}
                   aria-label={`${name} — ${status}`}
@@ -197,6 +202,7 @@ export default function WorldMap() {
                 {/* Explore pill (unlocked zones only) */}
                 {!isChampion && unlocked && (
                   <button
+                    data-tour={id === 'z1' ? 'map-first-explore' : undefined}
                     onClick={(e) => { e.stopPropagation(); openExplore(id) }}
                     className="absolute top-full left-1/2 -translate-x-1/2 mt-1.5 h-7 whitespace-nowrap
                                bg-sky-500/90 hover:bg-sky-400 active:bg-sky-600 text-white text-[11px]

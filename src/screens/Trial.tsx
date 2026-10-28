@@ -75,7 +75,8 @@ export default function Trial() {
 
   return (
     <div className="h-full w-full overflow-y-auto bg-purple-950 text-white p-5 space-y-4">
-      <div className="text-center space-y-1">
+      {/* px-12 keeps the heading clear of the help button (§22). */}
+      <div className="text-center space-y-1 px-12">
         <p className="text-purple-300 text-sm">{guardian.title}</p>
         <h2 className="text-2xl font-bold text-yellow-300">{guardian.name}</h2>
         <p className="text-purple-200">

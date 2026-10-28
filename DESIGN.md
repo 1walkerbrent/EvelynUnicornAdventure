@@ -557,12 +557,19 @@ Build Zone 1 end-to-end before anything else, with placeholder art (colored shap
 - **M3d — Beginner multiplication ✅ DONE:** 3rd-grade multiplication facts mixed into the math category at 30%, later raised to 50% (see §9 *Multiplication*). `engine/multiplicationGenerator.ts` holds the fact families per band, with the skip-counting hint and band 6's missing-factor form. Both public math entries (`generateMathProblem`, `generateHuntMathProblem`) roll the mix-in first. The addition/subtraction-only paths are exported as `generateAddSubProblem` / `generateHuntAddSubProblem`, and the existing band tests now call those. **No save or UI change**: the answer box already takes 0, and `×` renders as plain text. Tests: `multiplication.test.ts`. 324 tests passing, build clean.
 - **M5a — Achievements + Stardust ✅ DONE:** the §19 Trophy Shelf and the Stardust currency. `engine/achievements.ts` (pure): lifetime counters, the Stardust rates, and 43 trophies, each a predicate over a snapshot. `store.persist()` runs `settleAchievements()` before every save, so no action needs to know which trophies it affects. New hooks: `recordSolve(problem, misses)`, called from Quest, Practice and the Hunt warm-up; `recordBattleWin(summary)`, called from `<BattleScreen>`'s victory button; and `addToParty(c, { tamed })`. `<ProblemCard>`'s `onSolve` now passes the miss count, and multiplication problems carry `multiplication: true`. UI: `screens/Trophies.tsx` (third nav tab, one card per ladder), code-drawn `components/Medal.tsx`, `components/AchievementToast.tsx`, and a ✨ balance in the header. **Save v9** (`stardust`, `lifetime`, `achievements`); the migration backfills the Pony Book from the party and Champion wins from progress, so an existing save unlocks what it has already earned on first load. 357 tests passing, lint and build clean.
 - **M5b — Hatching + the Meadow ✅ DONE:** the §20 design, built. `engine/hatching.ts` (pure): eligibility and rest, cost with the Guardian surcharge, the preview (per-stat ranges, sparkle chance, each rare color's real chance given the roll order), the foal roll, and Meadow value/guards. Store actions `hatch(leadId, partnerId)` and `release(id)`. `screens/Moonwell.tsx` walks lead → partner (each row shows what that partner would bring) → preview → wobbling egg → reveal, with the Recipe Book below. `components/MeadowDialog.tsx` is a two-tap release. Trophy ponies are now flagged (`Creature.trophy`) when awarded, and Perfect Pony reads the flag. Variants render through `CreatureSprite`'s `variant` prop everywhere, including battles (`BattlePony.variant`). **Save v10**. Also fixed: `TeamPicker` never passed `speciesId`, so it showed placeholder circles instead of pony art. 386 tests passing, lint and build clean.
-- **M5c — Save slots ✅ DONE (current milestone):** three independent adventures per device, so friends can play on Evelyn's tablet. This is groundwork for cloud saves, which will treat these three slots as one player's slots. No change to game balance, combat or content.
+- **M5c — Save slots ✅ DONE:** three independent adventures per device, so friends can play on Evelyn's tablet. This is groundwork for cloud saves, which will treat these three slots as one player's slots. No change to game balance, combat or content.
   - **Storage (`state/save.ts`).** Each slot has its own key, `evelyn_unicorn_adventure:slot1` … `:slot3`, holding the same SaveData as before plus a `savedAt` ISO stamp, which cloud sync will compare. `:active` remembers the slot played last. **No save version bump**: the game data inside a slot is unchanged, and the slot number lives in the key. API: `saveSlot`/`loadSlot`/`deleteSlot`, `listSlots()` (a `SlotSummary` per slot for the picker cards: name, lead pony, badges, pony count, Stardust, journey, `savedAt`), `getActiveSlot`/`setActiveSlot`. Export and import work on one slot, and an import is stamped as the newest copy.
   - **Pre-slot save.** `migrateLegacySave()` runs in `main.tsx` before the first render. It copies the old single save (`evelyn_unicorn_adventure`) into slot 1 through `migrateSave` and makes slot 1 active. A `:migrated` marker makes it run once, it never overwrites a slot 1 that already holds a game, and the old key is kept as a fallback copy and never read again.
   - **Store.** `activeSlot` (`null` = the picker is showing) replaces `load()`/`resetGame()` with `openSlot(n)`, `closeSlot()` and `deleteAdventure()`. Opening a slot rebuilds state from `freshAdventure()`, so nothing (toasts, selected zone, screen) carries over from the last slot. `persist()` writes only to the open slot and does nothing while the picker is showing. An empty slot becomes "last played" only once character creation finishes (`setPlayerName`), so backing out of a new adventure leaves the picker as it was.
   - **UI.** `screens/SlotPicker.tsx` is the launch screen: three cards, the last-played one gold-ringed with "Continue ▶", an empty one reading "✨ New Adventure" (into character creation, which gains a "← My adventures" back button on fresh slots), and a two-tap delete per card. The Party screen gains **🔄 Switch Adventure**, and its Export/Import/Erase buttons name the slot they act on. Character creation's name field now starts blank instead of prefilled "Evelyn".
   - Tests: slot isolation, summaries, unreadable slots, last-played, and the legacy move (copy, run-once, no overwrite) in `save.test.ts`; switching with no carry-over, open-slot-only saves, picker-showing saves nothing, and `deleteAdventure` in `store.test.ts`. 416 tests passing, lint and build clean.
+- **M5d — Onboarding ✅ DONE (current milestone):** the §22 design, built. A guided tour on the World Map for a new game, a battle tour the first time it's her turn in a battle, and a ? help button on every screen. No change to game logic or balance.
+  - **Content.** `onboarding/tours.ts` (`TOURS`, `TOUR_IDS`) and `onboarding/helpContent.ts` (`HELP_TIPS`, keyed by screen plus `slotPicker`, `characterCreation` and `battle`). Components only carry `data-tour` markers.
+  - **`onboarding/TourOverlay.tsx`.** It's mounted once in `App` and shows `activeTour`. It lights the union of every element marked with the step's target, re-measuring each frame so it follows the map scroll and pony bob. The caption goes below the light, then above it, then beside it (the tall enemy column). Next/Skip/Done are 48px. The whole screen is covered, so nothing underneath takes taps.
+  - **`onboarding/HelpButton.tsx`.** A 48px ? button, top-right: in the header next to ✨ on screens with one, fixed to the corner (safe-area aware) on full-screen ones. `BattleScreen` sets `useHelpOverride` to `battle` while mounted. To clear the button, the battle's "X's team" label moved left, and the Trial and Hunt warm-up headings got right padding. Checked on every screen at 768×1024, 1024×768 and 375×812.
+  - **Store.** `toursDone` (persisted, survives prestige), `activeTour` (UI), `startTour` (no-op if done or another tour is showing), `finishTour` (finished or skipped, saves), `replayTours` (clears the list, goes to the World Map). The World Map calls `startTour('intro')` on mount. `BattleScreen` calls `startTour('battle')` on entering `playerPhase`. Enemies only act after she does, so the tour can't cost a turn. **Party → ❓ Replay Tours** stands in for settings, since there's no settings screen.
+  - **Save v11.** It adds `toursDone`. Any older save counts both tours as done, because it belongs to someone already playing. A v11 list drops unknown and repeated ids. Stored per slot, so it moves with Export/Import; cloud sync (shelved) would carry it as part of the slot.
+  - Tests: `onboarding/onboarding.test.ts` covers step counts, every target being marked in a component, caption and tip length, the v10 → v11 migration, and the store actions (save, no repeat, one at a time, per slot, replay, kept through a new journey). 428 tests passing, lint and build clean.
 
 ---
 
@@ -678,3 +685,58 @@ Two ponies visit the **Moonwell**, and a glowing egg hatches into a **foal**. In
 
 **Save v10:** `Creature.trophy?`, `Creature.variant?`, `Creature.parents?`, `Creature.restUntil?`. Lifetime stats gain `hatched`, `released` and `variantsFound`. A pre-v10 save flags trophies by species (Guardian signatures and Aurelune could only have joined as trophies then). A v10 save trusts the flag, so a hatched foal of those species stays unflagged. Unknown variants, junk rest counts and malformed parent pairs are dropped.
 
+---
+
+## 22. Onboarding
+
+New players are Evelyn's friends, young kids who read short sentences, playing on a tablet. Every caption and tip is one short sentence in simple words, and every button is at least 48px. All the text lives in `src/onboarding/tours.ts` and `src/onboarding/helpContent.ts`. This section lists all of it.
+
+### Guided tours
+
+The tour dims the screen, lights up one element (marked `data-tour="…"`), and shows the caption with big **Next** and **Skip** buttons (**Done** on the last step). Finishing or skipping marks the tour done in the slot's save (`toursDone`), so it doesn't repeat. **Party → ❓ Replay Tours** clears the list and starts the intro tour again; the battle tour comes back at the next battle. Starting a New Journey keeps the list. Saves from before v11 start with both tours done.
+
+**Intro tour**: on the World Map, the first time a new game reaches it.
+
+| # | Lights up (`data-tour`) | Caption |
+|---|---|---|
+| 1 | nothing, centered | Welcome, Trainer! Let's look around. |
+| 2 | Zone 1's map node (`map-first-land`) | Tap a land to find puzzle quests. |
+| 3 | Zone 1's 🔍 Explore pill (`map-first-explore`) | Tap Explore to hunt wild ponies. |
+| 4 | 🏅 badge counter (`map-badges`) | Win badges to open new lands. |
+| 5 | 🦄 Party tab (`nav-party`) | Your ponies live here. Pick your team! |
+| 6 | 🏆 Trophies tab (`nav-trophies`) | See your trophies and Stardust here. |
+| 7 | ? help button (`help-button`) | Stuck? Tap ? for help on any screen. |
+
+**Battle tour**: the first time it's her turn in any battle (Proving Glade, Hunt, Trial or Champion). Battles have no attack menu: she attacks by tapping a glowing pony, then an enemy, and the tour teaches that.
+
+| # | Lights up (`data-tour`) | Caption |
+|---|---|---|
+| 1 | her ponies (`battle-team`) | These are your ponies. Glowing ones are ready. |
+| 2 | the enemy ponies (`battle-enemies`) | Tap a glowing pony, then tap an enemy. |
+| 3 | the enemy ponies (`battle-enemies`) | Some elements beat others. "Super!" means a big hit. |
+| 4 | her first pony's HP bar (`battle-hp`) | This is HP. Make every enemy's HP zero to win! |
+
+### Help button
+
+A round **?** button in the top-right corner of every screen: in the header beside ✨ Stardust where there is a header, floating in the corner on full-screen screens. It must never cover a game control. Tapping it opens a panel with that screen's tips and a big **Close**. During a battle it shows the battle tips, whatever screen holds the battle.
+
+| Screen (key) | Tips |
+|---|---|
+| Slot picker (`slotPicker`) | Tap an adventure to keep playing. · Tap an empty slot to start a new one. |
+| Character creation (`characterCreation`) | Type your name. · Tap a pony to be your first friend. |
+| World Map (`worldMap`) | Tap a land to play its quests. · Tap Explore to practice or hunt. · Lands with a 🔒 open when you win more. |
+| Land (`zone`) | Do the quests from top to bottom. · Each quest you finish opens the next one. · ✅ means you finished it. |
+| Quest (`quest`) | Read the problem, then pick your answer. · Wrong? That's OK, just try again. · Miss three times and you get a hint. |
+| Explore (`exploreHub`) | Pick what you want to practice. · Practice makes your ponies stronger. · Hunt to battle a wild pony and keep it. |
+| Practice (`explorePractice`) | Solve problems to give your team XP. · Practice as much as you like! |
+| Hunt warm-up (`exploreHunt`) | Solve the warm-up to start the hunt. · Win the battle to keep the pony. |
+| Before a Trial (`trial`; also `provingGlade`, `champion`) | Pick three ponies for your team. · "Strong" ponies hit this team hard. · Lost? Try a new team and go again. |
+| Any battle (`battle`) | Tap a glowing pony, then tap an enemy. · You can also drag from your pony to an enemy. · "Super!" hits do double damage. |
+| Party (`party`) | Tap Choose team to pick three ponies. · Type Strengths shows which elements win. · Use the buttons up top to sort your ponies. |
+| Moonwell (`moonwell`) | Pick two ponies to make an egg. · Hatching costs Stardust. |
+| Trophies (`trophies`) | Solve puzzles to earn Stardust. · Trophies give you lots of Stardust. |
+| Game Complete (`gameComplete`) | You did it! · Start a New Journey from the map to play again. |
+
+Proving Glade and the Champion go straight into battle, so in practice their tips are the battle tips; their keys exist so every screen has an entry.
+
+**Save v11:** `toursDone: ('intro' | 'battle')[]`. Pre-v11 saves get both ids; unknown and repeated ids are dropped.

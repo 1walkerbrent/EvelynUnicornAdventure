@@ -93,7 +93,8 @@ export default function ExploreHunt() {
   if (phase === 'puzzle') {
     return (
       <div className="p-4 space-y-4">
-        <div>
+        {/* pr-14 keeps the heading clear of the help button (§22). */}
+        <div className="pr-14">
           <h2 className="text-2xl font-bold text-yellow-300">Before the Hunt…</h2>
           <p className="text-purple-400 text-sm mt-1">
             Solve this warm-up, then go catch <span className="text-white font-semibold">{species.name}</span>!

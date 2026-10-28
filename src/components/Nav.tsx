@@ -16,6 +16,7 @@ export default function Nav() {
       {TABS.map(({ screen, label, icon }) => (
         <button
           key={screen}
+          data-tour={`nav-${screen}`}
           onClick={() => setScreen(screen)}
           className={`flex-1 flex flex-row items-center justify-center py-3 gap-2 transition-colors ${
             // Zone/quest/explore screens belong to the world-map tab flow

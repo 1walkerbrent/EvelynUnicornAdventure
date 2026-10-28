@@ -35,6 +35,7 @@ export default function Party() {
   const activeSlot    = useGameStore((s) => s.activeSlot)
   const openSlot      = useGameStore((s) => s.openSlot)
   const closeSlot     = useGameStore((s) => s.closeSlot)
+  const replayTours   = useGameStore((s) => s.replayTours)
   const deleteAdventure = useGameStore((s) => s.deleteAdventure)
   const setScreen     = useGameStore((s) => s.setScreen)
   const fileInputRef  = useRef<HTMLInputElement>(null)
@@ -283,6 +284,12 @@ export default function Party() {
         className="w-full min-h-[44px] bg-purple-600 hover:bg-purple-500 active:bg-purple-400 text-white rounded-xl text-sm font-bold transition-colors"
       >
         🔄 Switch Adventure
+      </button>
+      <button
+        onClick={replayTours}
+        className="w-full min-h-12 bg-sky-700 hover:bg-sky-600 active:bg-sky-500 text-white rounded-xl text-sm font-bold transition-colors"
+      >
+        ❓ Replay Tours
       </button>
 
       <div className="flex gap-2 pt-2">
