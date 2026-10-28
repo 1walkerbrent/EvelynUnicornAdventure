@@ -34,12 +34,13 @@ export default function CharacterCreation() {
   const addToParty    = useGameStore((s) => s.addToParty)
   const setScreen     = useGameStore((s) => s.setScreen)
   const playerName    = useGameStore((s) => s.playerName)
+  const closeSlot     = useGameStore((s) => s.closeSlot)
   const prestigeCount = useGameStore((s) => s.prestigeCount)
   // A prestige run reuses her existing name — she only picks a new starter.
   const isNewJourney  = playerName !== ''
 
   const [step,         setStep]        = useState<'pick' | 'customize'>('pick')
-  const [trainerName,  setTrainerName] = useState(() => playerName || 'Evelyn')
+  const [trainerName,  setTrainerName] = useState(playerName)
   const [pickedId,     setPickedId]    = useState('')
   const [nickname,     setNickname]    = useState('')
   const [accentColor,  setAccentColor] = useState('#f472b6')
@@ -78,6 +79,14 @@ export default function CharacterCreation() {
         <img src={charCreationBg} alt="" className="absolute inset-0 w-full h-full object-cover object-center" aria-hidden="true" />
         <div className="absolute inset-0 bg-black/50" />
         <div className="relative z-10 flex-1 overflow-y-auto p-4 space-y-5">
+          {!isNewJourney && (
+            <button
+              onClick={closeSlot}
+              className="min-h-11 px-3 text-purple-300 hover:text-purple-200 text-sm font-medium"
+            >
+              ← My adventures
+            </button>
+          )}
           <div className="text-center pt-4">
             <div className="text-5xl mb-2">{isNewJourney ? '✨' : '🌟'}</div>
             <h1 className="text-3xl font-bold text-yellow-300">
@@ -99,6 +108,7 @@ export default function CharacterCreation() {
               value={trainerName}
               onChange={(e) => setTrainerName(e.target.value)}
               maxLength={20}
+              placeholder="Type your name"
               className="w-full bg-purple-800 text-white rounded-xl px-4 py-2 focus:outline-none focus:ring-2 focus:ring-yellow-400"
             />
           </div>

@@ -1,5 +1,6 @@
 import { describe, it, expect, beforeEach } from 'vitest'
 import { useGameStore } from './store'
+import { slotKey, getActiveSlot } from './save'
 import { ZONE_BY_ID } from '../content/zones'
 import { ACHIEVEMENT_BY_ID, ACHIEVEMENTS } from '../engine/achievements'
 
@@ -7,7 +8,7 @@ import { ACHIEVEMENT_BY_ID, ACHIEVEMENTS } from '../engine/achievements'
 describe('winTrial — signature pony joins with max IVs (3/3/3)', () => {
   beforeEach(() => {
     localStorage.clear()
-    useGameStore.getState().resetGame()
+    useGameStore.getState().openSlot(1)
   })
 
   it('awards the Zone 2 signature (Boulderhoof) at max IVs', () => {
@@ -32,7 +33,7 @@ describe('winTrial — signature pony joins with max IVs (3/3/3)', () => {
 describe('prestige — starting a new journey', () => {
   beforeEach(() => {
     localStorage.clear()
-    useGameStore.getState().resetGame()
+    useGameStore.getState().openSlot(1)
   })
 
   /** Play a full game: clear every zone, then beat the Champion. */
@@ -121,7 +122,7 @@ describe('prestige — starting a new journey', () => {
     completeTheGame()
     useGameStore.getState().prestige()
 
-    useGameStore.getState().load()
+    useGameStore.getState().openSlot(1)
 
     const s = useGameStore.getState()
     expect(s.prestigeCount).toBe(1)
@@ -137,7 +138,7 @@ describe('prestige — starting a new journey', () => {
 describe('achievements + Stardust', () => {
   beforeEach(() => {
     localStorage.clear()
-    useGameStore.getState().resetGame()
+    useGameStore.getState().openSlot(1)
   })
 
   const fact = { type: 'math', prompt: '3 × 4 = __', correctAnswer: 12, hint: '', multiplication: true } as const
@@ -208,7 +209,7 @@ describe('achievements + Stardust', () => {
 describe('hatching + the Meadow', () => {
   beforeEach(() => {
     localStorage.clear()
-    useGameStore.getState().resetGame()
+    useGameStore.getState().openSlot(1)
   })
 
   function adult(id: string, speciesId: string, extra: Record<string, unknown> = {}) {
@@ -295,17 +296,81 @@ describe('hatching + the Meadow', () => {
 describe('practice focus', () => {
   beforeEach(() => {
     localStorage.clear()
-    useGameStore.getState().resetGame()
+    useGameStore.getState().openSlot(1)
   })
 
   it('defaults to mix and is saved when changed', () => {
     expect(useGameStore.getState().practiceFocus).toBe('mix')
     useGameStore.getState().setPlayerName('Evelyn')
     useGameStore.getState().setPracticeFocus('times')
-    const saved = JSON.parse(localStorage.getItem('evelyn_unicorn_adventure')!)
+    const saved = JSON.parse(localStorage.getItem(slotKey(1))!)
     expect(saved.practiceFocus).toBe('times')
     useGameStore.setState({ practiceFocus: 'mix' })
-    useGameStore.getState().load()
+    useGameStore.getState().openSlot(1)
     expect(useGameStore.getState().practiceFocus).toBe('times')
+  })
+})
+
+describe('save slots — switching adventures', () => {
+  beforeEach(() => localStorage.clear())
+
+  it('opening an empty slot starts fresh, with nothing carried over from the last slot', () => {
+    const store = useGameStore.getState()
+    store.openSlot(1)
+    useGameStore.getState().setPlayerName('Evelyn')
+    useGameStore.getState().winTrial('z2')
+    useGameStore.getState().openZone('z2')
+    useGameStore.setState({ toastQueue: ['first-steps'] })
+
+    useGameStore.getState().openSlot(2)
+    const s = useGameStore.getState()
+    expect(s.activeSlot).toBe(2)
+    expect(s.playerName).toBe('')
+    expect(s.party).toEqual([])
+    expect(s.badges).toBe(0)
+    expect(s.selectedZoneId).toBeNull()
+    expect(s.toastQueue).toEqual([])
+    expect(s.currentScreen).toBe('worldMap')
+  })
+
+  it('switching back reloads that slot, and saves land only in the open slot', () => {
+    useGameStore.getState().openSlot(1)
+    useGameStore.getState().setPlayerName('Evelyn')
+    useGameStore.getState().openSlot(2)
+    useGameStore.getState().setPlayerName('Mia')
+
+    useGameStore.getState().openSlot(1)
+    expect(useGameStore.getState().playerName).toBe('Evelyn')
+    expect(JSON.parse(localStorage.getItem(slotKey(2))!).playerName).toBe('Mia')
+  })
+
+  it('nothing is saved while the slot picker is showing', () => {
+    useGameStore.getState().closeSlot()
+    useGameStore.getState().setPlayerName('Nobody')
+    expect(localStorage.getItem(slotKey(1))).toBeNull()
+  })
+
+  it('deleteAdventure erases only the open slot and returns to the picker', () => {
+    useGameStore.getState().openSlot(1)
+    useGameStore.getState().setPlayerName('Evelyn')
+    useGameStore.getState().openSlot(2)
+    useGameStore.getState().setPlayerName('Mia')
+
+    useGameStore.getState().deleteAdventure()
+    expect(useGameStore.getState().activeSlot).toBeNull()
+    expect(localStorage.getItem(slotKey(2))).toBeNull()
+    expect(localStorage.getItem(slotKey(1))).not.toBeNull()
+  })
+})
+
+describe('save slots — last played', () => {
+  beforeEach(() => localStorage.clear())
+
+  it('backing out of a new adventure leaves the last-played slot alone', () => {
+    useGameStore.getState().openSlot(1)
+    useGameStore.getState().setPlayerName('Evelyn')
+    useGameStore.getState().openSlot(2)
+    useGameStore.getState().closeSlot()
+    expect(getActiveSlot()).toBe(1)
   })
 })

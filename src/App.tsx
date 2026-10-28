@@ -1,6 +1,6 @@
-import { useEffect } from 'react'
 import { useGameStore } from './state/store'
 import CharacterCreation from './screens/CharacterCreation'
+import SlotPicker from './screens/SlotPicker'
 import WorldMap from './screens/WorldMap'
 import ZoneView from './screens/ZoneView'
 import Quest from './screens/Quest'
@@ -24,17 +24,21 @@ export default function App() {
   const playerName    = useGameStore((s) => s.playerName)
   const currentScreen = useGameStore((s) => s.currentScreen)
   const awaitingStarter = useGameStore((s) => s.awaitingStarter)
-  const load          = useGameStore((s) => s.load)
+  const activeSlot    = useGameStore((s) => s.activeSlot)
   const stardust      = useGameStore((s) => s.stardust)
   const setScreen     = useGameStore((s) => s.setScreen)
-
-  useEffect(() => {
-    load()
-  }, [load])
 
   // Either a brand-new player, or a prestige run waiting on this journey's starter.
   const isCreating   = playerName === '' || awaitingStarter
   const isFullscreen = isCreating || FULLSCREEN_SCREENS.has(currentScreen)
+
+  if (activeSlot === null) {
+    return (
+      <div className="app-height w-full safe-top safe-bottom safe-x bg-purple-950 text-white overflow-hidden">
+        <SlotPicker />
+      </div>
+    )
+  }
 
   if (isFullscreen) {
     return (

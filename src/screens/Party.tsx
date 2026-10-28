@@ -32,8 +32,10 @@ export default function Party() {
   const setActiveTeam = useGameStore((s) => s.setActiveTeam)
   const badges        = useGameStore((s) => s.badges)
   const levelCap      = useGameStore((s) => s.levelCap)
-  const load          = useGameStore((s) => s.load)
-  const resetGame     = useGameStore((s) => s.resetGame)
+  const activeSlot    = useGameStore((s) => s.activeSlot)
+  const openSlot      = useGameStore((s) => s.openSlot)
+  const closeSlot     = useGameStore((s) => s.closeSlot)
+  const deleteAdventure = useGameStore((s) => s.deleteAdventure)
   const setScreen     = useGameStore((s) => s.setScreen)
   const fileInputRef  = useRef<HTMLInputElement>(null)
 
@@ -49,9 +51,9 @@ export default function Party() {
 
   const handleImport = async (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
-    if (!file) return
-    const ok = await importSave(file)
-    if (ok) load()
+    if (!file || activeSlot === null) return
+    const ok = await importSave(file, activeSlot)
+    if (ok) openSlot(activeSlot)
     if (fileInputRef.current) fileInputRef.current.value = ''
   }
 
@@ -276,15 +278,22 @@ export default function Party() {
         />
       )}
 
+      <button
+        onClick={closeSlot}
+        className="w-full min-h-[44px] bg-purple-600 hover:bg-purple-500 active:bg-purple-400 text-white rounded-xl text-sm font-bold transition-colors"
+      >
+        🔄 Switch Adventure
+      </button>
+
       <div className="flex gap-2 pt-2">
         <button
-          onClick={exportSave}
+          onClick={() => activeSlot !== null && exportSave(activeSlot)}
           className="flex-1 bg-purple-700 hover:bg-purple-600 active:bg-purple-500 text-white py-2 rounded-xl text-sm font-medium transition-colors"
         >
-          Export Save
+          Export Slot {activeSlot}
         </button>
         <label className="flex-1 bg-purple-700 hover:bg-purple-600 active:bg-purple-500 text-white py-2 rounded-xl text-sm font-medium transition-colors text-center cursor-pointer">
-          Import Save
+          Import into Slot {activeSlot}
           <input
             ref={fileInputRef}
             type="file"
@@ -298,7 +307,7 @@ export default function Party() {
       {confirmReset ? (
         <div className="bg-red-950/60 border border-red-700/50 rounded-2xl p-4 space-y-3">
           <p className="text-red-300 text-sm font-medium text-center">
-            This will erase your save and restart from the beginning.
+            This will erase the adventure in slot {activeSlot}. Your other adventures stay safe.
           </p>
           <div className="flex gap-2">
             <button
@@ -308,10 +317,10 @@ export default function Party() {
               Cancel
             </button>
             <button
-              onClick={resetGame}
+              onClick={deleteAdventure}
               className="flex-1 bg-red-600 hover:bg-red-500 text-white py-2 rounded-xl text-sm font-bold transition-colors"
             >
-              Yes, reset
+              Yes, erase it
             </button>
           </div>
         </div>
@@ -320,7 +329,7 @@ export default function Party() {
           onClick={() => setConfirmReset(true)}
           className="w-full text-red-400 hover:text-red-300 text-sm py-2 transition-colors"
         >
-          New Game (erase save)
+          Erase this adventure (slot {activeSlot})
         </button>
       )}
     </div>

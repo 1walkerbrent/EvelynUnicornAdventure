@@ -1,5 +1,7 @@
-import { describe, it, expect } from 'vitest'
-import { migrateSave } from './save'
+import { describe, it, expect, beforeEach } from 'vitest'
+import {
+  migrateSave, saveSlot, loadSlot, deleteSlot, listSlots, slotKey, getActiveSlot, setActiveSlot, migrateLegacySave,
+} from './save'
 import type { Creature } from '../engine/types'
 
 // A pre-IV (v4) party pony — note: no `ivs` field.
@@ -363,5 +365,84 @@ describe('migrateSave — practice focus', () => {
   it('defaults a missing or unknown focus to mix', () => {
     expect(migrateSave(base)!.practiceFocus).toBe('mix')
     expect(migrateSave({ ...base, practiceFocus: 'karate' })!.practiceFocus).toBe('mix')
+  })
+})
+
+describe('save slots', () => {
+  beforeEach(() => localStorage.clear())
+
+  function game(name: string) {
+    const state = migrateSave(v4Save([ponyNoIvs('marina-mist')]))!
+    return { ...state, playerName: name }
+  }
+
+  it('keeps each slot separate', () => {
+    saveSlot(1, game('Evelyn'))
+    saveSlot(3, game('Mia'))
+    expect(loadSlot(1)!.playerName).toBe('Evelyn')
+    expect(loadSlot(2)).toBeNull()
+    expect(loadSlot(3)!.playerName).toBe('Mia')
+
+    deleteSlot(1)
+    expect(loadSlot(1)).toBeNull()
+    expect(loadSlot(3)!.playerName).toBe('Mia')
+  })
+
+  it('stamps savedAt and summarises each slot for the picker', () => {
+    saveSlot(2, game('Evelyn'), '2026-10-01T12:00:00.000Z')
+    const [one, two, three] = listSlots()
+    expect(one).toBeNull()
+    expect(three).toBeNull()
+    expect(two).toMatchObject({
+      slot: 2, playerName: 'Evelyn', leadSpeciesId: 'marina-mist', badges: 0, ponies: 1,
+      savedAt: '2026-10-01T12:00:00.000Z',
+    })
+  })
+
+  it('treats an unreadable slot as empty', () => {
+    localStorage.setItem(slotKey(1), '{not json')
+    expect(loadSlot(1)).toBeNull()
+    expect(listSlots()[0]).toBeNull()
+  })
+
+  it('remembers the slot played last', () => {
+    expect(getActiveSlot()).toBeNull()
+    setActiveSlot(2)
+    expect(getActiveSlot()).toBe(2)
+  })
+})
+
+describe('migrateLegacySave — the pre-slot save moves into slot 1', () => {
+  beforeEach(() => localStorage.clear())
+
+  it('copies the old save into slot 1, makes it active, and keeps the old key', () => {
+    localStorage.setItem('evelyn_unicorn_adventure', JSON.stringify(v4Save([ponyNoIvs('marina-mist')])))
+    migrateLegacySave()
+    expect(loadSlot(1)!.playerName).toBe('Evelyn')
+    expect(loadSlot(1)!.areasDone).toEqual(['brindlewood'])
+    expect(getActiveSlot()).toBe(1)
+    expect(localStorage.getItem('evelyn_unicorn_adventure')).not.toBeNull()
+  })
+
+  it('runs once: deleting slot 1 afterwards does not bring the old save back', () => {
+    localStorage.setItem('evelyn_unicorn_adventure', JSON.stringify(v4Save([])))
+    migrateLegacySave()
+    deleteSlot(1)
+    migrateLegacySave()
+    expect(loadSlot(1)).toBeNull()
+  })
+
+  it('never overwrites a slot 1 that already holds a game', () => {
+    const existing = migrateSave(v4Save([]))!
+    saveSlot(1, { ...existing, playerName: 'Mia' })
+    localStorage.setItem('evelyn_unicorn_adventure', JSON.stringify(v4Save([])))
+    migrateLegacySave()
+    expect(loadSlot(1)!.playerName).toBe('Mia')
+  })
+
+  it('does nothing on a device with no old save', () => {
+    migrateLegacySave()
+    expect(listSlots()).toEqual([null, null, null])
+    expect(getActiveSlot()).toBeNull()
   })
 })

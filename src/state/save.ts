@@ -8,6 +8,8 @@ import { sanitizeLifetime, applySpeciesSeen, TROPHY_SPECIES } from '../engine/ac
 import { VARIANT_BY_ID } from '../engine/hatching'
 import type { PuzzleFocus } from '../engine/puzzleFocus'
 import { isPuzzleFocus } from '../engine/puzzleFocus'
+import { resolveBattleTeam } from '../engine/team'
+import { badgeCount } from '../engine/progression'
 
 export interface SaveData {
   version: 10
@@ -260,9 +262,6 @@ function backfillLifetime(state: PersistedState, party: Creature[]): LifetimeSta
   return { ...seen, championWins: Math.max(seen.championWins, knownWins) }
 }
 
-export function saveGame(data: PersistedState): void {
-  localStorage.setItem(SAVE_KEY, JSON.stringify({ version: VERSION, ...data }))
-}
 
 /**
  * Pure migration: turn a parsed save object of any readable version into the
@@ -294,33 +293,134 @@ export function migrateSave(parsed: unknown): PersistedState | null {
   }
 }
 
-export function loadGame(): PersistedState | null {
-  const raw = localStorage.getItem(SAVE_KEY)
+// ── Save slots ──────────────────────────────────────────────────────────────
+// Three independent adventures per device, one localStorage key each. The game
+// data inside a slot is the same SaveData as before, plus a `savedAt` stamp that
+// cloud sync will compare. The pre-slot save under SAVE_KEY is copied into slot 1
+// once (migrateLegacySave) and then left alone as a fallback copy.
+
+export type SlotNumber = 1 | 2 | 3
+export const SLOTS: readonly SlotNumber[] = [1, 2, 3]
+
+const ACTIVE_KEY   = `${SAVE_KEY}:active`
+const MIGRATED_KEY = `${SAVE_KEY}:migrated`
+
+export function slotKey(slot: SlotNumber): string {
+  return `${SAVE_KEY}:slot${slot}`
+}
+
+function isSlotNumber(n: unknown): n is SlotNumber {
+  return n === 1 || n === 2 || n === 3
+}
+
+/** What the slot picker shows on a card, read without opening the adventure. */
+export interface SlotSummary {
+  slot: SlotNumber
+  playerName: string
+  /** The pony leading her battle team, for the card's art. */
+  leadSpeciesId: string | undefined
+  leadVariant: Creature['variant']
+  badges: number
+  ponies: number
+  stardust: number
+  prestigeCount: number
+  /** ISO time of the last save; null for saves written before slots existed. */
+  savedAt: string | null
+}
+
+function readSlot(slot: SlotNumber): { state: PersistedState; savedAt: string | null } | null {
+  const raw = localStorage.getItem(slotKey(slot))
   if (!raw) return null
   try {
-    return migrateSave(JSON.parse(raw))
+    const parsed: unknown = JSON.parse(raw)
+    const state = migrateSave(parsed)
+    if (!state) return null
+    const savedAt = (parsed as { savedAt?: unknown }).savedAt
+    return { state, savedAt: typeof savedAt === 'string' ? savedAt : null }
   } catch {
     return null
   }
 }
 
-export function exportSave(): void {
+export function saveSlot(slot: SlotNumber, data: PersistedState, savedAt = new Date().toISOString()): void {
+  localStorage.setItem(slotKey(slot), JSON.stringify({ version: VERSION, savedAt, ...data }))
+}
+
+export function loadSlot(slot: SlotNumber): PersistedState | null {
+  return readSlot(slot)?.state ?? null
+}
+
+export function deleteSlot(slot: SlotNumber): void {
+  localStorage.removeItem(slotKey(slot))
+}
+
+/** One entry per slot, in order; null where the slot is empty or unreadable. */
+export function listSlots(): (SlotSummary | null)[] {
+  return SLOTS.map((slot) => {
+    const read = readSlot(slot)
+    if (!read) return null
+    const { state, savedAt } = read
+    const lead = resolveBattleTeam(state.party, state.activeTeam)[0]
+    return {
+      slot,
+      playerName:    state.playerName,
+      leadSpeciesId: lead?.speciesId,
+      leadVariant:   lead?.variant,
+      badges:        badgeCount(state.areasDone),
+      ponies:        state.party.length,
+      stardust:      state.stardust,
+      prestigeCount: state.prestigeCount,
+      savedAt,
+    }
+  })
+}
+
+/** The slot played last on this device, or null if none yet. */
+export function getActiveSlot(): SlotNumber | null {
+  const n = Number(localStorage.getItem(ACTIVE_KEY))
+  return isSlotNumber(n) ? n : null
+}
+
+export function setActiveSlot(slot: SlotNumber): void {
+  localStorage.setItem(ACTIVE_KEY, String(slot))
+}
+
+/**
+ * One-time move of the pre-slot save into slot 1. Idempotent: a marker key
+ * stops it re-copying after slot 1 is later deleted, and it never overwrites a
+ * slot 1 that already holds a game. The legacy key is kept, never read again.
+ */
+export function migrateLegacySave(): void {
+  if (localStorage.getItem(MIGRATED_KEY)) return
   const raw = localStorage.getItem(SAVE_KEY)
+  if (raw && !localStorage.getItem(slotKey(1))) {
+    try {
+      const state = migrateSave(JSON.parse(raw))
+      if (state) {
+        saveSlot(1, state)
+        setActiveSlot(1)
+      }
+    } catch {
+      // Unreadable legacy save: leave it where it is.
+    }
+  }
+  localStorage.setItem(MIGRATED_KEY, '1')
+}
+
+export function exportSave(slot: SlotNumber): void {
+  const raw = localStorage.getItem(slotKey(slot))
   if (!raw) return
   const blob = new Blob([raw], { type: 'application/json' })
   const url = URL.createObjectURL(blob)
   const a = document.createElement('a')
   a.href = url
-  a.download = 'evelyn-adventure-save.json'
+  a.download = `unicorn-adventure-slot${slot}.json`
   a.click()
   URL.revokeObjectURL(url)
 }
 
-export function clearSave(): void {
-  localStorage.removeItem(SAVE_KEY)
-}
-
-export function importSave(file: File): Promise<boolean> {
+/** Replace a slot with an exported save file. The import counts as the newest copy. */
+export function importSave(file: File, slot: SlotNumber): Promise<boolean> {
   return new Promise((resolve) => {
     const reader = new FileReader()
     reader.onload = (e) => {
@@ -331,7 +431,12 @@ export function importSave(file: File): Promise<boolean> {
           resolve(false)
           return
         }
-        localStorage.setItem(SAVE_KEY, JSON.stringify(parsed))
+        const state = migrateSave(parsed)
+        if (!state) {
+          resolve(false)
+          return
+        }
+        saveSlot(slot, state)
         resolve(true)
       } catch {
         resolve(false)

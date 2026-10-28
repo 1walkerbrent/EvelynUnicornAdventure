@@ -1,6 +1,7 @@
 import { create } from 'zustand'
 import type { Creature } from '../engine/types'
-import { saveGame, loadGame, clearSave } from './save'
+import { saveSlot, loadSlot, deleteSlot, setActiveSlot } from './save'
+import type { SlotNumber } from './save'
 import { SPECIES_BY_ID } from '../content/creatures'
 import { ZONE_BY_ID } from '../content/zones'
 import { GUARDIAN_BY_ID } from '../content/guardians'
@@ -38,7 +39,9 @@ export type Screen =
   | 'moonwell'
 
 interface GameStore {
-  // persisted
+  /** Which save slot is open; null = the slot picker is showing. */
+  activeSlot: SlotNumber | null
+  // persisted (into the active slot)
   playerName: string
   party: Creature[]
   areasDone: string[]
@@ -101,8 +104,38 @@ interface GameStore {
   openExplore: (zoneId: string) => void
   setScreen: (screen: Screen) => void
   save: () => void
-  load: () => void
-  resetGame: () => void
+  /** Open a save slot: load it, or start a fresh adventure if it is empty. */
+  openSlot: (slot: SlotNumber) => void
+  /** Back to the slot picker. */
+  closeSlot: () => void
+  /** Erase the open slot's adventure and go back to the slot picker. */
+  deleteAdventure: () => void
+}
+
+// Everything an adventure holds, at its starting values. Opening a slot starts
+// from this so nothing from the previous slot carries over.
+function freshAdventure() {
+  return {
+    playerName:           '',
+    party:                [] as Creature[],
+    areasDone:            [] as string[],
+    championDefeated:     false,
+    activeTeam:           [] as string[],
+    trialLossStreaks:     {} as Record<string, number>,
+    recentPuzzleAttempts: [] as PuzzleAttempt[],
+    prestigeCount:        0,
+    awaitingStarter:      false,
+    stardust:             0,
+    lifetime:             emptyLifetime(),
+    achievements:         {} as Record<string, string>,
+    practiceFocus:        'mix' as PuzzleFocus,
+    toastQueue:           [] as string[],
+    badges:               0,
+    levelCap:             levelCapForBadges(0),
+    currentScreen:        'worldMap' as Screen,
+    selectedZoneId:       null as string | null,
+    selectedAreaId:       null as string | null,
+  }
 }
 
 export const useGameStore = create<GameStore>()((set, get) => {
@@ -131,12 +164,14 @@ export const useGameStore = create<GameStore>()((set, get) => {
   }
 
   function persist() {
+    const slot = get().activeSlot
+    if (slot === null) return
     // Count today as a played day (a no-op after the first save of the day).
     const lifetime = applyDayPlayed(get().lifetime, localDay())
     if (lifetime !== get().lifetime) set({ lifetime })
     settleAchievements()
     const s = get()
-    saveGame({
+    saveSlot(slot, {
       playerName:           s.playerName,
       party:                s.party,
       areasDone:            s.areasDone,
@@ -181,29 +216,17 @@ export const useGameStore = create<GameStore>()((set, get) => {
   }
 
   return {
-    playerName:            '',
-    party:                 [],
-    areasDone:             [],
-    championDefeated:      false,
-    activeTeam:            [],
-    trialLossStreaks:       {},
-    recentPuzzleAttempts:  [],
-    prestigeCount:         0,
-    awaitingStarter:       false,
-    stardust:              0,
-    lifetime:              emptyLifetime(),
-    achievements:          {},
-    practiceFocus:         'mix',
-    toastQueue:            [],
-    badges:                0,
-    levelCap:         levelCapForBadges(0),
-    currentScreen:    'worldMap',
-    selectedZoneId:   null,
-    selectedAreaId:   null,
+    activeSlot: null,
+    ...freshAdventure(),
 
     // Called once, as the last step of character creation — which is also what
     // ends the "pick this journey's starter" state on a prestige run.
-    setPlayerName: (name) => { set({ playerName: name, awaitingStarter: false }); persist() },
+    setPlayerName: (name) => {
+      set({ playerName: name, awaitingStarter: false })
+      const slot = get().activeSlot
+      if (slot !== null) setActiveSlot(slot)
+      persist()
+    },
 
     addToParty: (creature, opts) => {
       const l = applySpeciesSeen(get().lifetime, [creature.speciesId])
@@ -405,55 +428,44 @@ export const useGameStore = create<GameStore>()((set, get) => {
       persist()
     },
 
-    resetGame: () => {
-      clearSave()
+    // An empty slot only becomes "last played" once character creation finishes
+    // (setPlayerName), so backing out of a new adventure leaves the picker as it was.
+    openSlot: (slot) => {
+      const saved = loadSlot(slot)
+      if (!saved) {
+        set({ activeSlot: slot, ...freshAdventure() })
+        return
+      }
+      setActiveSlot(slot)
       set({
-        playerName:           '',
-        party:                [],
-        areasDone:            [],
-        championDefeated:     false,
-        prestigeCount:        0,
-        awaitingStarter:      false,
-        activeTeam:           [],
-        trialLossStreaks:     {},
-        recentPuzzleAttempts: [],
-        stardust:             0,
-        lifetime:             emptyLifetime(),
-        achievements:         {},
-        practiceFocus:        'mix',
-        toastQueue:           [],
-        badges:               0,
-        levelCap:             levelCapForBadges(0),
-        currentScreen:        'worldMap',
-        selectedZoneId:       null,
-        selectedAreaId:       null,
+        activeSlot:           slot,
+        ...freshAdventure(),
+        playerName:           saved.playerName,
+        party:                saved.party,
+        areasDone:            saved.areasDone,
+        championDefeated:     saved.championDefeated,
+        activeTeam:           saved.activeTeam ?? [],
+        trialLossStreaks:     saved.trialLossStreaks ?? {},
+        recentPuzzleAttempts: saved.recentPuzzleAttempts ?? [],
+        prestigeCount:        saved.prestigeCount ?? 0,
+        awaitingStarter:      saved.awaitingStarter ?? false,
+        stardust:             saved.stardust,
+        lifetime:             saved.lifetime,
+        achievements:         saved.achievements,
+        practiceFocus:        saved.practiceFocus ?? 'mix',
+        selectedZoneId:       saved.lastZoneId ?? null,
+        ...derive(saved.areasDone),
       })
+      // Counts today and unlocks anything an older save had already earned.
+      persist()
     },
 
-    load: () => {
-      const saved = loadGame()
-      if (saved) {
-        set({
-          playerName:       saved.playerName,
-          party:            saved.party,
-          areasDone:        saved.areasDone,
-          championDefeated: saved.championDefeated,
-          activeTeam:            saved.activeTeam ?? [],
-          trialLossStreaks:      saved.trialLossStreaks ?? {},
-          recentPuzzleAttempts:  saved.recentPuzzleAttempts ?? [],
-          prestigeCount:         saved.prestigeCount ?? 0,
-          awaitingStarter:       saved.awaitingStarter ?? false,
-          stardust:              saved.stardust,
-          lifetime:              saved.lifetime,
-          achievements:          saved.achievements,
-          practiceFocus:         saved.practiceFocus ?? 'mix',
-          selectedZoneId:        saved.lastZoneId ?? null,
-          currentScreen:         'worldMap',
-          ...derive(saved.areasDone),
-        })
-        // Counts today and unlocks anything an older save had already earned.
-        persist()
-      }
+    closeSlot: () => set({ activeSlot: null, ...freshAdventure() }),
+
+    deleteAdventure: () => {
+      const slot = get().activeSlot
+      if (slot !== null) deleteSlot(slot)
+      set({ activeSlot: null, ...freshAdventure() })
     },
   }
 })
