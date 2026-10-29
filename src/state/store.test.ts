@@ -141,7 +141,7 @@ describe('achievements + Stardust', () => {
     useGameStore.getState().openSlot(1)
   })
 
-  const fact = { type: 'math', prompt: '3 × 4 = __', correctAnswer: 12, hint: '', multiplication: true } as const
+  const fact = { type: 'math', prompt: '3 × 4 = __', answer: { kind: 'number', value: 12 }, hint: '', multiplication: true } as const
 
   it('a first-try solve pays the bonus; a missed one pays the base', () => {
     useGameStore.getState().recordSolve(fact, 0)

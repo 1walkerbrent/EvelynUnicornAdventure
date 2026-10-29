@@ -4,7 +4,7 @@ import type { PuzzleFocus } from './puzzleFocus'
 
 function make(focus: PuzzleFocus, extra: Partial<Parameters<typeof makeExplorePuzzle>[0]> = {}) {
   return makeExplorePuzzle({
-    focus, mode: 'practice', zoneNumber: 2, difficulty: 5, recentAttempts: [], speechAvailable: true, ...extra,
+    focus, grade: 3, mode: 'practice', zoneNumber: 2, difficulty: 5, recentAttempts: [], speechAvailable: true, ...extra,
   })
 }
 
@@ -18,11 +18,15 @@ describe('makeExplorePuzzle — a chosen focus serves only that kind of puzzle',
     })
   }
 
-  it('Times Tables is always a multiplication fact, in Practice and Hunt', () => {
-    for (const mode of ['practice', 'hunt'] as const) {
-      for (let i = 0; i < 40; i++) {
-        const p = make('times', { mode })
-        expect(p.type === 'math' && p.multiplication).toBe(true)
+  it('Times Tables is always × or ÷ work, in every grade, Practice and Hunt', () => {
+    for (const grade of [3, 4, 5] as const) {
+      for (const mode of ['practice', 'hunt'] as const) {
+        for (let zoneNumber = 1; zoneNumber <= 6; zoneNumber++) {
+          for (let i = 0; i < 20; i++) {
+            const p = make('times', { mode, grade, zoneNumber })
+            expect(p.type === 'math' && p.multiplication, `${grade}/${zoneNumber}/${mode}`).toBe(true)
+          }
+        }
       }
     }
   })

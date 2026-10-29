@@ -304,7 +304,7 @@ Problems are **generated from rules, never stored as a fixed list** — a hand-w
 
 ### Reinforcement weighting
 
-A **rolling window of the last 10 puzzle attempts** (category + correct/wrong) is stored in the save and used to weight category selection in Practice and Hunt. All four categories are weighted the same way — spelling included. Any category with **< 60% accuracy AND ≥ 3 attempts** gets **weight 2** (doubled); categories with fewer than 3 attempts are neutral (weight 1). This means if she keeps missing math, the game surfaces more math problems without any explicit mode change — the difficulty adapts to her.
+A **rolling window of the last 10 puzzle attempts** (category + correct/wrong) is stored in the save and used to weight category selection in Practice and Hunt. All four categories are weighted the same way — spelling included. Any category with **< 60% accuracy AND ≥ 3 attempts** gets **weight 2** (doubled); categories with fewer than 3 attempts are neutral (weight 1). This means if she keeps missing math, the game surfaces more math problems without any explicit mode change — the difficulty adapts to her. The window belongs to the journey's grade: picking a different grade for a new journey clears it (§23).
 
 ### Difficulty: one knob, fed by two dials
 
@@ -317,6 +317,8 @@ Difficulty is a single **effective-difficulty number** the generators read. It i
 This is the seam the future **New Game+** plugs into (see §15): a leveled-up restart just applies a global level offset, every generator reads a higher number, and the whole game's math shifts up — no new content required.
 
 ### Math generator (zone-progression bands)
+
+> **Superseded by §23 (Grade Levels).** Math and logic now come from the player's grade. What follows is the pre-grade design, kept for history; the parts that fit 3rd grade live on as the Grade 3 content (§23 lists exactly which).
 
 Bare equations with no story wrapper. All answers are positive integers; subtraction is always larger − smaller. A `__` marks the blank: usually at the end ("47 + 36 = __"), occasionally at the start for Zone 3 Hunt ("__ − 28 = 45"). Must guarantee clean answers, no negative results, results land in-range.
 
@@ -344,6 +346,8 @@ Bare equations with no story wrapper. All answers are positive integers; subtrac
 
 ### Multiplication (mixed into math)
 
+> **Superseded by §23 (Grade Levels).** Math and logic now come from the player's grade. What follows is the pre-grade design, kept for history; the parts that fit 3rd grade live on as the Grade 3 content (§23 lists exactly which).
+
 Beginner 3rd-grade multiplication facts (CCSS 3.OA), added because she has started multiplication in class. Not a separate category: **50% of math problems** (`MULTIPLICATION_SHARE`; raised from 30% at the user's request, for more times-table practice) are a multiplication fact instead of an addition/subtraction problem, in Quest, Practice and Hunt alike. Since multiplication is part of math, it uses the **math** reinforcement weighting. `src/engine/multiplicationGenerator.ts`; each generator's `generateAddSubProblem` / `generateHuntAddSubProblem` still produces addition/subtraction only.
 
 Fact families follow the usual classroom order, keyed by band (zone). One factor is always from the band's focus set; the other is 1–10 (1–5 in band 1). Both orders are shown, so 3 × 4 and 4 × 3 both come up. Nothing goes past 10 × 10.
@@ -360,6 +364,8 @@ Fact families follow the usual classroom order, keyed by band (zone). One factor
 **Hint** (after the 3rd wrong answer, §10) teaches with skip-counting instead of stating the fact: *"Count by 4s, 3 times: 4, 8, 12. So 3 × 4 = 12"*. It counts by the bigger factor, so the list stays short. ×0 and ×1 are explained as rules. In the missing-factor form, the known factor is never 0, because `0 × __ = 0` has no single answer.
 
 ### Logic generator
+
+> **Superseded by §23 (Grade Levels).** Math and logic now come from the player's grade. What follows is the pre-grade design, kept for history; the parts that fit 3rd grade live on as the Grade 3 content (§23 lists exactly which).
 
 A **pool of templates with swappable variables** per band group — a deduction like "the pony is behind one of three flowers; not the tallest, not the leftmost" shuffles which attributes and which answer each time, yielding dozens of variations from a handful of templates. ≥8 templates per band group (not all position-elimination style), shuffled by the anti-repeat tracker. Bands route: difficulty ≤3 → band12 (3 choices), ≤7 → band34 (4 choices), else → band56 (5 choices).
 
@@ -563,7 +569,7 @@ Build Zone 1 end-to-end before anything else, with placeholder art (colored shap
   - **Store.** `activeSlot` (`null` = the picker is showing) replaces `load()`/`resetGame()` with `openSlot(n)`, `closeSlot()` and `deleteAdventure()`. Opening a slot rebuilds state from `freshAdventure()`, so nothing (toasts, selected zone, screen) carries over from the last slot. `persist()` writes only to the open slot and does nothing while the picker is showing. An empty slot becomes "last played" only once character creation finishes (`setPlayerName`), so backing out of a new adventure leaves the picker as it was.
   - **UI.** `screens/SlotPicker.tsx` is the launch screen: three cards, the last-played one gold-ringed with "Continue ▶", an empty one reading "✨ New Adventure" (into character creation, which gains a "← My adventures" back button on fresh slots), and a two-tap delete per card. The Party screen gains **🔄 Switch Adventure**, and its Export/Import/Erase buttons name the slot they act on. Character creation's name field now starts blank instead of prefilled "Evelyn".
   - Tests: slot isolation, summaries, unreadable slots, last-played, and the legacy move (copy, run-once, no overwrite) in `save.test.ts`; switching with no carry-over, open-slot-only saves, picker-showing saves nothing, and `deleteAdventure` in `store.test.ts`. 416 tests passing, lint and build clean.
-- **M5d — Onboarding ✅ DONE (current milestone):** the §22 design, built. A guided tour on the World Map for a new game, a battle tour the first time it's her turn in a battle, and a ? help button on every screen. No change to game logic or balance.
+- **M5d — Onboarding ✅ DONE:** the §22 design, built. A guided tour on the World Map for a new game, a battle tour the first time it's her turn in a battle, and a ? help button on every screen. No change to game logic or balance.
   - **Content.** `onboarding/tours.ts` (`TOURS`, `TOUR_IDS`) and `onboarding/helpContent.ts` (`HELP_TIPS`, keyed by screen plus `slotPicker`, `characterCreation` and `battle`). Components only carry `data-tour` markers.
   - **`onboarding/TourOverlay.tsx`.** It's mounted once in `App` and shows `activeTour`. It lights the union of every element marked with the step's target, re-measuring each frame so it follows the map scroll and pony bob. The caption goes below the light, then above it, then beside it (the tall enemy column). Next/Skip/Done are 48px. The whole screen is covered, so nothing underneath takes taps.
   - **`onboarding/HelpButton.tsx`.** A 48px ? button, top-right: in the header next to ✨ on screens with one, fixed to the corner (safe-area aware) on full-screen ones. `BattleScreen` sets `useHelpOverride` to `battle` while mounted. To clear the button, the battle's "X's team" label moved left, and the Trial and Hunt warm-up headings got right padding. Checked on every screen at 768×1024, 1024×768 and 375×812.
@@ -571,6 +577,12 @@ Build Zone 1 end-to-end before anything else, with placeholder art (colored shap
   - **Save v11.** It adds `toursDone`. Any older save counts both tours as done, because it belongs to someone already playing. A v11 list drops unknown and repeated ids. Stored per slot, so it moves with Export/Import; cloud sync (shelved) would carry it as part of the slot.
   - Tests: `onboarding/onboarding.test.ts` covers step counts, every target being marked in a component, caption and tip length, the v10 → v11 migration, and the store actions (save, no repeat, one at a time, per slot, replay, kept through a new journey). 428 tests passing, lint and build clean.
 
+- **M5e — Grade levels ✅ DONE (current milestone):** the §23 design, built. 3rd, 4th and 5th grade math and logic, picked at character creation and fixed for the journey. No change to XP, rewards, combat or balance.
+  - **Content.** `src/content/grade3|4|5/math.ts` (skills per zone) and `logic.ts` (logic settings per zone), `gradeTypes.ts`, and one entry point, `grades.ts` (`problemFor`, `mathFor`, `logicFor`). Quest, Practice, Hunt and Times Tables all go through it. Shared helpers: `engine/mathKit.ts` (number formatting, fractions, problem builders, answer checking) and `engine/logicKit.ts` (logic generators with settings and a brute-force one-answer check). Puzzle text is in `content/logicText.ts`. The multiplication facts moved to `content/grade3/multiplication.ts` and gained division facts and missing factor/divisor. Removed: `mathGenerator.ts`, `huntMathGenerator.ts`, `logicGenerator.ts` and their tests.
+  - **Answers.** `MathProblem.correctAnswer` became `answer: MathAnswer` (number, decimal, fraction, remainder, choice). `components/MathAnswerInput.tsx` draws the matching input, and `checkAnswer` checks it.
+  - **Grade.** Save **v12** adds `grade` (older saves → 3). The store has `grade` and `chooseGrade`, which clears the accuracy window when the grade changes. Character creation shows three grade tiles; Party shows "Grade N".
+  - **Samples.** `docs/grade-samples.md` has 3 math and 3 logic problems per zone per grade, written by `scripts/grade-samples.test.ts` (skipped unless `WRITE_SAMPLES=1`).
+  - Tests: `content/grades.test.ts` checks every skill in every grade and zone (150 samples each; every answer that's plain arithmetic is re-derived from the prompt), grade ranges, the Hunt rule, answer checking, one-answer checks for ordering, grid and elimination read back from the printed clues, two-rule patterns, backward chains, logic growing with grade, the v12 migration and grade changes. 431 tests passing, lint and build clean.
 ---
 
 ## 15. Phase 2 (deferred — not in initial build)
@@ -740,3 +752,116 @@ A round **?** button in the top-right corner of every screen: in the header besi
 Proving Glade and the Champion go straight into battle, so in practice their tips are the battle tips; their keys exist so every screen has an entry.
 
 **Save v11:** `toursDone: ('intro' | 'battle')[]`. Pre-v11 saves get both ids; unknown and repeated ids are dropped.
+
+---
+
+## 23. Grade Levels
+
+Players are Evelyn (3rd grade) and her 4th-grade friends. Each journey's math and logic match the player's grade. Reading and spelling are the same for every grade (reading gets its own grade pass later). Grade affects problems only: XP, Stardust, trophies, combat and balance are identical.
+
+### Choosing a grade
+
+- **New adventure:** character creation shows three big tiles, **3rd · 4th · 5th**, under "Your name". Nothing is preselected, and the companion list stays disabled until one is picked.
+- **New Journey (§18):** the same tiles show, with the current grade preselected. Picking a different one sets the grade for the new journey and becomes the slot's grade from then on.
+- **During a journey** the grade can't change. The Party header shows "Grade N".
+- **Accuracy history:** changing grade clears the last-10 window (§9). The weighting rule itself is unchanged: a category below 60% over 3+ attempts gets double weight. Because the window only ever holds one grade, it is tracked per grade.
+- **Stored** as `grade` on each slot's save (**save v12**). Older saves become Grade 3, which is what they were playing. There is no player profile on `main`: the slot is the player, so the slot's grade is both the journey's grade and the next journey's default. If cloud saves return (§21, shelved), the player record gets a grade copied from here.
+
+### Where problems come from
+
+`src/content/grades.ts` is the only entry point: a screen asks for a problem for **(grade, zone, category)**.
+- **Math:** one of the zone's skills, picked at random.
+- **Times Tables** (Explore focus): only the zone's × and ÷ skills. Every zone of every grade has at least one.
+- **Hunt** keeps its "simpler" role (§9): its math comes from the same grade **one zone lower** (Zone 1 uses its own).
+- **Logic:** one of the zone's formats, with an anti-repeat tracker per grade and zone.
+- **Quests:** Area 1 is math at the zone's own skills; Area 2's logic comes from the grade. Spelling is unchanged.
+
+### Audit of the pre-grade content
+
+| Content | Matched | Kept? |
+|---|---|---|
+| 2-digit + − (old Quest Z1–Z2, Hunt Z1–Z4) | Grade 1–2 | **Replaced** by 3-digit + − |
+| 2–3 digit 2-step and 3-digit multi-step + − (old Z3–Z6) | Grade 3 | **Kept** as Grade 3 Zones 3–6. Band 6's "extra number", which only appeared in the hint, is dropped. |
+| × facts, bands 1–6, missing factor | Grade 3 | **Kept** as Grade 3's × skills |
+| Logic Z1–Z2 (2-clue hide-and-seek, biggest 2-digit number, +1…+4 patterns, odd one out, categories, everyday if/then, which comes first) | Grade K–2 | **Replaced** with 3–4 item clue puzzles, one-rule patterns to +10 and ×2, 3-digit comparisons |
+| Logic Z3–Z6 (2–3 attribute filters, 4–5 item ordering, chains, grids, must-be-true, impossible, conclusions, seating) | Grade 2–3 | **Kept** for Grade 3. Formats that were fixed lists are now generators; the word puzzles are kept as written. |
+
+Missing from Grade 3 before this, and added: division facts, rounding, comparing fractions.
+
+### Math skills by grade and zone
+
+Bare equations, no story wrappers. Zone 1 is the easiest work for the grade, Zone 6 the hardest.
+
+**Grade 3**
+
+| Zone | Skills |
+|---|---|
+| 1 | 3-digit + and − without regrouping · × facts: ×1, ×2, ×5, ×10 |
+| 2 | 3-digit + and − with regrouping · × facts: adds ×3, ×4 · round to the nearest 10 |
+| 3 | + and − within 1,000, 2 steps · × facts: adds ×0, ×6 · ÷ facts by 2, 5, 10 · round to the nearest 10 or 100 |
+| 4 | 3-digit + and −, 2 steps · all × facts to 10 × 10 · ÷ facts by 2–6 · compare fractions, same denominator |
+| 5 | + and − within 1,000, 2–3 steps · all ÷ facts · missing factor (6 × __ = 42) · compare fractions, same numerator |
+| 6 | + and − within 1,000, 2–3 steps · missing factor or divisor · × facts, some with a missing factor · compare fractions, same top or bottom |
+
+**Grade 4**
+
+| Zone | Skills |
+|---|---|
+| 1 | + and − to 10,000 · which is a factor |
+| 2 | + and − to 100,000 · 2–3 digit × 1-digit · which is a multiple |
+| 3 | + and − to 1,000,000 · 4-digit × 1-digit · 3-digit ÷ 1-digit with remainder · equivalent fractions |
+| 4 | 2-digit × 2-digit · 4-digit ÷ 1-digit with remainder · + − fractions, like denominators |
+| 5 | compare decimals to tenths · mixed numbers, like denominators · factors, multiples, primes |
+| 6 | compare decimals to hundredths · + and − to 1,000,000 · 2-digit × 2-digit · 4-digit ÷ 1-digit with remainder · mixed numbers, like denominators |
+
+**Grade 5**
+
+| Zone | Skills |
+|---|---|
+| 1 | × ÷ by 10, 100, 1,000 · order of operations with ( ) |
+| 2 | 3-digit × 2-digit · decimal + − to hundredths · powers of 10 with decimals |
+| 3 | 4-digit ÷ 2-digit · fraction × whole number · decimal × whole number |
+| 4 | 4-digit ÷ 2-digit with remainder · unlike denominators (one a multiple of the other) · decimal × decimal |
+| 5 | unlike denominators · fraction × fraction · decimal ÷ whole number · 4-digit × 2-digit |
+| 6 | mixed numbers, unlike denominators · nested parentheses · decimal ÷ decimal · powers of 10 with exponents (10², 10³) |
+
+Numbers of 1,000 and up are written with commas in Grades 4–5 ("4,527"). Every × and ÷ skill counts toward the Times Table trophy, as before.
+
+### Answer input
+
+**Typed entry for anything she computes; buttons only where the question asks her to pick.** Multiple choice for arithmetic would let her guess right 25–33% of the time and hide whether she did the work, and the game is built on "type the missing number". `components/MathAnswerInput.tsx`, checked by `checkAnswer` in `engine/mathKit.ts`.
+
+| Answer | Input | Accepted |
+|---|---|---|
+| Whole number | one box, number keyboard | commas and spaces ignored ("4,527" = 4527) |
+| Decimal | one box, decimal keyboard | by value (0.5 = 0.50 = .5) |
+| Remainder | `[ answer ] R [ left ]` | an empty R box means 0 |
+| Fraction | `[ whole ]  top / bottom` | any equal value: 2/4 for 1/2, 5/4 or 1 1/4, a whole answer in the whole box alone |
+| Compare | three big **< = >** buttons | |
+| Pick one | 2–4 buttons | wrong answers come from common mistakes |
+
+The pick-one wrong answers:
+- **"Which is a factor":** near misses, one more or less than a real factor.
+- **"Which is a multiple":** numbers next to the right one.
+- **"Which fraction is equal":** the same top number, or the same amount added to top and bottom.
+- **Decimal compares:** often pair tenths with hundredths, to catch "longer is bigger" (0.45 vs 0.5).
+- **Prime or composite:** always two buttons, in a fixed order.
+
+Every hint teaches a method, not just the answer. For example, "Look at the ones digit, 7. 5 or more rounds up."
+
+### Logic by grade
+
+The same formats in every grade, scaled by settings in `src/content/gradeN/logic.ts`. `engine/logicKit.ts` builds each puzzle, checks every possible arrangement so exactly one answer fits, and drops clues that aren't needed, so every clue counts. Puzzle text lives in `src/content/logicText.ts`.
+
+| Format | Grade 3 | Grade 4 | Grade 5 |
+|---|---|---|---|
+| Find it (hide-and-seek elimination) | 3 → 5 items, "NOT" clues; "left/right of" in Z6 | 4 → 6 items, "left of / right of / next to" | 5–6 items, relative clues |
+| Ordering ("taller than") | 3 → 5 people, asks the ends | 4 → 6, "is not the tallest" clues, second place from Z3 | 5–6, second place, clues that must be combined |
+| Who has what (grid) | 2 → 3 people | 3 → 4, only "not" clues in Z3–Z4 | 3–4, only "not" clues, never solvable from one column |
+| Patterns | one rule: +, −, ×2 | bigger steps, ×3, ÷2, growing jumps | **two rules** (× then + taking turns), two patterns woven together |
+| If/then chains | 2–3 steps | 3–4 steps plus a rule that isn't needed | 4–5 steps, some run **backward** ("the last thing didn't happen, so…") |
+| Attribute filter (gems) | 2 → 3 clues | 2–3 clues, 5–6 gems, a NOT in Z5–Z6 | 3 clues with a NOT |
+| Word puzzles (must be true, impossible, what follows, which would you use, seats in a row) | Z3–Z6 | Z3–Z5 | none (replaced by deeper deduction) |
+| Biggest number | Z1–Z2 (3-digit) | none | none |
+
+The full sample set, 3 math and 3 logic per zone per grade, is `docs/grade-samples.md`.

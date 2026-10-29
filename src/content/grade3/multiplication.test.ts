@@ -1,13 +1,17 @@
 import { describe, it, expect } from 'vitest'
 import {
   generateMultiplicationProblem,
+  generateDivisionFact,
+  generateMissingFactor,
+  generateMissingDivision,
   multiplicationHint,
   MULT_PARAMS,
-  MULTIPLICATION_SHARE,
-} from './multiplicationGenerator'
-import type { MultBand } from './multiplicationGenerator'
-import { generateMathProblem } from './mathGenerator'
-import { generateHuntMathProblem } from './huntMathGenerator'
+} from './multiplication'
+import type { MultBand } from './multiplication'
+import type { MathProblem } from '../../engine/problems'
+
+/** The typed whole-number answer (every fact here is one). */
+const ans = (p: MathProblem) => (p.answer.kind === 'number' ? p.answer.value : NaN)
 
 const BANDS: MultBand[] = [1, 2, 3, 4, 5, 6]
 
@@ -40,10 +44,10 @@ describe('generateMultiplicationProblem — hard guarantees over 300 samples per
       it('is a well-formed × equation whose stated answer is correct', () => {
         for (const p of samples) {
           expect(p.type).toBe('math')
-          expect(Number.isInteger(p.correctAnswer)).toBe(true)
+          expect(Number.isInteger(ans(p))).toBe(true)
           const { a, b, c } = parse(p.prompt)
-          if (c === null) expect(p.correctAnswer).toBe(a * (b as number))
-          else expect(a * p.correctAnswer).toBe(c)
+          if (c === null) expect(ans(p)).toBe(a * (b as number))
+          else expect(a * ans(p)).toBe(c)
         }
       })
 
@@ -51,7 +55,7 @@ describe('generateMultiplicationProblem — hard guarantees over 300 samples per
         const { focus, otherMin, otherMax } = MULT_PARAMS[band]
         for (const p of samples) {
           const { a, b, c } = parse(p.prompt)
-          const other = b ?? p.correctAnswer
+          const other = b ?? ans(p)
           const [x, y] = [a, other]
           const ok =
             (focus.includes(x) && y >= otherMin && y <= otherMax) ||
@@ -64,7 +68,7 @@ describe('generateMultiplicationProblem — hard guarantees over 300 samples per
         for (const p of samples) {
           const { a, b } = parse(p.prompt)
           expect(a).toBeLessThanOrEqual(10)
-          expect(b ?? p.correctAnswer).toBeLessThanOrEqual(10)
+          expect(b ?? ans(p)).toBeLessThanOrEqual(10)
         }
       })
 
@@ -100,7 +104,7 @@ describe('generateMultiplicationProblem — hard guarantees over 300 samples per
   it('band 1 sticks to the easiest facts: nothing beyond × 10 by 5', () => {
     const rng = seeded(1)
     for (let i = 0; i < 300; i++) {
-      expect(generateMultiplicationProblem(1, rng).correctAnswer).toBeLessThanOrEqual(50)
+      expect(ans(generateMultiplicationProblem(1, rng))).toBeLessThanOrEqual(50)
     }
   })
 })
@@ -117,22 +121,31 @@ describe('multiplicationHint', () => {
   })
 })
 
-describe('multiplication mix-in', () => {
-  it('Quest/Practice math includes multiplication at roughly MULTIPLICATION_SHARE', () => {
-    const rng = seeded(7)
-    const n = 2000
-    const mult = Array.from({ length: n }, () => generateMathProblem(9, rng))
-      .filter(p => p.prompt.includes('×')).length
-    expect(mult / n).toBeGreaterThan(MULTIPLICATION_SHARE - 0.05)
-    expect(mult / n).toBeLessThan(MULTIPLICATION_SHARE + 0.05)
+describe('division facts and missing numbers', () => {
+  it('division facts divide evenly, by the divisors asked for', () => {
+    const rng = seeded(11)
+    for (let i = 0; i < 300; i++) {
+      const p = generateDivisionFact([2, 5, 10], rng)
+      const [, n, d] = p.prompt.match(/^(\d+) ÷ (\d+) = __$/)!.map(Number)
+      expect([2, 5, 10]).toContain(d)
+      expect(ans(p) * d).toBe(n)
+      expect(ans(p)).toBeLessThanOrEqual(10)
+    }
   })
 
-  it('Hunt math includes multiplication in every zone', () => {
-    for (let zone = 1; zone <= 6; zone++) {
-      const rng = seeded(zone * 13)
-      const samples = Array.from({ length: 200 }, () => generateHuntMathProblem(zone, rng))
-      expect(samples.some(p => p.prompt.includes('×'))).toBe(true)
-      expect(samples.some(p => !p.prompt.includes('×'))).toBe(true)
+  it('missing factor and missing divisor have one right answer', () => {
+    const rng = seeded(12)
+    for (let i = 0; i < 300; i++) {
+      const f = generateMissingFactor(rng)
+      const m = f.prompt.match(/^(\d+|__) × (\d+|__) = (\d+)$/)!
+      const known = Number(m[1] === '__' ? m[2] : m[1])
+      expect(known * ans(f)).toBe(Number(m[3]))
+      expect(known).toBeGreaterThan(0)
+
+      const d = generateMissingDivision(rng)
+      const k = d.prompt.match(/^(\d+|__) ÷ (\d+|__) = (\d+)$/)!
+      if (k[1] === '__') expect(ans(d) / Number(k[2])).toBe(Number(k[3]))
+      else expect(Number(k[1]) / ans(d)).toBe(Number(k[3]))
     }
   })
 })

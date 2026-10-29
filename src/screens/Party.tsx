@@ -36,6 +36,7 @@ export default function Party() {
   const openSlot      = useGameStore((s) => s.openSlot)
   const closeSlot     = useGameStore((s) => s.closeSlot)
   const replayTours   = useGameStore((s) => s.replayTours)
+  const grade         = useGameStore((s) => s.grade)
   const deleteAdventure = useGameStore((s) => s.deleteAdventure)
   const setScreen     = useGameStore((s) => s.setScreen)
   const fileInputRef  = useRef<HTMLInputElement>(null)
@@ -94,6 +95,7 @@ export default function Party() {
         <h2 className="text-2xl font-bold text-yellow-300">Party</h2>
         <p className="text-purple-300 text-sm mt-1">
           Trainer: <span className="text-white font-semibold">{playerName || '—'}</span>
+          {' · '}Grade {grade}
           {' · '}Badges: {badges}
           {' · '}Level cap: {levelCap}
         </p>

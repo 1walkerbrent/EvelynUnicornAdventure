@@ -1,6 +1,9 @@
 import { useState } from 'react'
 import type { Problem } from '../engine/problems'
+import { checkAnswer } from '../engine/mathKit'
+import type { AnswerEntry } from '../engine/mathKit'
 import SpellingPuzzle from './SpellingPuzzle'
+import MathAnswerInput from './MathAnswerInput'
 
 const ENCOURAGEMENT = [
   "Not quite — but you've totally got this! Try again! 🌟",
@@ -18,7 +21,6 @@ interface Props {
 
 export default function ProblemCard({ problem, onSolve, onAttempt }: Props) {
   const [attempts, setAttempts] = useState(0)
-  const [input, setInput]       = useState('')
   const [feedback, setFeedback] = useState<string | null>(null)
 
   const showHint = attempts >= 3
@@ -27,7 +29,6 @@ export default function ProblemCard({ problem, onSolve, onAttempt }: Props) {
     const next = attempts + 1
     setAttempts(next)
     setFeedback(ENCOURAGEMENT[(next - 1) % ENCOURAGEMENT.length])
-    setInput('')
     onAttempt?.(false)
   }
 
@@ -36,14 +37,15 @@ export default function ProblemCard({ problem, onSolve, onAttempt }: Props) {
     onSolve(attempts)
   }
 
-  function handleMathSubmit() {
-    if (problem.type !== 'math') return
-    const answer = parseInt(input.trim(), 10)
-    if (!isNaN(answer) && answer === problem.correctAnswer) {
+  // Returns the verdict so <MathAnswerInput> knows whether to clear its boxes.
+  function handleMathSubmit(entry: AnswerEntry): boolean {
+    if (problem.type !== 'math') return false
+    if (checkAnswer(problem.answer, entry)) {
       handleCorrect()
-    } else {
-      recordWrong()
+      return true
     }
+    recordWrong()
+    return false
   }
 
   // Spelling returns the verdict so <SpellingPuzzle> can shake its tiles on a miss.
@@ -69,8 +71,13 @@ export default function ProblemCard({ problem, onSolve, onAttempt }: Props) {
 
   return (
     <div className="space-y-4">
-      {/* Prompt block — math and logic only */}
-      {(problem.type === 'math' || problem.type === 'logic') && (
+      {/* Prompt block — math and logic only. A math prompt is one bare equation, so it's big. */}
+      {problem.type === 'math' && (
+        <div className="bg-purple-900/60 rounded-2xl p-5 text-center">
+          <p className="text-white text-3xl font-bold tracking-wide leading-snug break-words">{problem.prompt}</p>
+        </div>
+      )}
+      {problem.type === 'logic' && (
         <div className="bg-purple-900/60 rounded-2xl p-4 space-y-1">
           {problem.prompt.split('\n').map((line, i) => (
             <p key={i} className={`${line === '' ? 'h-2' : 'text-white leading-relaxed'}`}>
@@ -96,26 +103,9 @@ export default function ProblemCard({ problem, onSolve, onAttempt }: Props) {
         <SpellingPuzzle key={problem.word} problem={problem} onSubmit={handleSpellingSubmit} />
       )}
 
-      {/* Math input */}
+      {/* Math input: typed for anything computed, buttons for pick-one questions (§23). */}
       {problem.type === 'math' && (
-        <div className="flex gap-2">
-          <input
-            type="text"
-            inputMode="numeric"
-            pattern="[0-9]*"
-            value={input}
-            onChange={(e) => setInput(e.target.value)}
-            onKeyDown={(e) => { if (e.key === 'Enter') handleMathSubmit() }}
-            placeholder="Your answer…"
-            className="flex-1 bg-purple-800 text-white placeholder-purple-400 rounded-xl px-4 py-3 text-lg font-bold text-center focus:outline-none focus:ring-2 focus:ring-yellow-400"
-          />
-          <button
-            onClick={handleMathSubmit}
-            className="bg-yellow-400 hover:bg-yellow-300 text-purple-950 font-bold px-5 py-3 rounded-xl transition-colors"
-          >
-            Check!
-          </button>
-        </div>
+        <MathAnswerInput key={problem.prompt} answer={problem.answer} onSubmit={handleMathSubmit} />
       )}
 
       {/* Logic / comprehension choices */}

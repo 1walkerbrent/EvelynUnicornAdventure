@@ -2,8 +2,7 @@ import { useState } from 'react'
 import { useGameStore } from '../state/store'
 import { SPECIES_BY_ID } from '../content/creatures'
 import { ZONE_BY_ID } from '../content/zones'
-import { generateMathProblem } from '../engine/mathGenerator'
-import { generateLogicProblem } from '../engine/logicGenerator'
+import { mathFor, logicFor } from '../content/grades'
 import { generateSpellingProblem } from '../engine/spellingGenerator'
 import { pickSecondQuestCategory } from '../engine/puzzleSelector'
 import { isSpeechAvailable } from '../engine/speech'
@@ -32,6 +31,7 @@ export default function Quest() {
   const openZone       = useGameStore((s) => s.openZone)
   const selectedZoneId = useGameStore((s) => s.selectedZoneId)
   const selectedAreaId = useGameStore((s) => s.selectedAreaId)
+  const grade          = useGameStore((s) => s.grade)
 
   const zone = selectedZoneId ? ZONE_BY_ID[selectedZoneId] : undefined
   const area = zone?.areas.find((a) => a.id === selectedAreaId)
@@ -44,11 +44,11 @@ export default function Quest() {
   const rewardLevel = Math.min(Math.max(partyLevel, 1), levelCap)
 
   const [problem] = useState<Problem>(() => {
-    const diff = effectiveDifficulty(zone ? zoneNumber(zone.id) : 1, partyLevel)
-    if (isMath) return generateMathProblem(diff)
+    const num = zone ? zoneNumber(zone.id) : 1
+    if (isMath) return mathFor(grade, num, 'quest')
     return pickSecondQuestCategory(isSpeechAvailable()) === 'spelling'
-      ? generateSpellingProblem(diff)
-      : generateLogicProblem(diff)
+      ? generateSpellingProblem(effectiveDifficulty(num, partyLevel))
+      : logicFor(grade, num)
   })
 
   const alreadyDone = area ? areasDone.includes(area.id) : false

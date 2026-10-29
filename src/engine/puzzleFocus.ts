@@ -5,14 +5,10 @@
 import type { Problem } from './problems'
 import type { PuzzleAttempt } from './puzzleSelector'
 import { selectProblemCategory, availableCategories } from './puzzleSelector'
-import { generateMathProblem } from './mathGenerator'
-import { generateHuntMathProblem } from './huntMathGenerator'
-import { generateMultiplicationProblem } from './multiplicationGenerator'
-import type { MultBand } from './multiplicationGenerator'
-import { generateLogicProblem } from './logicGenerator'
 import { generateComprehensionProblem } from './comprehensionGenerator'
 import { generateSpellingProblem } from './spellingGenerator'
-import { bandForDifficulty } from './difficulty'
+import { problemFor } from '../content/grades'
+import type { Grade } from '../content/gradeTypes'
 
 export type PuzzleFocus = 'mix' | 'math' | 'times' | 'spelling' | 'reading' | 'logic'
 
@@ -33,7 +29,7 @@ export const FOCUS_OPTIONS: FocusOption[] = [
     selected: 'from-yellow-300 to-amber-400 text-purple-950 shadow-amber-400/40' },
   { id: 'math',     label: 'Math',          emoji: '🔢', blurb: '+ − and ×',
     selected: 'from-sky-400 to-blue-600 text-white shadow-sky-400/40' },
-  { id: 'times',    label: 'Times Tables',  emoji: '✖️', blurb: 'Just ×',
+  { id: 'times',    label: 'Times Tables',  emoji: '✖️', blurb: '× and ÷',
     selected: 'from-fuchsia-400 to-purple-600 text-white shadow-fuchsia-400/40' },
   { id: 'spelling', label: 'Spelling',      emoji: '🔤', blurb: 'Hear it, spell it',
     selected: 'from-emerald-400 to-teal-600 text-white shadow-emerald-400/40', needsSpeech: true },
@@ -56,9 +52,12 @@ export function focusOptions(speechAvailable: boolean): FocusOption[] {
 
 export interface ExplorePuzzleArgs {
   focus: PuzzleFocus
-  /** Hunts use the simpler Hunt math bands (§9); Practice uses the zone bands. */
+  /** §23 — math and logic come from this grade's content. */
+  grade: Grade
+  /** Hunt math comes from one zone lower (§9, §23); Practice uses the zone's own. */
   mode: 'practice' | 'hunt'
   zoneNumber: number
+  /** Spelling and reading still read the §9 difficulty number. */
   difficulty: number
   recentAttempts: PuzzleAttempt[]
   speechAvailable: boolean
@@ -76,17 +75,11 @@ export function makeExplorePuzzle(a: ExplorePuzzleArgs): Problem {
 
   switch (category) {
     case 'math':
-      return a.mode === 'hunt' ? generateHuntMathProblem(a.zoneNumber, rng) : generateMathProblem(a.difficulty, rng)
-    case 'times': {
-      const band = (a.mode === 'hunt'
-        ? Math.max(1, Math.min(6, a.zoneNumber))
-        : bandForDifficulty(a.difficulty)) as MultBand
-      return generateMultiplicationProblem(band, rng)
-    }
+    case 'times':
+    case 'logic':
+      return problemFor(a.grade, a.zoneNumber, category, a.mode, rng)
     case 'spelling':
       return generateSpellingProblem(a.difficulty, rng)
-    case 'logic':
-      return generateLogicProblem(a.difficulty, rng)
     case 'reading':
     case 'comprehension':
       return generateComprehensionProblem(a.difficulty, rng)

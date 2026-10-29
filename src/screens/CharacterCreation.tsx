@@ -6,6 +6,8 @@ import { getStats } from '../engine/stats'
 import { rollIvs } from '../engine/ivs'
 import { newCreatureId } from '../engine/creature'
 import type { Element, Ivs } from '../engine/types'
+import { GRADES } from '../content/gradeTypes'
+import type { Grade } from '../content/gradeTypes'
 import charCreationBg from '../assets/backgrounds/character-creation.jpg'
 
 const ELEMENT_LABEL: Record<Element, string> = {
@@ -36,6 +38,8 @@ export default function CharacterCreation() {
   const playerName    = useGameStore((s) => s.playerName)
   const closeSlot     = useGameStore((s) => s.closeSlot)
   const prestigeCount = useGameStore((s) => s.prestigeCount)
+  const currentGrade  = useGameStore((s) => s.grade)
+  const chooseGrade   = useGameStore((s) => s.chooseGrade)
   // A prestige run reuses her existing name — she only picks a new starter.
   const isNewJourney  = playerName !== ''
 
@@ -46,6 +50,8 @@ export default function CharacterCreation() {
   const [accentColor,  setAccentColor] = useState('#f472b6')
   // Her starter's permanent IVs (§5), rolled when she picks a pony.
   const [starterIvs,   setStarterIvs]  = useState<Ivs>(() => rollIvs())
+  // §23: a new adventure must pick a grade; a new journey starts on the current one.
+  const [grade,        setGrade]       = useState<Grade | null>(isNewJourney ? currentGrade : null)
 
   function handlePick(speciesId: string) {
     const species = SPECIES_BY_ID[speciesId]
@@ -68,6 +74,7 @@ export default function CharacterCreation() {
       accentColor,
       ivs:         starterIvs,
     })
+    chooseGrade(grade ?? currentGrade)
     setPlayerName(trainerName.trim() || 'Trainer') // setPlayerName also saves
     setScreen('worldMap')
   }
@@ -113,13 +120,44 @@ export default function CharacterCreation() {
             />
           </div>
 
+          {/* §23 grade tiles. The grade is fixed for the journey once it starts. */}
+          <div>
+            <p className="text-purple-300 text-sm font-medium mb-1">
+              {isNewJourney ? 'Your grade for this journey' : 'What grade are you in?'}
+            </p>
+            <div className="grid grid-cols-3 gap-3" role="radiogroup" aria-label="Grade">
+              {GRADES.map((g) => (
+                <button
+                  key={g}
+                  role="radio"
+                  aria-checked={grade === g}
+                  onClick={() => setGrade(g)}
+                  className={`min-h-20 rounded-2xl font-black text-3xl transition-all border-2 ${
+                    grade === g
+                      ? 'bg-yellow-400 text-purple-950 border-white scale-105 shadow-lg'
+                      : 'bg-purple-900/70 text-white border-purple-600 hover:bg-purple-800'
+                  }`}
+                >
+                  {g}{g === 3 ? 'rd' : 'th'}
+                  <span className="block text-xs font-semibold">grade</span>
+                </button>
+              ))}
+            </div>
+            {isNewJourney && grade !== currentGrade && (
+              <p className="text-amber-200 text-xs mt-1.5">New grade, new puzzles! Your practice history starts fresh.</p>
+            )}
+          </div>
+
           <div className="space-y-3">
-            <p className="text-purple-300 text-sm font-medium">Pick your companion:</p>
+            <p className="text-purple-300 text-sm font-medium">
+              {grade === null ? 'Pick your grade first, then your companion:' : 'Pick your companion:'}
+            </p>
             {STARTER_SPECIES.map((species) => (
               <button
                 key={species.id}
                 onClick={() => handlePick(species.id)}
-                className="w-full bg-purple-900/70 hover:bg-purple-800 active:bg-purple-700 rounded-2xl p-4 flex items-center gap-4 transition-colors text-left"
+                disabled={grade === null}
+                className="w-full bg-purple-900/70 hover:bg-purple-800 active:bg-purple-700 rounded-2xl p-4 flex items-center gap-4 transition-colors text-left disabled:opacity-40 disabled:pointer-events-none"
               >
                 <CreatureSprite element={species.element} speciesId={species.id} size={56} />
                 <div className="flex-1 min-w-0">

@@ -47,6 +47,7 @@ export default function ExploreHunt() {
   // Generate the warm-up puzzle once on mount, in her chosen focus (§9). Hunt
   // uses the simpler Hunt math bands.
   const huntPuzzle = useState<Problem>(() => makeExplorePuzzle({
+    grade:           useGameStore.getState().grade,
     focus:           practiceFocus,
     mode:            'hunt',
     zoneNumber:      num,

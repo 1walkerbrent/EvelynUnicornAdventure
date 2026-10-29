@@ -12,9 +12,11 @@ import { resolveBattleTeam } from '../engine/team'
 import { badgeCount } from '../engine/progression'
 import { TOUR_IDS, isTourId } from '../onboarding/tours'
 import type { TourId } from '../onboarding/tours'
+import type { Grade } from '../content/gradeTypes'
+import { isGrade } from '../content/gradeTypes'
 
 export interface SaveData {
-  version: 11
+  version: 12
   playerName: string
   party: Creature[]
   /** Completed area ids — the single source of truth for progression. */
@@ -42,17 +44,19 @@ export interface SaveData {
   lastZoneId?: string
   /** Onboarding tours she has finished or skipped (§22). Survives prestige. */
   toursDone: TourId[]
+  /** School grade this journey's math and logic are pitched at (§23). Fixed for the journey. */
+  grade: Grade
 }
 
 const SAVE_KEY = 'evelyn_unicorn_adventure'
-const VERSION = 11 as const
+const VERSION = 12 as const
 
 /** Save schema versions this build can read (current + migratable predecessors). */
-const READABLE_VERSIONS = [11, 10, 9, 8, 7, 6, 5, 4, 3, 2]
+const READABLE_VERSIONS = [12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2]
 
 export type PersistedState = Omit<SaveData, 'version'>
 // What the per-version migrations build; migrateSave adds the rest.
-type Migrated = Omit<PersistedState, 'toursDone'>
+type Migrated = Omit<PersistedState, 'toursDone' | 'grade'>
 
 const M2E_DEFAULTS = { activeTeam: [] as string[], trialLossStreaks: {} as Record<string, number> }
 const PUZZLE_DEFAULTS = { recentPuzzleAttempts: [] as PuzzleAttempt[] }
@@ -148,6 +152,8 @@ interface SaveDataV5 {
   lastZoneId?: string
   /** Present from v11 onward. */
   toursDone?: unknown
+  /** Present from v12 onward. */
+  grade?: unknown
 }
 
 function migrateV5(d: SaveDataV5): Migrated {
@@ -283,7 +289,7 @@ export function migrateSave(parsed: unknown): PersistedState | null {
   // v8/v7/v6/v5 share the same superset shape (v7 adds Creature.id + id-based
   // activeTeam, both handled by the universal backfill below; v8 adds the
   // prestige fields, defaulted in migrateV5).
-  if (version === 11 || version === 10 || version === 9 || version === 8 || version === 7 || version === 6 || version === 5) state = migrateV5(parsed as SaveDataV5)
+  if (version === 12 || version === 11 || version === 10 || version === 9 || version === 8 || version === 7 || version === 6 || version === 5) state = migrateV5(parsed as SaveDataV5)
   else if (version === 4)   state = migrateV4(parsed as SaveDataV4)
   else if (version === 3)   state = migrateV3(parsed as SaveDataV3)
   else if (version === 2)   state = migrateV2(parsed as SaveDataV2)
@@ -300,7 +306,9 @@ export function migrateSave(parsed: unknown): PersistedState | null {
     lifetime: backfillLifetime(state, party),
     // v11 (§22). Every older save belongs to someone already playing, so they
     // skip the tours; Replay Tours on the Party screen brings them back.
-    toursDone: version === 11 ? sanitizeTours((parsed as { toursDone?: unknown }).toursDone) : [...TOUR_IDS],
+    toursDone: typeof version === 'number' && version >= 11 ? sanitizeTours((parsed as { toursDone?: unknown }).toursDone) : [...TOUR_IDS],
+    // v12 (§23). Everyone playing before grades existed was on the Grade 3 content.
+    grade: isGrade((parsed as { grade?: unknown }).grade) ? (parsed as { grade: Grade }).grade : 3,
   }
 }
 

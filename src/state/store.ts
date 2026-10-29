@@ -23,6 +23,7 @@ import {
   stardustForSolve, newlyEarned, STARDUST_PER_BATTLE_WIN,
 } from '../engine/achievements'
 import type { TourId } from '../onboarding/tours'
+import type { Grade } from '../content/gradeTypes'
 
 export type Screen =
   | 'worldMap'
@@ -67,6 +68,8 @@ interface GameStore {
   practiceFocus: PuzzleFocus
   /** §22 — onboarding tours finished or skipped. Survives prestige. */
   toursDone: TourId[]
+  /** §23 — the grade this journey's problems are pitched at. Chosen at character creation, fixed for the journey. */
+  grade: Grade
   // ui — not persisted: the tour on screen, if any
   activeTour: TourId | null
   // ui — not persisted: achievements waiting to pop up, oldest first
@@ -80,6 +83,12 @@ interface GameStore {
   selectedAreaId: string | null
   // actions
   setPlayerName: (name: string) => void
+  /**
+   * Pick the grade for a new adventure or journey (§23). Changing it clears
+   * the puzzle-accuracy window, so reinforcement only ever reads one grade.
+   * Character creation calls it just before setPlayerName, which saves.
+   */
+  chooseGrade: (grade: Grade) => void
   /** `tamed` counts it toward the Pony Whisperer trophy (Hunt catches only). */
   addToParty: (creature: Creature, opts?: { tamed?: boolean }) => void
   awardXpToParty: (amount: number) => void
@@ -141,6 +150,7 @@ function freshAdventure() {
     achievements:         {} as Record<string, string>,
     practiceFocus:        'mix' as PuzzleFocus,
     toursDone:            [] as TourId[],
+    grade:                3 as Grade,
     activeTour:           null as TourId | null,
     toastQueue:           [] as string[],
     badges:               0,
@@ -199,6 +209,7 @@ export const useGameStore = create<GameStore>()((set, get) => {
       achievements:         s.achievements,
       practiceFocus:        s.practiceFocus,
       toursDone:            s.toursDone,
+      grade:                s.grade,
       lastZoneId:           s.selectedZoneId ?? undefined,
     })
   }
@@ -240,6 +251,11 @@ export const useGameStore = create<GameStore>()((set, get) => {
       const slot = get().activeSlot
       if (slot !== null) setActiveSlot(slot)
       persist()
+    },
+
+    chooseGrade: (grade) => {
+      if (grade === get().grade) return
+      set({ grade, recentPuzzleAttempts: [] })
     },
 
     addToParty: (creature, opts) => {
@@ -486,6 +502,7 @@ export const useGameStore = create<GameStore>()((set, get) => {
         achievements:         saved.achievements,
         practiceFocus:        saved.practiceFocus ?? 'mix',
         toursDone:            saved.toursDone,
+        grade:                saved.grade,
         selectedZoneId:       saved.lastZoneId ?? null,
         ...derive(saved.areasDone),
       })

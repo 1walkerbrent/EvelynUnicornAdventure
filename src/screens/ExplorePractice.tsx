@@ -31,6 +31,7 @@ export default function ExplorePractice() {
     return makeExplorePuzzle({
       // Read live: the picker's onChange runs before this component re-renders.
       focus:           useGameStore.getState().practiceFocus,
+      grade:           useGameStore.getState().grade,
       mode:            'practice',
       zoneNumber:      num,
       difficulty:      effectiveDifficulty(num, partyLevel),
@@ -58,7 +59,7 @@ export default function ExplorePractice() {
   }
 
   const typeLabel =
-    problem.type === 'math' && problem.multiplication ? 'A times-table fact' :
+    problem.type === 'math' && problem.multiplication ? 'A × or ÷ problem' :
     problem.type === 'math'          ? 'A number problem' :
     problem.type === 'logic'         ? 'A story puzzle'   :
     problem.type === 'spelling'      ? 'A spelling word'  :
