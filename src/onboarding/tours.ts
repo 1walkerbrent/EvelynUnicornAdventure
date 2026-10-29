@@ -3,7 +3,7 @@
 // data-tour="<target>". Keep captions to one short sentence in simple words:
 // the players are young kids reading on a tablet.
 
-export const TOUR_IDS = ['intro', 'battle'] as const
+export const TOUR_IDS = ['intro', 'battle', 'scratch'] as const
 export type TourId = typeof TOUR_IDS[number]
 
 export function isTourId(x: unknown): x is TourId {
@@ -33,5 +33,10 @@ export const TOURS: Record<TourId, TourStep[]> = {
     { target: 'battle-enemies', caption: 'Tap a glowing pony, then tap an enemy.' },
     { target: 'battle-enemies', caption: 'Some elements beat others. "Super!" means a big hit.' },
     { target: 'battle-hp',      caption: "This is HP. Make every enemy's HP zero to win!" },
+  ],
+  // The first math problem she sees (§24). Battles have no math, so this is
+  // its own one-step tour rather than a battle step.
+  scratch: [
+    { target: 'scratch-button', caption: 'Tap the pencil to get scratch paper for working out problems.' },
   ],
 }

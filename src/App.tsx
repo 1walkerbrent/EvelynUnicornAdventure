@@ -18,6 +18,8 @@ import Nav from './components/Nav'
 import AchievementToast from './components/AchievementToast'
 import HelpButton from './onboarding/HelpButton'
 import TourOverlay from './onboarding/TourOverlay'
+import { useScratchLayout, SCRATCH_SIDE_WIDTH, SCRATCH_BOTTOM_SHARE } from './scratch/scratchLayout'
+import type { ScratchLayout } from './scratch/scratchLayout'
 
 // Full-screen layouts have no header, so the help button floats in the same
 // top-right corner the header puts it in.
@@ -26,6 +28,15 @@ const FLOATING_HELP: React.CSSProperties = {
   top:   'calc(env(safe-area-inset-top) + 8px)',
   right: 'calc(env(safe-area-inset-right) + 8px)',
   zIndex: 40,
+}
+
+// Room for open scratch paper (§24): in landscape the content moves into the
+// space beside the panel; in portrait it gets enough extra scroll to lift the
+// answer box above the panel.
+function scratchRoom(layout: ScratchLayout | null): React.CSSProperties | undefined {
+  if (layout === 'side')   return { paddingRight: `calc(${SCRATCH_SIDE_WIDTH} + env(safe-area-inset-right))` }
+  if (layout === 'bottom') return { paddingBottom: `calc(${SCRATCH_BOTTOM_SHARE * 100}vh + env(safe-area-inset-bottom))`, overflowY: 'auto' }
+  return undefined
 }
 
 // Immersive full-screen experiences (no header/nav chrome).
@@ -38,6 +49,7 @@ export default function App() {
   const activeSlot    = useGameStore((s) => s.activeSlot)
   const stardust      = useGameStore((s) => s.stardust)
   const setScreen     = useGameStore((s) => s.setScreen)
+  const scratchLayout = useScratchLayout((s) => s.layout)
 
   // Either a brand-new player, or a prestige run waiting on this journey's starter.
   const isCreating   = playerName === '' || awaitingStarter
@@ -54,14 +66,15 @@ export default function App() {
 
   if (isFullscreen) {
     return (
-      <div className="app-height w-full safe-top safe-bottom safe-x bg-purple-950 text-white overflow-hidden">
+      <div className="app-height w-full safe-top safe-bottom safe-x bg-purple-950 text-white overflow-hidden" style={scratchRoom(scratchLayout)}>
         {isCreating                          ? <CharacterCreation /> :
          currentScreen === 'provingGlade'    ? <ProvingGlade /> :
          currentScreen === 'trial'           ? <Trial /> :
          currentScreen === 'champion'        ? <Champion /> :
          currentScreen === 'exploreHunt'     ? <ExploreHunt /> :
          currentScreen === 'gameComplete'    ? <GameComplete /> : null}
-        <HelpButton style={FLOATING_HELP} />
+        {/* The floating button would sit on the scratch paper's Done button. */}
+        {scratchLayout === null && <HelpButton style={FLOATING_HELP} />}
         <AchievementToast />
         <TourOverlay />
       </div>
@@ -85,7 +98,7 @@ export default function App() {
           <HelpButton />
         </div>
       </header>
-      <main className="flex-1 min-h-0 overflow-y-auto">
+      <main className="flex-1 min-h-0 overflow-y-auto" style={scratchRoom(scratchLayout)}>
         {currentScreen === 'worldMap'        && <WorldMap />}
         {currentScreen === 'zone'            && <ZoneView />}
         {currentScreen === 'quest'           && <Quest />}

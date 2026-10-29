@@ -10,7 +10,7 @@ import type { PuzzleFocus } from '../engine/puzzleFocus'
 import { isPuzzleFocus } from '../engine/puzzleFocus'
 import { resolveBattleTeam } from '../engine/team'
 import { badgeCount } from '../engine/progression'
-import { TOUR_IDS, isTourId } from '../onboarding/tours'
+import { isTourId } from '../onboarding/tours'
 import type { TourId } from '../onboarding/tours'
 import type { Grade } from '../content/gradeTypes'
 import { isGrade } from '../content/gradeTypes'
@@ -305,8 +305,9 @@ export function migrateSave(parsed: unknown): PersistedState | null {
     activeTeam: remapActiveTeam(party, state.activeTeam),
     lifetime: backfillLifetime(state, party),
     // v11 (§22). Every older save belongs to someone already playing, so they
-    // skip the tours; Replay Tours on the Party screen brings them back.
-    toursDone: typeof version === 'number' && version >= 11 ? sanitizeTours((parsed as { toursDone?: unknown }).toursDone) : [...TOUR_IDS],
+    // skip the tours that existed then; Replay Tours on the Party screen brings
+    // them back. Newer tours (scratch paper, §24) show once to everyone.
+    toursDone: typeof version === 'number' && version >= 11 ? sanitizeTours((parsed as { toursDone?: unknown }).toursDone) : ['intro', 'battle'],
     // v12 (§23). Everyone playing before grades existed was on the Grade 3 content.
     grade: isGrade((parsed as { grade?: unknown }).grade) ? (parsed as { grade: Grade }).grade : 3,
   }

@@ -577,12 +577,16 @@ Build Zone 1 end-to-end before anything else, with placeholder art (colored shap
   - **Save v11.** It adds `toursDone`. Any older save counts both tours as done, because it belongs to someone already playing. A v11 list drops unknown and repeated ids. Stored per slot, so it moves with Export/Import; cloud sync (shelved) would carry it as part of the slot.
   - Tests: `onboarding/onboarding.test.ts` covers step counts, every target being marked in a component, caption and tip length, the v10 → v11 migration, and the store actions (save, no repeat, one at a time, per slot, replay, kept through a new journey). 428 tests passing, lint and build clean.
 
-- **M5e — Grade levels ✅ DONE (current milestone):** the §23 design, built. 3rd, 4th and 5th grade math and logic, picked at character creation and fixed for the journey. No change to XP, rewards, combat or balance.
+- **M5e — Grade levels ✅ DONE:** the §23 design, built. 3rd, 4th and 5th grade math and logic, picked at character creation and fixed for the journey. No change to XP, rewards, combat or balance.
   - **Content.** `src/content/grade3|4|5/math.ts` (skills per zone) and `logic.ts` (logic settings per zone), `gradeTypes.ts`, and one entry point, `grades.ts` (`problemFor`, `mathFor`, `logicFor`). Quest, Practice, Hunt and Times Tables all go through it. Shared helpers: `engine/mathKit.ts` (number formatting, fractions, problem builders, answer checking) and `engine/logicKit.ts` (logic generators with settings and a brute-force one-answer check). Puzzle text is in `content/logicText.ts`. The multiplication facts moved to `content/grade3/multiplication.ts` and gained division facts and missing factor/divisor. Removed: `mathGenerator.ts`, `huntMathGenerator.ts`, `logicGenerator.ts` and their tests.
   - **Answers.** `MathProblem.correctAnswer` became `answer: MathAnswer` (number, decimal, fraction, remainder, choice). `components/MathAnswerInput.tsx` draws the matching input, and `checkAnswer` checks it.
   - **Grade.** Save **v12** adds `grade` (older saves → 3). The store has `grade` and `chooseGrade`, which clears the accuracy window when the grade changes. Character creation shows three grade tiles; Party shows "Grade N".
   - **Samples.** `docs/grade-samples.md` has 3 math and 3 logic problems per zone per grade, written by `scripts/grade-samples.test.ts` (skipped unless `WRITE_SAMPLES=1`).
   - Tests: `content/grades.test.ts` checks every skill in every grade and zone (150 samples each; every answer that's plain arithmetic is re-derived from the prompt), grade ranges, the Hunt rule, answer checking, one-answer checks for ordering, grid and elimination read back from the printed clues, two-rule patterns, backward chains, logic growing with grade, the v12 migration and grade changes. 431 tests passing, lint and build clean.
+- **M5f — Scratch paper ✅ DONE (current milestone):** the §24 design, built. A ✏️ Scratch Paper button on every math problem opens a drawing panel; nothing is saved.
+  - `src/scratch/`: `scratchModel.ts` (the page as a list of strokes and clears, undo, palm rejection; pure), `ScratchCanvas.tsx` (pointer-event drawing), `ScratchPaper.tsx` (the panel and tools), `scratchLayout.ts` (which way the panel opens, the tools she picked; in memory only). `ProblemCard` owns the page for its problem; App makes room for the panel.
+  - Onboarding: a one-step `scratch` tour on the first math problem, and the pencil tip on Quest, Practice and Hunt (§22). Pre-v11 saves start with `intro` and `battle` done, not `scratch`. No save version change.
+  - Tests: `scratch/scratch.test.tsx` covers undo depth, clear and its undo, palm rejection, layout by orientation, and the panel in a problem card (math only, kept on reopen, blank on a new problem, clear asks first, no storage writes).
 ---
 
 ## 15. Phase 2 (deferred — not in initial build)
@@ -728,6 +732,12 @@ The tour dims the screen, lights up one element (marked `data-tour="…"`), and 
 | 3 | the enemy ponies (`battle-enemies`) | Some elements beat others. "Super!" means a big hit. |
 | 4 | her first pony's HP bar (`battle-hp`) | This is HP. Make every enemy's HP zero to win! |
 
+**Scratch paper tour**: the first time a math problem shows (§24). Battles have no math problems, so the pencil gets its own one-step tour instead of a battle step.
+
+| # | Lights up (`data-tour`) | Caption |
+|---|---|---|
+| 1 | the ✏️ Scratch Paper button (`scratch-button`) | Tap the pencil to get scratch paper for working out problems. |
+
 ### Help button
 
 A round **?** button in the top-right corner of every screen: in the header beside ✨ Stardust where there is a header, floating in the corner on full-screen screens. It must never cover a game control. Tapping it opens a panel with that screen's tips and a big **Close**. During a battle it shows the battle tips, whatever screen holds the battle.
@@ -738,10 +748,10 @@ A round **?** button in the top-right corner of every screen: in the header besi
 | Character creation (`characterCreation`) | Type your name. · Tap a pony to be your first friend. |
 | World Map (`worldMap`) | Tap a land to play its quests. · Tap Explore to practice or hunt. · Lands with a 🔒 open when you win more. |
 | Land (`zone`) | Do the quests from top to bottom. · Each quest you finish opens the next one. · ✅ means you finished it. |
-| Quest (`quest`) | Read the problem, then pick your answer. · Wrong? That's OK, just try again. · Miss three times and you get a hint. |
+| Quest (`quest`) | Read the problem, then pick your answer. · Tap the pencil to get scratch paper for working out problems. · Miss three times and you get a hint. |
 | Explore (`exploreHub`) | Pick what you want to practice. · Practice makes your ponies stronger. · Hunt to battle a wild pony and keep it. |
-| Practice (`explorePractice`) | Solve problems to give your team XP. · Practice as much as you like! |
-| Hunt warm-up (`exploreHunt`) | Solve the warm-up to start the hunt. · Win the battle to keep the pony. |
+| Practice (`explorePractice`) | Solve problems to give your team XP. · Practice as much as you like! · Tap the pencil to get scratch paper for working out problems. |
+| Hunt warm-up (`exploreHunt`) | Solve the warm-up to start the hunt. · Win the battle to keep the pony. · Tap the pencil to get scratch paper for working out problems. |
 | Before a Trial (`trial`; also `provingGlade`, `champion`) | Pick three ponies for your team. · "Strong" ponies hit this team hard. · Lost? Try a new team and go again. |
 | Any battle (`battle`) | Tap a glowing pony, then tap an enemy. · You can also drag from your pony to an enemy. · "Super!" hits do double damage. |
 | Party (`party`) | Tap Choose team to pick three ponies. · Type Strengths shows which elements win. · Use the buttons up top to sort your ponies. |
@@ -751,7 +761,7 @@ A round **?** button in the top-right corner of every screen: in the header besi
 
 Proving Glade and the Champion go straight into battle, so in practice their tips are the battle tips; their keys exist so every screen has an entry.
 
-**Save v11:** `toursDone: ('intro' | 'battle')[]`. Pre-v11 saves get both ids; unknown and repeated ids are dropped.
+**Save v11:** `toursDone: ('intro' | 'battle' | 'scratch')[]`. Pre-v11 saves get `intro` and `battle` (the scratch tour is newer, so everyone sees it once); unknown and repeated ids are dropped.
 
 ---
 
@@ -865,3 +875,45 @@ The same formats in every grade, scaled by settings in `src/content/gradeN/logic
 | Biggest number | Z1–Z2 (3-digit) | none | none |
 
 The full sample set, 3 math and 3 logic per zone per grade, is `docs/grade-samples.md`.
+
+---
+
+## 24. Scratch Paper
+
+Harder problems (multi-digit ×, long division, fractions) need somewhere to write out the work. On a tablet that's the screen itself.
+
+### Behavior
+
+- **Where:** a big **✏️ Scratch Paper** button (48px tall, full width) on every math problem, between the problem and the answer box: Quests, Explore Practice and the Hunt warm-up. Never on reading, spelling or logic.
+- **The panel** covers most of the screen but leaves the answer box showing, and repeats the problem at its top.
+  - **Landscape** (wider than tall): a panel on the right, 60% of the width. The screen's content moves into the left 40%, beside it.
+  - **Portrait:** a sheet slides up over the bottom 60%. The screen scrolls so the answer box sits just above it.
+  - The ? help button hides while the panel is open on full-screen screens, where it would sit on **Done**.
+- **Done** closes the panel. Opening it again during the same problem shows the same work.
+- **A new problem starts a blank page,** with the panel closed.
+- **Answers still go in the normal answer box.** There's no handwriting recognition.
+- **No timers:** no math problem has a time limit, so nothing pauses. If one is ever added, it must pause while the panel is open.
+
+### No-save rule
+
+Drawings live only in memory, inside the problem card that holds the problem. They are **never** written to localStorage, the save file, or any server (cloud saves included, §21). The pen color, eraser and grid choice are remembered for the rest of the visit, also only in memory; a reload resets them.
+
+### Canvas
+
+- An HTML canvas with pointer events, so it takes a finger, a stylus or a mouse. It is sized for `devicePixelRatio`, so lines are sharp.
+- `touch-action: none` stops writing from scrolling or zooming the page.
+- **Palm rejection:** while a stylus (`pointerType: "pen"`) is touching the screen, and for 1 second after it lifts, finger touches are ignored. If a palm landed just before the stylus, its stroke is removed. One line draws at a time.
+- **Smooth lines:** a quadratic curve through each point to the next midpoint. Each stroke draws straight onto the canvas as it moves, using the stylus's coalesced events where the browser has them. The whole page is only redrawn on undo, clear, or a resize, which keeps it quick on a mid-range tablet.
+- The page is a list of operations (pen stroke, eraser stroke, clear), so undo just drops the last one and redraws.
+
+### Tools
+
+Every button is at least 48px.
+
+| Tool | What it does |
+|---|---|
+| Pen ×3 | dark gray (the default), blue, red |
+| 🧽 Eraser | rubs out ink, about one digit wide; the grid stays |
+| ↩️ Undo | takes back the last stroke or clear, up to **30** steps |
+| # Grid | grid lines, **on by default**, 40px cells (one handwritten digit). Drawn under the ink, so the eraser can't remove it |
+| 🗑️ Clear all | asks "Clear everything?" with **Yes, clear** and **No**. Undo brings it back |

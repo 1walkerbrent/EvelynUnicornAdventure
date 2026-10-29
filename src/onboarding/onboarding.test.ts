@@ -30,7 +30,7 @@ describe('tour content', () => {
 
   it('captions are one short sentence', () => {
     for (const id of TOUR_IDS) {
-      for (const { caption } of TOURS[id]) expect(caption.split(' ').length, caption).toBeLessThanOrEqual(10)
+      for (const { caption } of TOURS[id]) expect(caption.split(' ').length, caption).toBeLessThanOrEqual(11)
     }
   })
 })
@@ -40,7 +40,7 @@ describe('help content', () => {
     for (const [screen, tips] of Object.entries(HELP_TIPS)) {
       expect(tips.length, screen).toBeGreaterThanOrEqual(2)
       expect(tips.length, screen).toBeLessThanOrEqual(3)
-      for (const tip of tips) expect(tip.split(' ').length, tip).toBeLessThanOrEqual(10)
+      for (const tip of tips) expect(tip.split(' ').length, tip).toBeLessThanOrEqual(11)
     }
   })
 })

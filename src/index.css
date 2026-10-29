@@ -153,3 +153,12 @@
 .moon-glow {
   animation: moonGlow 3s ease-in-out infinite;
 }
+
+/* Scratch paper (§24) slides in from the side in landscape, up from the bottom in portrait. */
+@keyframes scratchInSide   { from { translate: 100% 0; } to { translate: 0 0; } }
+@keyframes scratchInBottom { from { translate: 0 100%; } to { translate: 0 0; } }
+.scratch-in-side   { animation: scratchInSide 0.22s ease-out; }
+.scratch-in-bottom { animation: scratchInBottom 0.22s ease-out; }
+@media (prefers-reduced-motion: reduce) {
+  .scratch-in-side, .scratch-in-bottom { animation: none; }
+}

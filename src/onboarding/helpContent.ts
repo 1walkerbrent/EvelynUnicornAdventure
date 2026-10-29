@@ -26,7 +26,7 @@ export const HELP_TIPS: Record<HelpScreen, string[]> = {
   ],
   quest: [
     'Read the problem, then pick your answer.',
-    "Wrong? That's OK, just try again.",
+    'Tap the pencil to get scratch paper for working out problems.',
     'Miss three times and you get a hint.',
   ],
   exploreHub: [
@@ -37,10 +37,12 @@ export const HELP_TIPS: Record<HelpScreen, string[]> = {
   explorePractice: [
     'Solve problems to give your team XP.',
     'Practice as much as you like!',
+    'Tap the pencil to get scratch paper for working out problems.',
   ],
   exploreHunt: [
     'Solve the warm-up to start the hunt.',
     'Win the battle to keep the pony.',
+    'Tap the pencil to get scratch paper for working out problems.',
   ],
   // Proving Glade and the Champion go straight into battle; only the Trial
   // has a screen before it.
