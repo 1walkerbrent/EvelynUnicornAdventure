@@ -776,7 +776,269 @@ Her friends always know what kind of night it is just by looking at Pearl. Tonig
       ],
     },
   ],
-  4: [],
+  // ── Zone 4 (Fire): Cinderpath, Ashfall Camp, the Magma Forge ──────────────
+  4: [
+    {
+      title: 'Campfire Week',
+      passage: `Spark Flicker has a very important job at Ashfall Camp. She lights the campfires every evening. She does not need matches. She just touches the wood with the tip of her horn, and a tiny spark jumps out.
+
+This week, the camp was extra busy. On Monday, eight families came to visit, so Spark lit eight campfires. On Tuesday, even more ponies arrived. That night she lit twelve fires! The visitors cheered each time a new fire crackled to life.
+
+By the end of Tuesday, Spark was very tired. She curled up next to the warmest fire and fell asleep right away.`,
+      questions: [
+        { type: 'twoFact', question: 'How many campfires did Spark light on Tuesday?',
+          choices: ['Eight', 'Ten', 'Twelve', 'Twenty'], correctIndex: 2,
+          hint: 'Monday and Tuesday had different numbers. Find Tuesday.' },
+        { type: 'recall', question: 'How does Spark light the fires?',
+          choices: ['With a box of matches', 'With a spark from her horn', 'With a lantern', 'By rubbing two sticks together'], correctIndex: 1,
+          hint: 'Look at the first paragraph.' },
+      ],
+    },
+    {
+      title: 'Cocoa\'s Secret',
+      passage: `Cinder Cocoa makes the best hot chocolate in the Fire zone. Ponies come all the way from Cinderpath to taste it.
+
+Everyone asks for her secret. Cocoa says she has two. The first secret is to stir very slowly, so the chocolate never burns. The second secret is about the spices. She puts the honey in at the very beginning. But she always adds the cinnamon last, just before she pours.
+
+"Cinnamon at the end keeps the smell strong," she explains. Then she hands you a warm mug and smiles.`,
+      questions: [
+        { type: 'twoFact', question: 'What does Cocoa add last?',
+          choices: ['The honey', 'The milk', 'The chocolate', 'The cinnamon'], correctIndex: 3,
+          hint: 'One spice goes in at the beginning and one goes in at the end.' },
+        { type: 'recall', question: 'Why does Cocoa stir very slowly?',
+          choices: ['So the chocolate never burns', 'So it cools down quickly', 'So it makes lots more bubbles on top', 'So the cinnamon sinks'], correctIndex: 0,
+          hint: 'Read about her first secret.' },
+      ],
+    },
+    {
+      title: 'Blazehoof on Guard',
+      passage: `Blazehoof guards the gate of the Magma Forge. He is big and strong, and his mane looks like a crackling flame.
+
+On sunny days, Blazehoof stands by the gate from morning until night. He says hello to every pony who walks by. He checks that the path is safe.
+
+Rainy days are different. Fire ponies do not like getting wet. When it rains, nobody comes to the forge, so Blazehoof takes a break. He goes inside, sits by the warm fire and reads his favorite book about dragons.`,
+      questions: [
+        { type: 'twoFact', question: 'What does Blazehoof do on rainy days?',
+          choices: ['Stands by the gate all day', 'Checks that the path is safe', 'Reads by the fire inside', 'Visits his friends in Cinderpath'], correctIndex: 2,
+          hint: 'Sunny days and rainy days are different for him.' },
+        { type: 'recall', question: 'Why does nobody come to the forge when it rains?',
+          choices: ['The gate is locked', 'Fire ponies do not like getting wet', 'The path gets too muddy and slippery to walk on'], correctIndex: 1,
+          hint: 'Read the start of the last paragraph.' },
+      ],
+    },
+    {
+      title: 'Flame Twirl\'s Dances',
+      passage: `Flame Twirl is the best dancer at Ashfall Camp. When she dances, little sparks fly from her hooves.
+
+Flame knows many fire dances. Last spring, she learned the Spark. It is a fast dance with lots of hopping. She practiced it every morning until she could do it with her eyes closed.
+
+Just this week, she learned a brand-new dance called the Swirl. It is slow and smooth. She spins in big circles, and the sparks swirl around her like a ribbon.
+
+Flame plans to show the Swirl at the next campfire party.`,
+      questions: [
+        { type: 'twoFact', question: 'Which dance did Flame learn this week?',
+          choices: ['The Spark', 'The Hop', 'The Swirl', 'The Blaze'], correctIndex: 2,
+          hint: 'She learned one dance last spring and one this week.' },
+        { type: 'twoFact', question: 'Which dance has lots of hopping?',
+          choices: ['The Spark', 'The Swirl', 'Both dances'], correctIndex: 0,
+          hint: 'Read about each dance carefully.' },
+      ],
+    },
+    {
+      title: 'Red Embers, Blue Embers',
+      passage: `Ember Glow keeps a collection of embers in a stone jar. An ember is a small piece of glowing coal. Fire ponies can hold them without getting burned.
+
+Most of Ember's embers are red. She has six red ones. They glow softly, like the sky at sunset.
+
+Two of her embers are blue. Blue embers are very rare, and they burn much hotter than red ones. Ember found one in the Magma Forge. The other was a birthday present from her aunt. Her aunt promised to help her look for more.
+
+At night, Ember opens the jar, and her whole room glows.`,
+      questions: [
+        { type: 'twoFact', question: 'How many blue embers does Ember have?',
+          choices: ['One', 'Six', 'Eight', 'Two'], correctIndex: 3,
+          hint: 'She has red ones and blue ones. Count only the blue.' },
+        { type: 'twoFact', question: 'Which embers burn hotter?',
+          choices: ['The red ones', 'The blue ones', 'They are all the same', 'The ones from her aunt'], correctIndex: 1,
+          hint: 'Read the paragraph about the blue embers.' },
+      ],
+    },
+    {
+      title: 'Sunny and the Clouds',
+      passage: `Sunny Scorch gets her energy from the sun. Her golden coat soaks up the sunlight the way a plant does.
+
+On sunny days, Sunny is full of energy. She runs races, climbs hills and plays tag until sunset. Her friends can hardly keep up.
+
+On cloudy days, Sunny feels tired. Without sunlight, her energy runs low. She moves slowly and yawns a lot. Sometimes she takes a nap in the middle of the afternoon.
+
+When the clouds finally move away, Sunny stands in the sunshine with her eyes closed. In a few minutes, she is ready to play again. Her friends call it her sun bath.`,
+      questions: [
+        { type: 'twoFact', question: 'How does Sunny feel on cloudy days?',
+          choices: ['Full of energy', 'Tired', 'Angry', 'Hungry'], correctIndex: 1,
+          hint: 'Sunny feels one way on sunny days and another way on cloudy days.' },
+        { type: 'recall', question: 'What does Sunny do when the clouds move away?',
+          choices: ['She takes a long nap under a tree', 'She eats a big lunch', 'She runs home to bed', 'She stands in the sunshine'], correctIndex: 3,
+          hint: 'Look at the last paragraph.' },
+      ],
+    },
+    {
+      title: 'Cinda\'s Mane',
+      passage: `Emberwarden Cinda is the guardian of the Fire zone. Her mane is made of real fire, and it changes color with her mood.
+
+Most of the time, her mane is bright orange. When Cinda is happy, it turns gold and sparkles. When she is thinking very hard, it turns deep purple. Trainers who battle her in the Trial watch her mane closely. If it turns purple, they know she is planning a clever move.
+
+Once, a young trainer made Cinda laugh in the middle of a battle. Her mane turned gold for the rest of the day.`,
+      questions: [
+        { type: 'twoFact', question: 'What color is Cinda\'s mane when she is thinking hard?',
+          choices: ['Bright orange', 'Gold', 'Deep purple', 'Blue'], correctIndex: 2,
+          hint: 'Her mane has a color for happy and a color for thinking hard.' },
+        { type: 'twoFact', question: 'What color is Cinda\'s mane most of the time?',
+          choices: ['Bright orange', 'Deep purple', 'Sparkling gold', 'Silver'], correctIndex: 0,
+          hint: 'Find the words "Most of the time".' },
+      ],
+    },
+    {
+      title: 'The Glowing Road',
+      passage: `Cinderpath is the road that leads into the Fire zone. It is not made of dirt or stone. It is made of cinders, which are tiny bits of rock left over from old fires.
+
+During the day, the cinders are dark gray. They feel warm under your hooves, like sand on a summer beach.
+
+At night, something special happens. The cinders begin to glow orange. The whole road lights up like a long, bright ribbon. Because of this, travelers on Cinderpath never need a lantern after dark. They just follow the glowing road.`,
+      questions: [
+        { type: 'twoFact', question: 'What do the cinders look like at night?',
+          choices: ['Dark gray', 'Glowing orange', 'Shiny white', 'Sparkling bright blue'], correctIndex: 1,
+          hint: 'The cinders look one way during the day and another way at night.' },
+        { type: 'recall', question: 'Why don\'t travelers need a lantern on Cinderpath?',
+          choices: ['The moon is very bright', 'The road glows at night', 'They only walk in the day', 'Fire ponies can see in the dark'], correctIndex: 1,
+          hint: 'Read the end of the last paragraph.' },
+      ],
+    },
+    {
+      title: 'Stones That Float',
+      passage: `Spark Flicker collects stones from the old lava fields near Ashfall Camp. Lava is melted rock. When it cools, it turns into stone.
+
+Spark has found two kinds. The black stones are shiny and smooth, like glass. They are heavy and have sharp edges, so Spark holds them carefully.
+
+The gray stones are full of tiny holes, like a sponge. They are so light that they float in water! Spark likes to drop them in the hot spring and watch them bob.
+
+She keeps the black ones on her shelf and the gray ones in her bathtub.`,
+      questions: [
+        { type: 'twoFact', question: 'Which stones float in water?',
+          choices: ['The heavy shiny black ones', 'The gray ones with holes', 'Both kinds of stones', 'Neither kind'], correctIndex: 1,
+          hint: 'Read about the black stones, then the gray ones.' },
+        { type: 'twoFact', question: 'Where does Spark keep the black stones?',
+          choices: ['In her bathtub', 'On her shelf', 'In the hot spring', 'Under her bed'], correctIndex: 1,
+          hint: 'Look at the last sentence.' },
+      ],
+    },
+    {
+      title: 'Cocoa\'s Party',
+      passage: `Cinder Cocoa loves to have parties. Last Saturday, she had a party at her house in Ashfall Camp.
+
+Cocoa invited eight friends. She made eight mugs of hot chocolate and baked a big plate of cinnamon cookies.
+
+But only seven friends came to the party. Sunny Scorch was home sick with a cold. So Cocoa saved a mug and some cookies for her.
+
+Blazehoof was the last to arrive. He brought a basket of fire-roasted apples. Everyone said they were delicious. The friends played games and told stories until the stars came out.`,
+      questions: [
+        { type: 'twoFact', question: 'How many friends came to the party?',
+          choices: ['Six', 'Seven', 'Eight', 'Nine'], correctIndex: 1,
+          hint: 'Cocoa invited one number of friends, but a different number came.' },
+        { type: 'recall', question: 'What did Blazehoof bring?',
+          choices: ['Cinnamon cookies', 'Hot chocolate', 'Fire-roasted apples', 'A brand-new board game'], correctIndex: 2,
+          hint: 'Read the last paragraph.' },
+      ],
+    },
+    {
+      title: 'Choosing Tents',
+      passage: `Every summer, the young ponies camp out at Ashfall Camp for a whole week. Each pony gets to pick a tent.
+
+This year, Sunny Scorch and Flame Twirl picked last. Only two tents were left. One was gold and one was red.
+
+Sunny chose the gold tent. "It matches the sunrise," she said. "I want to wake up to that color every morning."
+
+Flame chose the red tent. It was the strongest tent at the camp, and the wind on the hill can be very strong. Flame does not like being woken up by flapping walls.`,
+      questions: [
+        { type: 'twoFact', question: 'Why did Sunny choose the gold tent?',
+          choices: ['It was the strongest', 'It was the biggest one at camp', 'It matched the sunrise', 'It was the last one'], correctIndex: 2,
+          hint: 'Sunny and Flame chose for different reasons.' },
+        { type: 'twoFact', question: 'Which pony chose the red tent?',
+          choices: ['Flame Twirl', 'Sunny Scorch', 'Spark Flicker'], correctIndex: 0,
+          hint: 'Read the last paragraph.' },
+      ],
+    },
+    {
+      title: 'The Magma Forge',
+      passage: `The Magma Forge is a big workshop built into the side of a mountain. It is the home of Emberwarden Cinda.
+
+The forge is warm all year, even in winter. That is because a river of lava flows deep under the floor. Its heat rises up through the stone.
+
+Fire ponies use this heat to make things. They melt metal and shape it into horseshoes, bells and lanterns. The ringing of their hammers can be heard all the way down the mountain.
+
+Visitors are welcome, but they must stay behind the yellow line. The line keeps them safe from sparks.`,
+      questions: [
+        { type: 'twoFact', question: 'What keeps the forge warm all year?',
+          choices: ['A giant campfire', 'Hot winds from the desert', 'Lava flowing under the floor', 'Many lanterns'], correctIndex: 2,
+          hint: 'Find the word "because".' },
+        { type: 'recall', question: 'What must visitors do?',
+          choices: ['Bring their own hammer', 'Ring the bell at the door', 'Wear a horseshoe', 'Stay behind the yellow line'], correctIndex: 3,
+          hint: 'Look at the last sentence.' },
+      ],
+    },
+    {
+      title: 'Apples and Toast',
+      passage: `Blazehoof loves to cook for his visitors. He has a special treat for each kind of visit.
+
+When his friends from Ashfall Camp come over, he makes toast. He holds the bread near his fiery mane until it turns crispy and brown. Then he spreads honey on top.
+
+When his little sister visits from Cinderpath, he makes something even better. He roasts apples until they are soft and sweet. They are his sister's favorite food in the whole world.
+
+His sister visits once a month. Blazehoof always saves the biggest apples for her. He says it is the best part of his month.`,
+      questions: [
+        { type: 'twoFact', question: 'What does Blazehoof make when his sister visits?',
+          choices: ['Toast with honey', 'Hot chocolate', 'Roasted apples', 'Cinnamon cookies'], correctIndex: 2,
+          hint: 'He makes one treat for friends and another for his sister.' },
+        { type: 'recall', question: 'How often does his sister visit?',
+          choices: ['Once a week', 'Every day', 'Once a year', 'Once a month'], correctIndex: 3,
+          hint: 'Read the last paragraph.' },
+      ],
+    },
+    {
+      title: 'Shaping Embers',
+      passage: `Sunny Scorch has a special talent. She can shape warm embers with her hooves, the way other ponies shape clay.
+
+Sunny makes two shapes most often. For everyday use, she makes circles. A circle ember glows evenly, so it is good for keeping a room warm.
+
+For parties, Sunny makes stars. Star embers twinkle and flicker, which makes everyone smile. But they do not stay warm for very long.
+
+Next week, Cinder Cocoa is having a birthday party. Sunny has already made twenty star embers to hang around the room. Cocoa does not know yet. It is a surprise!`,
+      questions: [
+        { type: 'twoFact', question: 'Which shape does Sunny make for parties?',
+          choices: ['Circles', 'Hearts', 'Stars', 'Squares'], correctIndex: 2,
+          hint: 'She makes one shape for everyday and one for parties.' },
+        { type: 'twoFact', question: 'Which embers are good for keeping a room warm?',
+          choices: ['Circle embers', 'Star embers', 'Heart embers'], correctIndex: 0,
+          hint: 'Read about the everyday shape.' },
+      ],
+    },
+    {
+      title: 'Two Hot Springs',
+      passage: `There are two hot springs at Ashfall Camp. A hot spring is a pool of water that is heated from deep under the ground.
+
+The small spring is very hot. Steam rises from it all day long. Ponies do not swim in it. Instead, they lower baskets of eggs into it to cook them for breakfast.
+
+The big spring is just warm. It feels like a bath. The young ponies swim and splash in it every afternoon.
+
+A wooden sign stands between the two springs. It says, "Small spring for eggs. Big spring for ponies!" Nobody has ever mixed them up.`,
+      questions: [
+        { type: 'twoFact', question: 'What do ponies use the small spring for?',
+          choices: ['Swimming and splashing', 'Washing their manes', 'Cooking eggs', 'Drinking water'], correctIndex: 2,
+          hint: 'The two springs are used for different things.' },
+        { type: 'twoFact', question: 'Which spring feels like a bath?',
+          choices: ['The small spring', 'The big spring', 'Neither spring'], correctIndex: 1,
+          hint: 'Read about the big spring.' },
+      ],
+    },
+  ],
   5: [],
   6: [],
 }
