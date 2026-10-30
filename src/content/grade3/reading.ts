@@ -511,7 +511,271 @@ When the rain stops, Fern shakes the water from her mane and goes home for a war
       ],
     },
   ],
-  3: [],
+  // ── Zone 3 (Water): Saltspray Cove, Mistreef, Coral Sanctum ───────────────
+  3: [
+    {
+      title: 'Pink Bubbles, Blue Bubbles',
+      passage: `Bubble Brook blows bubbles at the end of the dock in Saltspray Cove. She dips a ring of seaweed into the water and blows gently.
+
+Bubble can make two colors. Her pink bubbles come out big and round, but they pop very quickly. Her blue bubbles are smaller. They float much higher, and they last the longest of all.
+
+Sometimes a blue bubble drifts all the way across the cove. The seagulls chase it, but they never catch it. Bubble laughs and blows another one.`,
+      questions: [
+        { type: 'twoFact', question: 'Which bubbles last the longest?',
+          choices: ['The big pink ones', 'The green ones', 'The small blue ones', 'The seaweed ones'], correctIndex: 2,
+          hint: 'The passage tells about pink bubbles, then blue ones. Which one lasts longest?' },
+        { type: 'recall', question: 'Where does Bubble blow her bubbles?',
+          choices: ['At the end of the dock', 'Under the waves at Mistreef', 'On top of a sand hill', 'Inside the Coral Sanctum'], correctIndex: 0,
+          hint: 'Look at the first sentence.' },
+      ],
+    },
+    {
+      title: 'Two Pearls',
+      passage: `Pearl Ripple has two pearls. She keeps them in a shell box beside her bed.
+
+The silver pearl is the bigger one. Pearl found it herself, deep in the waters of Mistreef. It took her three dives to reach it.
+
+The golden pearl is very small. It was a gift from her grandmother, who found it long ago. Pearl says the golden one is more special, even though it is tiny.
+
+"A big pearl is nice," Pearl says. "But a pearl from Grandma is the best kind of all."`,
+      questions: [
+        { type: 'twoFact', question: 'Which pearl is the bigger one?',
+          choices: ['The golden pearl', 'The silver pearl', 'They are the same size'], correctIndex: 1,
+          hint: 'Read about each pearl. Which one does the passage call bigger?' },
+        { type: 'twoFact', question: 'Which pearl does Pearl think is more special?',
+          choices: ['The silver one she found', 'The pink one from the cove', 'Neither of them', 'The golden one from Grandma'], correctIndex: 3,
+          hint: 'Find the words "more special".' },
+      ],
+    },
+    {
+      title: 'The Morning Race',
+      passage: `Every morning, Tidalhoof and Misty Wave race along the shore of Saltspray Cove. The race always ends at the big gray rock.
+
+Tidalhoof is a strong swimmer. When they race through the water, he wins every time. Misty can hardly keep up with his splashes.
+
+But Misty is quick on her hooves. When they race on the sand, she wins. Tidalhoof's big hooves sink into the soft sand and slow him down.
+
+So each morning they take turns. One day they race in the water. The next day they race on the sand.`,
+      questions: [
+        { type: 'twoFact', question: 'Who wins when they race on the sand?',
+          choices: ['Misty Wave', 'Tidalhoof', 'Nobody, it is always a tie', 'Bubble Brook'], correctIndex: 0,
+          hint: 'One pony wins in the water and one wins on the sand. Find the sand part.' },
+        { type: 'recall', question: 'Where does the race always end?',
+          choices: ['At the end of the dock', 'At the big gray rock', 'At the edge of Mistreef', 'At Tidalhoof\'s house'], correctIndex: 1,
+          hint: 'Look at the first paragraph.' },
+      ],
+    },
+    {
+      title: 'Skipping Stones',
+      passage: `Splash Pebble is trying to skip a stone ten times across the water. Her best so far is eight.
+
+Splash has learned that the kind of stone matters. Flat gray stones skip well. They bounce across the top of the water, hop, hop, hop. Round white stones do not skip at all. They just go plunk and sink to the bottom.
+
+So Splash fills her bag with flat gray stones before she goes to the beach. She practices every afternoon when the water is calm. She is sure she will reach ten by the end of summer.`,
+      questions: [
+        { type: 'twoFact', question: 'Which stones sink instead of skipping?',
+          choices: ['Flat gray stones', 'Small black stones', 'Round white stones', 'Shiny green stones'], correctIndex: 2,
+          hint: 'The passage tells about two kinds of stones. Which one goes plunk?' },
+        { type: 'recall', question: 'What is Splash\'s best number of skips so far?',
+          choices: ['Six', 'Ten', 'Twelve', 'Eight'], correctIndex: 3,
+          hint: 'Look at the first paragraph. Ten is her goal, not her best.' },
+      ],
+    },
+    {
+      title: 'Coral Shimmer\'s Treasures',
+      passage: `Coral Shimmer collects pieces of coral that wash up on the beach. She never breaks coral off the reef. She only takes pieces the waves bring in.
+
+Coral has four pieces in all. Three of them are pink. She found those on the beach near her home.
+
+The fourth piece is blue. Blue coral is very rare. Coral did not find this one herself. It was a gift from Tidecaller Nerida, the guardian of the Water zone, after Coral helped clean up the beach.
+
+Coral keeps the blue piece on a shelf all by itself.`,
+      questions: [
+        { type: 'twoFact', question: 'How many pink pieces of coral does Coral have?',
+          choices: ['One', 'Three', 'Four'], correctIndex: 1,
+          hint: 'She has four pieces in all. Count only the pink ones.' },
+        { type: 'twoFact', question: 'Where did the blue coral come from?',
+          choices: ['The beach near her home', 'The bottom of Mistreef', 'A gift from Nerida', 'A shop in the cove'], correctIndex: 2,
+          hint: 'The pink pieces came from the beach. Read about the fourth piece.' },
+      ],
+    },
+    {
+      title: 'Thin Fog, Thick Fog',
+      passage: `Misty Wave can make fog. She breathes out slowly, and a cloud of mist rolls over the water.
+
+Misty makes two kinds of fog. Thin fog is for fun. On warm mornings, she makes a light, sparkly fog, and the young ponies play hide-and-seek inside it.
+
+Thick fog is for keeping safe. When hungry seagulls circle over the beach, Misty makes a fog so heavy that nobody can see through it. The baby crabs hide inside it until the seagulls fly away.
+
+The crabs of Saltspray Cove love Misty very much.`,
+      questions: [
+        { type: 'twoFact', question: 'What does Misty use thick fog for?',
+          choices: ['Hiding baby crabs from seagulls', 'Playing hide-and-seek in the morning', 'Cooling the water down', 'Making rainbows over the cove'], correctIndex: 0,
+          hint: 'Thin fog is for fun. What is thick fog for?' },
+        { type: 'recall', question: 'When does Misty make thin fog?',
+          choices: ['On stormy nights', 'On cold winter days', 'When seagulls come', 'On warm mornings'], correctIndex: 3,
+          hint: 'Read the second paragraph.' },
+      ],
+    },
+    {
+      title: 'Inside the Coral Sanctum',
+      passage: `The Coral Sanctum is a great building made of coral. It stands on a rock at the edge of Mistreef. It is the home of Tidecaller Nerida, the guardian of the Water zone.
+
+The Sanctum has two big halls. The Hall of Echoes is round and very tall. When a pony speaks inside, their voice bounces back again and again. This is where trainers battle Nerida in the Trial.
+
+The Hall of Pearls is quiet and calm. Its walls shine with pearls. This is where Nerida rests after a long day.`,
+      questions: [
+        { type: 'twoFact', question: 'In which hall do trainers battle Nerida?',
+          choices: ['The Hall of Pearls', 'The Hall of Echoes', 'The Hall of Tides', 'The Coral Garden'], correctIndex: 1,
+          hint: 'The passage tells about two halls. Find the one where the Trial happens.' },
+        { type: 'twoFact', question: 'What happens when a pony speaks in the Hall of Echoes?',
+          choices: ['The walls start to shine', 'Nerida wakes up from her rest', 'Their voice bounces back', 'The pearls begin to sing'], correctIndex: 2,
+          hint: 'Read about the round, tall hall.' },
+      ],
+    },
+    {
+      title: 'The Bubble Chain',
+      passage: `A bubble chain is a line of bubbles all stuck together, like beads on a string. It is very hard to make one, because a single pop can break the whole chain.
+
+Bubble Brook and Pearl Ripple love to make bubble chains. They see who can make the longest one. They practice almost every day.
+
+Pearl's best chain was eighteen bubbles long. She made it on a calm, quiet day.
+
+Bubble's best chain was twenty-two bubbles long. She made it the very next morning. It floated over the dock and across the water before it finally popped.`,
+      questions: [
+        { type: 'twoFact', question: 'How long was Bubble\'s best chain?',
+          choices: ['Twelve bubbles', 'Eighteen bubbles', 'Thirty bubbles', 'Twenty-two bubbles'], correctIndex: 3,
+          hint: 'Pearl\'s chain and Bubble\'s chain had different lengths. Find Bubble\'s.' },
+        { type: 'recall', question: 'Why is a bubble chain hard to make?',
+          choices: ['One pop can break the whole chain', 'The water is too cold', 'The seagulls eat the bubbles', 'It only works at night'], correctIndex: 0,
+          hint: 'Look at the first paragraph.' },
+      ],
+    },
+    {
+      title: 'Sea Glass',
+      passage: `Sea glass is glass that has rolled in the waves for a very long time. The water and sand make it smooth and cloudy. Splash Pebble looks for it every day on the beach.
+
+Splash has many pieces. Some are tiny, and some are as big as a hoof. Two of them are her favorites. Her oldest piece is dark green. Its edges are so smooth that it feels like soap. Her brightest piece is light blue, like the sky in spring. She holds it up to the sun to make it glow.
+
+Splash keeps them both in a little jar on her windowsill.`,
+      questions: [
+        { type: 'twoFact', question: 'What color is Splash\'s oldest piece of sea glass?',
+          choices: ['Light blue', 'Dark green', 'Clear white'], correctIndex: 1,
+          hint: 'She has an oldest piece and a brightest piece. Find the oldest.' },
+        { type: 'recall', question: 'What makes sea glass smooth?',
+          choices: ['The hot sun on the sand', 'Splash rubbing it with soap', 'The water and the sand', 'Rain falling on the beach'], correctIndex: 2,
+          hint: 'Look at the first paragraph.' },
+      ],
+    },
+    {
+      title: 'Coral\'s Kitchen',
+      passage: `Coral Shimmer is the best cook in Saltspray Cove. Her two most famous dishes are kelp cakes and seaweed soup.
+
+Kelp cakes are crispy and warm. Coral makes them for breakfast on sunny days. She cooks them on a hot, flat stone.
+
+Seaweed soup is thick and salty. Coral makes it on cold, rainy nights. She cooks it in a big pot over the fire.
+
+Her friends like both dishes. But if you ask Coral, she will tell you the soup tastes better. "Soup warms you all the way to your hooves," she says.`,
+      questions: [
+        { type: 'twoFact', question: 'When does Coral make seaweed soup?',
+          choices: ['On cold, rainy nights', 'For breakfast on sunny days', 'On her birthday', 'Only in summer'], correctIndex: 0,
+          hint: 'Kelp cakes and soup are made at different times. Find the soup part.' },
+        { type: 'twoFact', question: 'Which dish does Coral say tastes better?',
+          choices: ['Kelp cakes', 'Fish pie', 'Both are the same', 'Seaweed soup'], correctIndex: 3,
+          hint: 'Read what Coral says at the end.' },
+      ],
+    },
+    {
+      title: 'Fish of Mistreef',
+      passage: `Mistreef is a reef under the sea, not far from Saltspray Cove. Many kinds of fish live there.
+
+Near the top, where the water is warm and bright, live the striped fish. They are yellow and black, and they swim in big groups. They dart away quickly when a pony swims near.
+
+Far down below, where the water is cold and dark, live the glowing fish. Their bodies shine with a soft blue light. They swim slowly, all alone. Some are as long as a pony's tail.
+
+Water ponies like to dive down at night to watch the glowing fish.`,
+      questions: [
+        { type: 'twoFact', question: 'Where do the glowing fish live?',
+          choices: ['Near the top, in warm water', 'In the tide pools on the beach', 'Far down, in cold dark water', 'Inside the Coral Sanctum'], correctIndex: 2,
+          hint: 'Striped fish live near the top. Where do the glowing fish live?' },
+        { type: 'twoFact', question: 'Which fish swim in big groups?',
+          choices: ['The striped fish', 'The glowing fish', 'Both kinds of fish'], correctIndex: 0,
+          hint: 'Read about each kind of fish.' },
+      ],
+    },
+    {
+      title: 'Nerida\'s Crown',
+      passage: `Tidecaller Nerida wears a crown made of shells. Every shell has a story.
+
+The shell in the center is a big white spiral. Nerida found it on her very first swim, when she was just a little foal. It is the oldest shell on her crown.
+
+The shells on the sides are smaller and pink. They were gifts from trainers who battled her in the Trial. Each time a trainer wins, Nerida gives them a badge. Many trainers give her a shell to say thank you.
+
+Nerida's crown gets a little bigger every year.`,
+      questions: [
+        { type: 'twoFact', question: 'Where did the center shell come from?',
+          choices: ['A gift from a trainer', 'Nerida\'s very first swim', 'The bottom of a tide pool', 'A shop in Saltspray Cove'], correctIndex: 1,
+          hint: 'The center shell and the side shells came from different places.' },
+        { type: 'recall', question: 'What color are the shells on the sides?',
+          choices: ['White', 'Blue', 'Gold', 'Pink'], correctIndex: 3,
+          hint: 'Read the third paragraph.' },
+      ],
+    },
+    {
+      title: 'High Tide, Low Tide',
+      passage: `Twice a day, the sea comes up high on the beach. This is called high tide. Twice a day, the sea goes back out again. This is called low tide.
+
+At high tide, the water covers the rocks. You can only see the tops of the tallest ones.
+
+At low tide, the water pulls away. Little pools of water are left behind between the rocks. These are called tide pools. Inside them, you can find crabs, snails and starfish.
+
+The young ponies of Saltspray Cove always explore the beach at low tide. Then they hurry home before the water comes back.`,
+      questions: [
+        { type: 'twoFact', question: 'When can you find tide pools?',
+          choices: ['At high tide', 'At low tide', 'Only at night', 'Only in winter'], correctIndex: 1,
+          hint: 'The passage tells about high tide and low tide. When are the pools left behind?' },
+        { type: 'recall', question: 'How many times a day is there a high tide?',
+          choices: ['Once', 'Three times', 'Twice'], correctIndex: 2,
+          hint: 'Look at the first sentence.' },
+      ],
+    },
+    {
+      title: 'Two Paths to Mistreef',
+      passage: `There are two paths from Saltspray Cove to the cliffs above Mistreef.
+
+The cliff path is short. It goes straight up the hill, but it is steep and rocky. Strong ponies like Tidalhoof take it when they are in a hurry.
+
+The beach path is long. It winds slowly around the bay. But it is flat and sandy, and there are shells to find along the way.
+
+Today Splash Pebble is taking her little brother to see the reef. She picks the beach path. It will take longer, but her brother will not slip. Shells are his favorite thing.`,
+      questions: [
+        { type: 'twoFact', question: 'Which path is steep and rocky?',
+          choices: ['The beach path', 'The forest path', 'The bridge path', 'The cliff path'], correctIndex: 3,
+          hint: 'One path is short and steep. The other is long and flat.' },
+        { type: 'recall', question: 'Who is Splash taking to see the reef?',
+          choices: ['Her little brother', 'Tidalhoof', 'Her best friend Coral', 'Her grandmother'], correctIndex: 0,
+          hint: 'Look at the last paragraph.' },
+      ],
+    },
+    {
+      title: 'Pearl and the Moon',
+      passage: `Pearl Ripple feels different depending on the moon.
+
+When the moon is full and bright, Pearl feels brave. She swims out past the reef. She goes farther than she ever would in the daytime. The moonlight shines down through the water and shows her the way.
+
+When there is no moon at all, Pearl feels sleepy. The water is dark and quiet. She curls up in her cozy nest of sea grass and goes to bed early.
+
+Her friends always know what kind of night it is just by looking at Pearl. Tonight, the moon is full and round.`,
+      questions: [
+        { type: 'twoFact', question: 'How does Pearl feel when there is no moon?',
+          choices: ['Brave', 'Hungry', 'Sleepy', 'Scared'], correctIndex: 2,
+          hint: 'Pearl feels one way with a full moon and another with no moon.' },
+        { type: 'twoFact', question: 'What does Pearl do when the moon is full?',
+          choices: ['She goes to bed early', 'She swims out past the reef', 'She sings to the fish', 'She visits Nerida'], correctIndex: 1,
+          hint: 'Read the second paragraph.' },
+      ],
+    },
+  ],
   4: [],
   5: [],
   6: [],
