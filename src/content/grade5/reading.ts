@@ -921,7 +921,328 @@ Juniper`,
       ],
     },
   ],
-  4: [],
+  // ── Zone 4 (Fire): Cinderpath, Ashfall Camp, the Magma Forge ──────────────
+  4: [
+    {
+      title: 'Inside a Volcano',
+      passage: `The mountain that holds the Magma Forge is a volcano, and understanding how it works helps explain almost everything about the Fire zone.
+
+Deep beneath the ground, it is hot enough to melt solid rock. This melted rock is called magma. Because magma is lighter than the solid rock around it, it slowly pushes upward, collecting in a huge underground pool called a magma chamber. Above the chamber, a long crack called a vent leads to the top of the mountain.
+
+When too much pressure builds in the chamber, magma forces its way up the vent and pours out. Once magma reaches the surface, it gets a new name: lava. As the lava flows down the slopes, it cools and hardens into rock. Over thousands of years, layer after layer of cooled lava builds the mountain taller.
+
+The volcano near Ashfall Camp has not erupted in hundreds of years. Its vent has been plugged by hardened rock. But the magma chamber below is still hot. It heats the underground river that keeps the Magma Forge warm, warms the hot springs and sends up the puffs of ash that give the camp its name.
+
+So while the volcano sleeps, it still shapes daily life for every Fire pony.`,
+      questions: [
+        { type: 'purpose', question: 'Why did the author write this passage?',
+          choices: ['To warn ponies that the volcano will erupt soon', 'To explain how the volcano shapes the Fire zone', 'To tell a story about the Magma Forge', 'To describe the hot springs'], correctIndex: 1,
+          hint: 'Look at the first and last sentences.' },
+        { type: 'twoFact', question: 'What is the difference between magma and lava?',
+          choices: ['Magma is cooler than lava', 'Lava is found only deep inside the magma chamber', 'They are different colors', 'Magma is underground; lava is at the surface'], correctIndex: 3,
+          hint: 'Read the third paragraph.' },
+      ],
+    },
+    {
+      title: 'Two Guardians',
+      passage: `Emberwarden Cinda of the Fire zone and Tidecaller Nerida of the Water zone are both guardians, and they are old friends. But their elements are opposites, and so are many of their habits.
+
+Cinda is quick and bold. She makes decisions fast and changes her mind just as fast if she sees a better idea. Her Trial begins with a fierce charge, testing whether a trainer can stay calm under pressure. In her free time, she loves loud music and crowded festivals.
+
+Nerida is patient and watchful. She thinks about a problem for a long time before she acts, and once she decides, she rarely changes course. Her Trial is fast too, but she relies on timing rather than force. In her free time, she sits alone and watches the tides.
+
+Despite their differences, the two guardians share an important belief. Both say that a Trial is not about defeating a trainer. It is about helping the trainer discover what they need to learn. Both give every challenger advice afterward, win or lose.
+
+Every year, the guardians meet halfway, at the edge of Cinderpath where the Fire zone touches the sea. They sit together on a warm black rock and talk until sunset. Neither will say what they discuss.`,
+      questions: [
+        { type: 'compare', question: 'How does Nerida make decisions differently from Cinda?',
+          choices: ['She thinks for a long time and rarely changes course', 'She decides quickly and often changes her mind about it', 'She asks other ponies to decide for her', 'She never makes decisions at all'], correctIndex: 0,
+          hint: 'Compare the second and third paragraphs.' },
+        { type: 'compare', question: 'What belief do both guardians share?',
+          choices: ['Trials should be as loud as possible', 'Trainers should never get advice', 'A Trial helps a trainer learn what they need', 'Only the strongest trainers deserve to earn badges'], correctIndex: 2,
+          hint: 'Read the fourth paragraph.' },
+      ],
+    },
+    {
+      title: 'The Forge, Then and Now',
+      passage: `The Magma Forge has been making tools and horseshoes for more than three hundred years, but the way Fire ponies work there has changed a great deal.
+
+In the earliest days, smiths heated metal over open fires of wood and coal. These fires were hard to control. They burned hot in some spots and cool in others, so a smith had to keep moving the metal around. The smoke filled the workshop, and smiths often worked with their eyes watering. Making a single horseshoe could take most of a morning.
+
+Today, the forge uses the heat of the underground lava river. Stone channels carry the heat into a row of ovens, each one kept at a steady temperature. Smiths no longer need to feed fires or breathe smoke. A skilled smith can now make a horseshoe in less than an hour.
+
+Some things have not changed at all. Smiths still shape the hot metal by hand, using heavy hammers on iron anvils. They still dip the finished pieces in cold water with a sharp hiss to harden them. And they still test every piece before it leaves the forge.
+
+The oldest smith at the forge, a pony named Anvil, says the new ovens are wonderful. But he still keeps a small wood fire in the corner of his workshop, just for the smell.`,
+      questions: [
+        { type: 'compare', question: 'How has heating the metal changed at the forge?',
+          choices: ['Smiths now burn much more wood and coal than before', 'Smiths now heat metal in the sun', 'Nothing has changed at all', 'Smiths now use steady heat from the lava river'], correctIndex: 3,
+          hint: 'Compare the second and third paragraphs.' },
+        { type: 'twoFact', question: 'Which part of the work has stayed the same?',
+          choices: ['Shaping metal by hand with hammers', 'Feeding open fires', 'Breathing smoke while working', 'Taking a whole morning per horseshoe'], correctIndex: 0,
+          hint: 'Read the fourth paragraph.' },
+      ],
+    },
+    {
+      title: 'A Note to Campers',
+      passage: `Welcome to Ashfall Camp! We are glad you are here. Before you settle in, please take a moment to read these important notes about fire safety. Even Fire ponies follow them, every single day.
+
+Build fires only inside the stone rings already set up around camp. Do not make new rings. The stones are placed where the ground is bare and no roots run underneath, because roots can catch fire underground and smolder for days before anyone notices.
+
+Keep your fire small. A fire as big as a pony may look exciting, but it throws sparks far beyond the ring. A cooking fire only needs to be about the size of a melon. Keep a bucket of sand beside every fire.
+
+Never leave a fire unattended, even for a moment. If you need to leave, put the fire out first. Pour sand over the coals, stir them and pour more sand until you can hold your hoof just above the ashes without feeling any heat.
+
+Finally, check the flag by the gate each morning. A green flag means fires are allowed. A red flag means the wind is too strong or the grass is too dry, and no fires may be lit that day.
+
+Thank you for helping us keep Ashfall Camp safe for everyone. Enjoy your stay!
+
+Spark Flicker, Camp Fire Keeper`,
+      questions: [
+        { type: 'purpose', question: 'What is the main purpose of this note?',
+          choices: ['To tell campers about fun activities', 'To describe the history of the camp', 'To explain the fire safety rules', 'To invite ponies to a festival'], correctIndex: 2,
+          hint: 'Read the first paragraph.' },
+        { type: 'twoFact', question: 'What does a red flag by the gate mean?',
+          choices: ['Fires are allowed', 'No fires may be lit that day', 'The camp is full', 'A festival is starting'], correctIndex: 1,
+          hint: 'The note explains both flag colors.' },
+      ],
+    },
+    {
+      title: 'Spark Flicker\'s Busy Day',
+      passage: `Spark Flicker's day as Fire Keeper of Ashfall Camp begins before sunrise. She walks around the whole camp, checking every stone ring to make sure no coals are still glowing from the night before. She has never once missed a morning check.
+
+Next, she climbs the lookout rock to read the weather. She licks a hoof and holds it up to feel the wind, then crumbles a handful of grass to see how dry it is. Today the wind is calm and the grass is damp from the night air, so she raises the green flag by the gate.
+
+By midmorning, families start arriving with questions. Where should they build their cooking fire? How much wood do they need? Spark answers every question patiently, even when she has heard it a hundred times before.
+
+In the afternoon, Spark teaches a class for young ponies about fire safety. Today she shows them how to put out a fire with sand. One foal asks why they cannot use water. Spark explains that water works too, but sand is easier to carry and never runs out at camp.
+
+As the sun sets, Spark lights the big campfire in the center of camp with a spark from her horn. Then she finally sits down for dinner. By the time the stars come out, she is fast asleep beside the fire.`,
+      questions: [
+        { type: 'twoFact', question: 'What does Spark do right after checking the stone rings?',
+          choices: ['She teaches a class', 'She reads the weather', 'She lights the big campfire', 'She answers questions'], correctIndex: 1,
+          hint: 'Follow the order of her day.' },
+        { type: 'recall', question: 'Why does Spark use sand instead of water at camp?',
+          choices: ['Water does not work on fires', 'Water is too cold', 'Sand smells better', 'Sand is easier to carry'], correctIndex: 3,
+          hint: 'Read the fourth paragraph.' },
+      ],
+    },
+    {
+      title: 'The Science of Hot Springs',
+      passage: `Ashfall Camp has two hot springs, one small and very hot, the other large and just pleasantly warm. Visitors often wonder why two springs so close together can be so different.
+
+Both springs get their heat from the same place: the magma chamber deep beneath the volcano. Rainwater seeps down through cracks in the ground until it gets close to the hot rock. There, it heats up. Hot water is lighter than cold water, so it rises back up through other cracks until it bubbles out at the surface as a spring.
+
+The difference between the two springs comes from the paths their water takes. The small spring sits directly above a deep crack that leads almost straight down toward the heat. Its water rises quickly and has little time to cool, so it stays hot enough to cook an egg. Steam rises from it even on warm days.
+
+The large spring is fed by a longer, twisting path. Its water travels sideways through layers of rock before it reaches the surface, and along the way it mixes with cooler groundwater. By the time it fills the pool, it is just the right temperature for swimming.
+
+Fire ponies have learned to use both. They cook in the small spring and relax in the large one.`,
+      questions: [
+        { type: 'compare', question: 'Why is the small spring hotter than the large one?',
+          choices: ['Its water rises quickly through a deep crack', 'It is closer to the sun', 'Ponies heat it with fires', 'It gets no rainwater'], correctIndex: 0,
+          hint: 'Compare the paths the water takes in the third and fourth paragraphs.' },
+        { type: 'purpose', question: 'Why does the author explain how rainwater moves underground?',
+          choices: ['To warn ponies about cracks', 'To explain how rain forms', 'To show where both springs get their heat', 'To describe the volcano\'s shape'], correctIndex: 2,
+          hint: 'Read the second paragraph.' },
+      ],
+    },
+    {
+      title: 'Fire Ponies and Water Ponies',
+      passage: `Fire and water are opposites, and so the ponies of these two elements are often thought of as opposites too. In many ways, that is true. In others, they are more alike than most ponies realize.
+
+Their differences are easy to see. Fire ponies love heat. They sleep beside campfires, bathe in hot springs and feel weak when cold rain falls on them. Water ponies love cool water. They swim in the sea every day, sleep near the waves and feel tired and dry after a long time in the sun.
+
+Their battle styles also differ. Fire ponies tend to strike with bold, powerful attacks. Water ponies tend to rely on speed, timing and slipping away from danger.
+
+But look more closely, and similarities appear. Both groups live near something powerful and dangerous: the Fire ponies beside a volcano, the Water ponies beside the open sea. Both have learned to respect that power rather than fear it. Both watch their surroundings carefully, Fire ponies reading the wind and the dryness of the grass, Water ponies reading the tides and the clouds.
+
+And both share a love of stories. Fire ponies tell theirs around campfires. Water ponies tell theirs on the beach at sunset, while the waves roll in.`,
+      questions: [
+        { type: 'compare', question: 'How are Fire ponies and Water ponies alike?',
+          choices: ['They both love hot springs', 'They both have the same bold battle style', 'They both sleep beside campfires', 'They both respect a powerful neighbor'], correctIndex: 3,
+          hint: 'Read the fourth paragraph.' },
+        { type: 'mainIdea', question: 'What is the main idea of this passage?',
+          choices: ['They are both different and alike', 'Fire ponies are stronger than Water ponies', 'Water ponies tell the best stories', 'Fire and water should never mix'], correctIndex: 0,
+          hint: 'Look at the last sentence of the first paragraph.' },
+      ],
+    },
+    {
+      title: 'How the Ember Festival Began',
+      passage: `Today the Ember Festival is the biggest celebration in the Fire zone, with a lantern parade, a dance contest and a giant breakfast at sunrise. But it began with something much smaller and much sadder.
+
+Long ago, a terrible winter struck the realm. Snow fell for weeks, and the cold reached even the Fire zone. Many ponies in the other zones had no way to stay warm. One night, a young Fire pony named Ember the First filled a basket with glowing embers from the Magma Forge and carried it down Cinderpath to a freezing village at the edge of the zone.
+
+The next night, she returned with two friends and three baskets. By the end of the winter, more than a hundred Fire ponies were carrying embers to villages all across the realm. Every ember they delivered was placed inside a paper lantern so it could be carried safely.
+
+When spring finally came, the villages sent their thanks to the Fire zone. The Fire ponies decided to remember that winter every year by walking down Cinderpath with lanterns, just as Ember the First had done.
+
+The parade is a celebration now, full of music and laughter. But the oldest ponies still walk quietly at the front, remembering why it started.`,
+      questions: [
+        { type: 'purpose', question: 'Why does the author describe the terrible winter?',
+          choices: ['To warn readers about snow', 'To describe the Magma Forge', 'To explain the reason the festival began', 'To show that Fire ponies dislike cold'], correctIndex: 2,
+          hint: 'Think about what the winter led to.' },
+        { type: 'compare', question: 'How is the parade today different from how it began?',
+          choices: ['It began as a happy celebration and is now a sad, quiet walk', 'It began as a way to help others and is now a celebration', 'It has always been the same', 'It used to be held in summer'], correctIndex: 1,
+          hint: 'Compare the start of the story with the last paragraph.' },
+      ],
+    },
+    {
+      title: 'Runny Lava and Thick Lava',
+      passage: `Not all lava behaves the same way. Fire ponies who study the old lava fields around the volcano have found evidence of two very different kinds.
+
+The first kind is runny, almost like warm honey. It flows quickly in long, smooth rivers and can travel a great distance before it cools. When it hardens, it often leaves a smooth, ropy surface, with wrinkles that look like coils of thick rope. Large areas near Cinderpath are covered in this kind of hardened lava. The road itself was built on top of an old runny flow.
+
+The second kind is thick and sticky, like cold clay. It barely flows at all. Instead, it piles up near the vent and creeps forward slowly, breaking into sharp, jagged chunks as its outer surface cools. Walking across this kind of hardened lava is difficult, because the chunks are loose and their edges are sharp. Some chunks are as big as a pony.
+
+The difference depends on what the lava is made of and how hot it is. Hotter lava with fewer minerals tends to be runny. Cooler lava with more minerals tends to be thick.
+
+Spark Flicker leads walks across both kinds of lava fields. She always tells visitors to wear thick hoof-wraps for the second one.`,
+      questions: [
+        { type: 'compare', question: 'How does thick lava move compared with runny lava?',
+          choices: ['It flows faster and farther than the runny kind', 'It barely flows and creeps forward slowly', 'It flows like warm honey', 'It does not cool at all'], correctIndex: 1,
+          hint: 'Compare the second and third paragraphs.' },
+        { type: 'twoFact', question: 'What kind of lava is Cinderpath built on?',
+          choices: ['Thick, sticky lava', 'Fresh, hot lava', 'No lava at all', 'Runny lava'], correctIndex: 3,
+          hint: 'Read the second paragraph.' },
+      ],
+    },
+    {
+      title: 'Cocoa\'s Recipe Card',
+      passage: `Cinder Cocoa has never written down her famous hot chocolate recipe, until now. Here it is, exactly as she gave it to the Ashfall Camp cookbook.
+
+What you need: two cups of milk, three spoonfuls of chocolate shavings, one spoonful of honey and a pinch of cinnamon.
+
+Step one: Pour the milk into a pot and warm it slowly over a small fire. Do not let it boil. If tiny bubbles form around the edge, it is hot enough.
+
+Step two: Stir in the honey first, so it melts completely into the warm milk.
+
+Step three: Add the chocolate shavings a little at a time, stirring slowly and gently in circles. Stirring too fast makes the chocolate stick to the bottom of the pot and burn. This step should take about five minutes, so be patient.
+
+Step four: Take the pot off the fire. Only then should you add the cinnamon. Adding it at the end keeps its smell strong and warm.
+
+Step five: Pour into a mug and enjoy while it is hot.
+
+At the bottom of the card, Cocoa added one more line in small writing: "Best shared with a friend on a chilly evening."`,
+      questions: [
+        { type: 'purpose', question: 'Why is this passage organized into numbered steps?',
+          choices: ['So the reader can follow the recipe in order', 'So it looks like a poem', 'To show how old the recipe is and who wrote it', 'To make it harder to read'], correctIndex: 0,
+          hint: 'Think about what a recipe is for.' },
+        { type: 'twoFact', question: 'When should the cinnamon be added?',
+          choices: ['At the very start, with the milk', 'Before the honey', 'After the pot is taken off the fire', 'While the milk is boiling'], correctIndex: 2,
+          hint: 'Honey and cinnamon are added at different times.' },
+      ],
+    },
+    {
+      title: 'Training Partners',
+      passage: `Blazehoof and Flame Twirl both battle for Emberwarden Cinda, and for years they trained separately. Blazehoof lifted boulders on one side of the forge. Flame practiced her spins and dodges on the other. They rarely spoke.
+
+Then Cinda gave them a challenge. For one month, they would train together, and each would have to learn something from the other.
+
+At first, it did not go well. Blazehoof tried to dodge like Flame and tripped over his own hooves. Flame tried to stand her ground like Blazehoof and was knocked flat on the first hit.
+
+But slowly, each found a piece of the other's style that fit. Blazehoof learned to take one quick step to the side before a big hit, which made his opponents miss more often. Flame learned to plant her hooves for just a moment before striking, which made her small attacks land much harder.
+
+By the end of the month, both ponies were stronger than they had ever been. More surprising, they had become friends. Now they train together every morning, and they have invented a game where Blazehoof tries to catch Flame while she tries to knock him off balance. Neither has ever won. Cinda sometimes watches them and smiles.`,
+      questions: [
+        { type: 'compare', question: 'What did each pony learn from the other?',
+          choices: ['Both learned to lift boulders', 'Both learned to spin', 'Flame learned to lift boulders, while Blazehoof learned to spin fast', 'Blazehoof learned a quick step; Flame learned to plant her hooves'], correctIndex: 3,
+          hint: 'Read the fourth paragraph.' },
+        { type: 'twoFact', question: 'What happened when Flame first tried Blazehoof\'s style?',
+          choices: ['She was knocked flat on the first hit', 'She tripped over her hooves', 'She won right away', 'She got bored'], correctIndex: 0,
+          hint: 'Each pony had a different problem at first.' },
+      ],
+    },
+    {
+      title: 'Life on Cinderpath',
+      passage: `Cinderpath looks empty at first glance, just a long road of dark cinders stretching through bare, rocky land. But many creatures live there, and they have found clever ways to survive the heat.
+
+The ember lizard is the most common. Its scales are dark red, the same color as cooling lava, so it is hard to spot. During the hottest part of the day, it hides in cracks between rocks where the air is cooler. It comes out in the morning and evening to hunt for insects. When it gets too hot, it lifts two of its feet off the ground at a time to cool them, which makes it look like it is dancing.
+
+The ash beetle has a different strategy. Its shell is pale gray, which reflects sunlight instead of soaking it up. Ash beetles are active in the middle of the day, when most other creatures are hiding. They collect drops of water by standing still in the early morning fog, letting the mist gather on their shells and roll down into their mouths.
+
+Both creatures depend on the night. When the cinders begin to glow and the air cools, the whole road comes alive with tiny movements.
+
+Fire ponies traveling Cinderpath are careful to stay on the road, so they do not disturb the creatures' hiding places.`,
+      questions: [
+        { type: 'compare', question: 'How is the ash beetle different from the ember lizard?',
+          choices: ['It hides during the hottest part of the day', 'It has dark red scales', 'It is active in the middle of the day', 'It hunts in the evening'], correctIndex: 2,
+          hint: 'Compare the second and third paragraphs.' },
+        { type: 'recall', question: 'How does the ash beetle get water?',
+          choices: ['From the hot springs', 'By letting fog gather on its shell', 'From insects it eats', 'By digging underground'], correctIndex: 1,
+          hint: 'Read the third paragraph.' },
+      ],
+    },
+    {
+      title: 'Ember Glow\'s Experiment',
+      passage: `Ember Glow has always wondered why blue embers are so much rarer than red ones. So last spring, she decided to find out with an experiment.
+
+She collected two piles of wood that were exactly the same: the same kind of tree, the same size and equally dry. She weighed each pile before burning it. She placed one pile in an ordinary campfire ring at Ashfall Camp. She placed the other in one of the ovens at the Magma Forge, which are heated by the underground lava river.
+
+Both piles burned down to embers. The campfire pile produced only red embers, as Ember expected. The forge pile produced mostly red embers too, but among them were three small blue ones.
+
+Ember repeated the experiment five times to make sure the result was not an accident. Each time, the campfire produced only red embers, and the forge produced a few blue ones. The only difference between the two was the heat. The forge ovens are much hotter than any campfire.
+
+Ember concluded that blue embers form only at extremely high temperatures. She wrote her results in a careful report and presented it to Emberwarden Cinda.
+
+Cinda read the report twice. Then she gave Ember permission to keep using one forge oven for more experiments.`,
+      questions: [
+        { type: 'twoFact', question: 'What did the campfire pile produce?',
+          choices: ['Mostly blue embers', 'Only red embers', 'Three blue embers', 'No embers at all'], correctIndex: 1,
+          hint: 'The two piles produced different results.' },
+        { type: 'recall', question: 'Why did Ember repeat the experiment five times?',
+          choices: ['The first one failed', 'Cinda asked her to', 'She needed more blue embers for her collection', 'To make sure the result was not an accident'], correctIndex: 3,
+          hint: 'Read the fourth paragraph.' },
+      ],
+    },
+    {
+      title: 'Postcard from Cinderpath',
+      passage: `Dear Fern,
+
+I am writing to you from a rock beside Cinderpath, and I have so much to tell you!
+
+You warned me the Fire zone would be hot, but I did not believe it could be this hot. During the day, the cinders are so warm that I wrapped my hooves in wet cloth. I walked only in the mornings and late afternoons and rested in the shade of the big boulders at noon, just like the Fire ponies told me to.
+
+But the nights! At sunset, the whole road began to glow orange, as if someone had laid a river of embers across the land. I did not need a lantern at all. I saw an ember lizard lift two feet at a time, which looked like a funny little dance.
+
+Yesterday I reached Ashfall Camp. A Fire pony named Cinder Cocoa made me the best hot chocolate I have ever tasted. I asked for the recipe, and she just winked.
+
+Tomorrow I will visit the Magma Forge. I am a little nervous about the heat, but very excited to see the smiths at work.
+
+I miss the cool ferns of Mossgrove. I promise to bring you back a piece of obsidian.
+
+Your friend,
+Daisy`,
+      questions: [
+        { type: 'purpose', question: 'Why did Daisy write this postcard?',
+          choices: ['To share her travel experiences with a friend', 'To give Fern directions to the Magma Forge from camp', 'To complain about the Fire zone', 'To ask Fern for a recipe'], correctIndex: 0,
+          hint: 'Think about who she is writing to and what she describes.' },
+        { type: 'compare', question: 'How did Cinderpath feel different at night than during the day?',
+          choices: ['It was hotter at night', 'It was darker and colder', 'It glowed and needed no lantern', 'Nothing changed at night'], correctIndex: 2,
+          hint: 'Compare the second and third paragraphs.' },
+      ],
+    },
+    {
+      title: 'From Sand to Glass',
+      passage: `Some of the most beautiful objects made at the Magma Forge are not made of metal at all. They are made of glass, and they begin as ordinary sand.
+
+Sand and glass seem to have nothing in common. Sand is rough, loose and dull. You cannot see through it, and it slips through your hooves. Glass is smooth, solid and clear enough to see through. Yet glass is simply sand that has been changed by heat.
+
+To make glass, Fire ponies pour clean sand into a clay pot and place it in the hottest oven in the forge. The sand must get far hotter than a campfire, hot enough to melt completely into a glowing, syrupy liquid. A smith then gathers a blob of melted glass on the end of a long hollow pipe and blows into the other end, like blowing a bubble. The blob swells into a hollow shape. While it is still soft, the smith can stretch it, twist it or press it into a mold.
+
+When the glass cools, it hardens into its new shape forever. A single vase can take a whole afternoon. Heat can never turn it back into sand.
+
+Cloud Skip of the Air zone visited this workshop once. She says it gave her the idea for her famous bridge.`,
+      questions: [
+        { type: 'compare', question: 'How is glass different from the sand it is made from?',
+          choices: ['Glass is rough and loose', 'Glass is dull and cannot be seen through', 'They are exactly the same', 'Glass is smooth, solid and clear'], correctIndex: 3,
+          hint: 'Read the second paragraph.' },
+        { type: 'purpose', question: 'Why does the author mention Cloud Skip at the end?',
+          choices: ['To show that the glass workshop inspired others', 'To explain how bridges are built across the sky', 'To describe the Air zone', 'To warn about the heat'], correctIndex: 0,
+          hint: 'Read the last two sentences.' },
+      ],
+    },
+  ],
   5: [],
   6: [],
 }
