@@ -5,9 +5,9 @@
 import type { Problem } from './problems'
 import type { PuzzleAttempt } from './puzzleSelector'
 import { selectProblemCategory, availableCategories } from './puzzleSelector'
-import { generateComprehensionProblem } from './comprehensionGenerator'
+import { bandForDifficulty } from './difficulty'
 import { generateSpellingProblem } from './spellingGenerator'
-import { problemFor } from '../content/grades'
+import { problemFor, readingFor } from '../content/grades'
 import type { Grade } from '../content/gradeTypes'
 
 export type PuzzleFocus = 'mix' | 'math' | 'times' | 'spelling' | 'reading' | 'logic'
@@ -52,12 +52,12 @@ export function focusOptions(speechAvailable: boolean): FocusOption[] {
 
 export interface ExplorePuzzleArgs {
   focus: PuzzleFocus
-  /** §23 — math and logic come from this grade's content. */
+  /** §23 — math, logic and reading come from this grade's content. */
   grade: Grade
   /** Hunt math comes from one zone lower (§9, §23); Practice uses the zone's own. */
   mode: 'practice' | 'hunt'
   zoneNumber: number
-  /** Spelling and reading still read the §9 difficulty number. */
+  /** Spelling reads the §9 difficulty number; reading takes its zone from the same band. */
   difficulty: number
   recentAttempts: PuzzleAttempt[]
   speechAvailable: boolean
@@ -82,6 +82,6 @@ export function makeExplorePuzzle(a: ExplorePuzzleArgs): Problem {
       return generateSpellingProblem(a.difficulty, rng)
     case 'reading':
     case 'comprehension':
-      return generateComprehensionProblem(a.difficulty, rng)
+      return readingFor(a.grade, bandForDifficulty(a.difficulty), rng)
   }
 }

@@ -9,6 +9,7 @@ import { EMPTY_PAGE } from '../scratch/scratchModel'
 import type { Page } from '../scratch/scratchModel'
 import { useScratchLayout, SCRATCH_BOTTOM_SHARE } from '../scratch/scratchLayout'
 import { useGameStore } from '../state/store'
+import { paragraphs } from '../content/readingRules'
 
 const ENCOURAGEMENT = [
   "Not quite — but you've totally got this! Try again! 🌟",
@@ -123,8 +124,8 @@ export default function ProblemCard({ problem, onSolve, onAttempt }: Props) {
       {/* Comprehension: passage then question */}
       {problem.type === 'comprehension' && (
         <div className="space-y-3">
-          <div className="bg-purple-900/60 rounded-2xl p-4 text-white leading-relaxed text-sm">
-            {problem.passage}
+          <div className="bg-purple-900/60 rounded-2xl p-4 text-white leading-relaxed text-base space-y-3">
+            {paragraphs(problem.passage).map((para, i) => <p key={i}>{para}</p>)}
           </div>
           <p className="text-yellow-200 font-semibold leading-snug">{problem.question}</p>
         </div>

@@ -1,6 +1,5 @@
 import { describe, it, expect } from 'vitest'
 import { COMPREHENSION_BANK } from '../content/comprehensionBank'
-import { generateComprehensionProblem } from './comprehensionGenerator'
 
 describe('COMPREHENSION_BANK — structure', () => {
   it('has exactly 90 entries', () => {
@@ -41,32 +40,5 @@ describe('COMPREHENSION_BANK — structure', () => {
       expect(correct).toBeDefined()
       expect(correct.length).toBeGreaterThan(0)
     }
-  })
-})
-
-describe('generateComprehensionProblem', () => {
-  it('returns a valid ComprehensionProblem shape', () => {
-    const p = generateComprehensionProblem(2)
-    expect(p.type).toBe('comprehension')
-    expect(p.passage).toBeTruthy()
-    expect(p.question).toBeTruthy()
-    expect(p.choices).toHaveLength(4)
-    expect(p.correctIndex).toBeGreaterThanOrEqual(0)
-    expect(p.correctIndex).toBeLessThanOrEqual(3)
-    expect(p.hint).toBeTruthy()
-  })
-
-  it('band-1 difficulty (≤3) draws from zone-1 entries', () => {
-    const zone1Passages = new Set(COMPREHENSION_BANK.filter(e => e.zone === 1).map(e => e.passage))
-    for (let i = 0; i < 15; i++) {
-      const p = generateComprehensionProblem(2)
-      expect(zone1Passages.has(p.passage)).toBe(true)
-    }
-  })
-
-  it('band-6 difficulty (≥20) draws from zone-6 entries', () => {
-    const zone6Passages = new Set(COMPREHENSION_BANK.filter(e => e.zone === 6).map(e => e.passage))
-    const p = generateComprehensionProblem(20)
-    expect(zone6Passages.has(p.passage)).toBe(true)
   })
 })

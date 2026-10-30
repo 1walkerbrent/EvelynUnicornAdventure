@@ -27,3 +27,33 @@ export interface LogicFormat {
 
 /** Each zone's logic formats, at that grade's settings. */
 export type ZoneLogic = Record<Zone, LogicFormat[]>
+
+/** What a reading question asks for (§23's ramp decides which a grade and zone may use). */
+export type ReadingQuestionType =
+  | 'recall'      // one fact the passage states
+  | 'twoFact'     // tell apart two similar facts the passage states
+  | 'inference'   // something the passage shows but doesn't say
+  | 'mainIdea'
+  | 'wordMeaning' // a word's meaning from context; the word is quoted in the question
+  | 'compare'     // how two details are alike or different
+  | 'purpose'     // why the author wrote it, or wrote a part of it
+  | 'theme'
+
+export interface ReadingQuestion {
+  type: ReadingQuestionType
+  question: string
+  choices: string[]
+  correctIndex: number
+  hint: string
+}
+
+export interface ReadingPassage {
+  title: string
+  /** Paragraphs are separated by a blank line. */
+  passage: string
+  /** 1–2; each time the passage is served, one is picked at random. */
+  questions: ReadingQuestion[]
+}
+
+/** Each zone's 15 passages. An empty zone is one not written yet. */
+export type ZoneReading = Record<Zone, ReadingPassage[]>
