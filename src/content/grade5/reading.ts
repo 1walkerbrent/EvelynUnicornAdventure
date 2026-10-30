@@ -607,7 +607,320 @@ Acorn now keeps the fossil in a special box lined with cloth, separate from her 
       ],
     },
   ],
-  3: [],
+  // ── Zone 3 (Water): Saltspray Cove, Mistreef, Coral Sanctum ───────────────
+  3: [
+    {
+      title: 'Breathing Below the Waves',
+      passage: `Both Water ponies and fish spend much of their lives underwater, but they solve the problem of breathing in completely different ways.
+
+Fish breathe with gills, thin feathery organs on the sides of their heads. As water flows over the gills, they pull out the oxygen that is dissolved in it. Fish never need to come up for air. In fact, if a fish is taken out of the water, its gills collapse and it cannot breathe at all.
+
+Water ponies breathe air, just like ponies of every other element. Before a dive, a Water pony takes several slow, deep breaths and then holds the last one. Their bodies are built to make that breath last. Their hearts slow down underwater, so they use less oxygen, and their large lungs store more air than most ponies'. Their thick coats also keep them warm in cold water. A trained diver like Tidalhoof can stay under for four minutes, but even he must eventually swim back to the surface.
+
+Each way has its advantages. Fish can stay underwater forever but cannot leave it. Water ponies must return to the surface often, but they can live comfortably on land and in the sea.
+
+Young Water ponies sometimes wish they had gills. Older ones say they would rather keep the beach.`,
+      questions: [
+        { type: 'compare', question: 'How is breathing different for fish and Water ponies?',
+          choices: ['Fish breathe air at the surface, while ponies use gills', 'Fish use gills, while ponies hold their breath', 'Both of them must come up for air', 'Both of them use gills'], correctIndex: 1,
+          hint: 'Read the second and third paragraphs and compare them.' },
+        { type: 'purpose', question: 'Why did the author write this passage?',
+          choices: ['To tell a story about Tidalhoof', 'To convince readers to learn to dive deep in the reef', 'To describe the beach', 'To explain two ways of breathing underwater'], correctIndex: 3,
+          hint: 'Look at the first sentence and what the rest of the passage does.' },
+      ],
+    },
+    {
+      title: 'The Tidecaller',
+      passage: `Tidecaller Nerida has guarded the Water zone for longer than most of its ponies have been alive. Yet few visitors know much about her life before she became guardian.
+
+Nerida grew up in a tiny fishing village on the far side of Mistreef. As a foal, she was not a strong swimmer. Other young ponies teased her for always staying in the shallow water. But she spent hours watching the tides, learning when the water would rise, when it would fall and how the currents shifted around the reef.
+
+When she was twelve, a sudden storm trapped a group of divers inside a reef cave. The strong swimmers tried to reach them and were pushed back by the current. Nerida, who knew the tides better than anyone, waited for the exact moment when the current paused. Then she swam in and guided every diver out.
+
+The old guardian of the Water zone heard the story and invited her to train at the Coral Sanctum. Years later, Nerida took the old guardian's place.
+
+Her name comes from that day. Ponies said she seemed to call the tide to her, and she has been the Tidecaller ever since. She still begins every morning by watching the water.`,
+      questions: [
+        { type: 'purpose', question: 'Why does the author include the story about the storm?',
+          choices: ['To show how Nerida earned her name and her role', 'To warn readers never to swim into reef caves in storms', 'To explain how currents work', 'To describe the fishing village'], correctIndex: 0,
+          hint: 'Think about what happened because of that day.' },
+        { type: 'twoFact', question: 'How did Nerida reach the trapped divers?',
+          choices: ['She swam faster than the strong swimmers', 'She called for help from the Sanctum', 'She waited for the current to pause', 'She dug a tunnel'], correctIndex: 2,
+          hint: 'The strong swimmers and Nerida tried different things.' },
+      ],
+    },
+    {
+      title: 'Two Divers',
+      passage: `Pearl Ripple and Tidalhoof are the two best divers in Saltspray Cove, and they often dive together in Mistreef. But anyone who watches them can see they have very different styles.
+
+Tidalhoof dives with power. He kicks hard with his strong legs and shoots straight down toward the bottom like a falling stone. He reaches the deepest parts of the reef faster than anyone. But his powerful kicks use up air quickly, so his dives are short, and he often stirs up sand that clouds the water.
+
+Pearl dives with patience. She glides down slowly in wide spirals, barely moving her legs. She takes much longer to reach the bottom, but she uses so little air that she can stay down nearly twice as long. Because she moves gently, the water around her stays clear, and fish swim right up to her.
+
+Their different styles make them a perfect team. When they search for pearls, Tidalhoof dives first to scout the deepest spots and point out where the oysters are. Then Pearl follows, slowly and carefully, to collect them without disturbing the reef.
+
+Both divers agree on one thing. Neither of them would ever dive alone. Each one always waits on the surface for the other.`,
+      questions: [
+        { type: 'compare', question: 'How are Pearl\'s dives different from Tidalhoof\'s?',
+          choices: ['Pearl dives faster and deeper', 'Pearl kicks much harder with her strong legs', 'Pearl stirs up more sand', 'Pearl dives slowly but stays down longer'], correctIndex: 3,
+          hint: 'Compare the second and third paragraphs.' },
+        { type: 'compare', question: 'What do both divers agree on?',
+          choices: ['Neither would ever dive alone', 'Fast dives are best', 'Pearls are easy to find', 'Spirals are the best way down'], correctIndex: 0,
+          hint: 'Read the last paragraph.' },
+      ],
+    },
+    {
+      title: 'How to Explore a Tide Pool',
+      passage: `Tide pools are one of the best places in Saltspray Cove to see sea creatures up close. They appear at low tide, when the sea pulls back and leaves water trapped between the rocks. If you visit one, follow these steps to stay safe and protect the creatures who live there.
+
+First, check the tide. Low tide happens twice a day, at a different time each day. Plan to arrive about an hour before the lowest point, and leave before the water starts rising again. The sea comes back faster than most visitors expect.
+
+Second, watch your step. The rocks around tide pools are often covered in slippery seaweed. Walk slowly and step on bare, dry rock whenever you can. Never step inside the pool itself, because the creatures hiding there are easy to crush.
+
+Third, look before you touch. Many creatures blend in with the rocks. Be patient and stay still, and you will start to notice crabs, snails, starfish and tiny fish moving around.
+
+Finally, if you gently pick up a creature, put it back exactly where you found it. Many of them have a favorite spot under a certain rock, and they need it to stay safe from the sun and seagulls. A tide pool is a home, not a toy.`,
+      questions: [
+        { type: 'purpose', question: 'What is the author\'s main purpose in this passage?',
+          choices: ['To tell a story about a crab', 'To explain what causes the tides to rise and fall each day', 'To teach readers how to visit a tide pool safely', 'To describe Saltspray Cove'], correctIndex: 2,
+          hint: 'Notice the words "First," "Second," "Third" and "Finally."' },
+        { type: 'recall', question: 'Why should visitors never step inside a tide pool?',
+          choices: ['The water is too cold', 'The creatures hiding there are easy to crush', 'The seaweed inside is too slippery to stand on', 'The pool is very deep'], correctIndex: 1,
+          hint: 'Read the paragraph about watching your step.' },
+      ],
+    },
+    {
+      title: 'Above and Below',
+      passage: `The Water zone has two main areas, and they could hardly be more different. Saltspray Cove lies above the water, while Mistreef lies below it.
+
+Saltspray Cove is a curved bay with a wide sandy beach. Most Water ponies live there, in small houses on the dock or along the shore. The cove is full of sounds: waves crashing, seagulls calling and young ponies laughing in the tide pools. It is bright, busy and warm in summer, though winter storms can make it wild.
+
+Mistreef is a coral reef just offshore, entirely underwater. It is quiet, except for the soft clicking of shrimp and the bubbles from passing divers. The light there is blue and wavy, and the colors of the coral seem to glow. Few ponies live in Mistreef, but it is where they find food, pearls and the glowing fish that come out at night.
+
+Even though they are so different, the two places depend on each other. The reef breaks the biggest waves before they reach the beach, protecting the cove from storms. In return, the ponies of the cove protect the reef. They keep its water clean and never break the coral.
+
+Visitors who only see the beach have seen only half of the Water zone.`,
+      questions: [
+        { type: 'compare', question: 'How are Saltspray Cove and Mistreef different?',
+          choices: ['The cove is underwater, while the reef is up on dry land', 'The cove is loud and busy, while the reef is quiet', 'Both are full of houses', 'Both are covered in sand'], correctIndex: 1,
+          hint: 'Compare the second and third paragraphs.' },
+        { type: 'mainIdea', question: 'What is the main idea of the fourth paragraph?',
+          choices: ['The reef stops the biggest waves during storms', 'Ponies never break coral', 'Storms are dangerous', 'The cove and the reef help protect each other'], correctIndex: 3,
+          hint: 'Read the first sentence of that paragraph.' },
+      ],
+    },
+    {
+      title: 'From Misty\'s Fog Journal',
+      passage: `Day 1. Nerida asked me to keep a journal while I practice making thicker fog. She says writing things down helps you notice patterns. I am not sure I believe her, but here goes. Today I made fog for ten minutes before I got tired. It was thin and wispy and blew away fast.
+
+Day 4. I tried making fog in the morning instead of the afternoon. It lasted much longer! Maybe the cool morning air helps it stay together.
+
+Day 9. Big discovery. When the air is already damp, like after rain, my fog is twice as thick and takes half the effort. When the air is dry and windy, I can barely make any at all. I never noticed this before.
+
+Day 15. I made a fog thick enough to hide the whole dock for an hour. Bubble Brook walked right into a post. I said sorry, but I was secretly very proud.
+
+Day 21. Nerida read my journal today. She smiled and asked what I had learned. I told her that fog is easiest on cool, damp mornings and hardest on dry, windy afternoons. She said that is exactly what a good mist-maker needs to know.
+
+I guess she was right about writing things down.`,
+      questions: [
+        { type: 'purpose', question: 'Why is this passage written as a journal?',
+          choices: ['To show how Misty learned by noticing patterns', 'To give a list of rules', 'To explain how Bubble hurt herself by walking into a post', 'To describe the dock'], correctIndex: 0,
+          hint: 'Think about what the entries show from Day 1 to Day 21.' },
+        { type: 'compare', question: 'How does fog-making on damp days compare with dry, windy days?',
+          choices: ['It is easier on dry, windy days', 'It is the same on both', 'It is much easier on damp days', 'Fog cannot be made on damp days'], correctIndex: 2,
+          hint: 'Read the Day 9 entry.' },
+      ],
+    },
+    {
+      title: 'When Coral Turns White',
+      passage: `Most of the coral in Mistreef is brightly colored, in shades of pink, orange, purple and green. But in a few places, divers have noticed patches of coral that have turned completely white. This is called bleaching, and it is a sign that the coral is in trouble.
+
+Coral gets its colors from tiny living things that live inside it. These little partners make food from sunlight and share it with the coral. In return, the coral gives them a safe place to live. It is a partnership that helps both.
+
+When the water becomes too warm, this partnership breaks down. The stressed coral pushes its tiny partners out, and without them, the coral loses its color and its main source of food. If the water cools down soon enough, the partners can return and the coral recovers. If the water stays warm too long, the coral can starve.
+
+The Water ponies are working to protect Mistreef. They plant small pieces of healthy coral in damaged areas to help the reef regrow. They keep the water clean, because coral that is already weak from dirty water bleaches more easily.
+
+Every pony who visits the reef can help too. Never touch or stand on coral, and always take your trash home.`,
+      questions: [
+        { type: 'purpose', question: 'Why does the author include the last paragraph?',
+          choices: ['To explain where the colors of coral come from', 'To describe a dive', 'To tell a funny story', 'To encourage readers to help protect the reef'], correctIndex: 3,
+          hint: 'Notice that the paragraph speaks directly to the reader.' },
+        { type: 'mainIdea', question: 'What is this passage mostly about?',
+          choices: ['Why coral bleaches and how ponies protect it', 'How to plant coral', 'The colors of Mistreef', 'Why warm water is nice for swimming in the summer'], correctIndex: 0,
+          hint: 'Think about what the whole passage explains.' },
+      ],
+    },
+    {
+      title: 'The Bubble and Fog Show',
+      passage: `Every year at the Saltspray Summer Festival, Bubble Brook and Misty Wave perform a show together. Each brings her own talent, and the crowd loves the way they combine.
+
+Bubble begins by blowing hundreds of blue bubbles, the long-lasting kind made with a drop of honey. They float over the beach in slow, glittering rows, each one catching the evening light. The crowd watches quietly as the bubbles drift higher.
+
+Then Misty takes over. She breathes out a soft, low fog that rolls across the sand and rises slowly until it surrounds the floating bubbles. Inside the fog, the bubbles seem to glow like tiny lanterns, and the edges of everything turn silver and soft.
+
+The two talents could not be more different. Bubbles are clear and round, and each one is separate. Fog is cloudy and shapeless, spreading everywhere at once. Bubbles rise upward. Fog creeps along the ground first. But together, they create something neither could make alone.
+
+The show ends when Bubble blows one giant bubble right in the center of the fog. Misty pulls the fog inside it, and for a moment the crowd sees a perfect sphere of swirling mist. Then it pops, and the fog drifts away over the water.`,
+      questions: [
+        { type: 'compare', question: 'How is fog different from bubbles in this passage?',
+          choices: ['Fog is clear and round', 'Fog rises upward first', 'Fog is cloudy and spreads everywhere', 'Fog is made with honey'], correctIndex: 2,
+          hint: 'Read the fourth paragraph.' },
+        { type: 'twoFact', question: 'What happens at the very end of the show?',
+          choices: ['Bubble blows hundreds of blue bubbles', 'Misty pulls fog into one giant bubble', 'The crowd leaves the beach', 'Misty makes a low fog'], correctIndex: 1,
+          hint: 'Read the last paragraph.' },
+      ],
+    },
+    {
+      title: 'Please Do Not Feed the Seagulls',
+      passage: `Many visitors to Saltspray Cove enjoy tossing bits of bread to the seagulls. The birds swoop and squawk and catch the crumbs in midair, and it can seem like harmless fun. But the ponies of the cove are asking visitors to stop, and they have good reasons.
+
+First, bread is bad for seagulls. It fills their stomachs without giving them the nutrients they need. A seagull that eats too much bread may stop hunting for fish and crabs, which are much healthier foods.
+
+Second, feeding seagulls changes how they behave. Once seagulls learn that ponies carry food, they become bold. At Saltspray Cove, seagulls have started snatching snacks right out of foals' hooves, and some have even raided picnic baskets.
+
+Third, large crowds of seagulls cause problems for other animals. When too many gather on the beach, they scare away the sandpipers and disturb the turtle nests that the Water ponies work so hard to protect.
+
+Seagulls are wonderful birds. They are clever, loud and full of personality. The best way to enjoy them is to watch them hunt for their own food along the shore. So the next time you visit the cove, please keep your bread to yourself. The seagulls, and the turtles, will thank you.`,
+      questions: [
+        { type: 'purpose', question: 'What is the author trying to do in this passage?',
+          choices: ['Describe how seagulls fly', 'Convince readers not to feed seagulls', 'Explain how to bake bread', 'Tell a story about a picnic that seagulls raided'], correctIndex: 1,
+          hint: 'Look at the title and the last few sentences.' },
+        { type: 'twoFact', question: 'What is the author\'s second reason?',
+          choices: ['Bread is bad for seagulls', 'Seagulls scare away other animals', 'Seagulls are clever', 'Feeding changes how seagulls behave'], correctIndex: 3,
+          hint: 'Find the paragraph that starts with "Second."' },
+      ],
+    },
+    {
+      title: 'Giants in the Cove',
+      passage: `Every autumn, the Water ponies of Saltspray Cove watch for a spout of mist rising from the open sea. It means the whales have arrived.
+
+Whales are the largest creatures that visit the Water zone. The biggest are longer than ten ponies standing nose to tail. Although they live in the sea and are shaped a little like fish, whales are not fish at all. They are more like ponies in some surprising ways.
+
+Fish breathe through gills, but whales breathe air, just as ponies do. They must swim up to the surface to breathe through a blowhole on top of their heads. That spout of mist is the whale breathing out. Fish lay eggs, but whales give birth to live babies, called calves, and feed them milk. Fish are usually cold to the touch, but whales are warm. Their songs can be heard through the water from far away.
+
+The whales come to the warm, calm waters near the cove to have their calves. Mothers and calves stay for about two months before swimming back to colder seas to feed.
+
+Water ponies sometimes swim out to greet them, staying a respectful distance away. Pearl Ripple says that once, a calf swam right up to her, looked at her with one huge, gentle eye and then dove back to its mother.`,
+      questions: [
+        { type: 'compare', question: 'How are whales different from fish?',
+          choices: ['Whales breathe air and give birth to live babies', 'Whales lay eggs on the sandy beach and breathe water', 'Whales are colder to the touch', 'Whales have gills'], correctIndex: 0,
+          hint: 'Read the third paragraph.' },
+        { type: 'recall', question: 'Why do the whales come to the waters near the cove?',
+          choices: ['To find fish to eat', 'To escape storms', 'To have their calves', 'To meet the Water ponies'], correctIndex: 2,
+          hint: 'Read the fourth paragraph.' },
+      ],
+    },
+    {
+      title: 'Two Collectors',
+      passage: `Splash Pebble and Coral Shimmer both collect treasures from the beach of Saltspray Cove, but they look for very different things and keep them in very different ways.
+
+Splash collects sea glass. She loves how the waves turn sharp broken glass into smooth, frosty pebbles over many years. She searches the beach early every morning, especially after storms, and she keeps her finds in glass jars sorted by color. Her rarest piece is a tiny red one, which she says is harder to find than a pearl.
+
+Coral collects shells, but only empty ones. She checks every shell carefully to make sure no creature is living inside before she picks it up. Instead of jars, she displays her shells on long wooden shelves, each one labeled with the name of the creature that once lived in it and the date she found it.
+
+Despite their differences, they share one important rule. Neither of them ever takes anything from a living reef or a tide pool. They only collect what the sea has already washed up and left behind.
+
+Every winter, they host a show in Coral's house, where young ponies can see both collections side by side. Splash brings her jars, and Coral moves a few shelves into the light.`,
+      questions: [
+        { type: 'compare', question: 'How do Splash and Coral keep their collections differently?',
+          choices: ['Splash uses wooden shelves, while Coral uses glass jars', 'Both keep them in boxes', 'Both hang them from the ceiling', 'Splash uses jars, while Coral uses labeled shelves'], correctIndex: 3,
+          hint: 'Compare how each one stores her treasures.' },
+        { type: 'compare', question: 'What rule do both collectors share?',
+          choices: ['Never take from a living reef or tide pool', 'Only collect red items', 'Only search after storms', 'Always label every find'], correctIndex: 0,
+          hint: 'Read the fourth paragraph.' },
+      ],
+    },
+    {
+      title: 'Inside the Coral Sanctum',
+      passage: `The Coral Sanctum stands on a rocky island at the edge of Mistreef. Its walls are made of living coral that has grown over hundreds of years, and its two great halls serve very different purposes.
+
+The Hall of Echoes is where Tidecaller Nerida meets challengers in the Trial. It is round, with a ceiling so high and smooth that every sound bounces around the room several times. Trainers say it is hard to concentrate at first, because every command they call out comes back at them. The floor is covered in a thin layer of seawater, which makes it slippery for ponies who are not used to it.
+
+The Hall of Pearls is a place of rest. Its walls are set with thousands of pearls, gifts from the divers of the cove over many generations. The room is quiet, because soft curtains of seaweed hang from the ceiling and absorb sound. The floor is dry sand, warm from the sun that shines through openings in the roof. The silence there is so deep that some visitors fall asleep.
+
+Nerida spends her mornings in the Hall of Pearls, watching the tides through the windows. She enters the Hall of Echoes only when a challenger arrives.
+
+Visitors may enter the Hall of Pearls freely. The Hall of Echoes is opened only for the Trial.`,
+      questions: [
+        { type: 'compare', question: 'How is the Hall of Pearls different from the Hall of Echoes?',
+          choices: ['It is louder and slippery', 'It is where the Trial happens', 'It is quiet, with a dry sand floor', 'It is closed to visitors'], correctIndex: 2,
+          hint: 'Compare the second and third paragraphs.' },
+        { type: 'recall', question: 'Why is it hard for trainers to concentrate in the Hall of Echoes?',
+          choices: ['It is too dark', 'Their commands echo back at them', 'Nerida talks during the battle', 'The pearls are distracting'], correctIndex: 1,
+          hint: 'Read the second paragraph.' },
+      ],
+    },
+    {
+      title: 'The Night of the Big Storm',
+      passage: `The storm reached Saltspray Cove just after sunset. Misty Wave had felt it coming all afternoon, the air thick and heavy, the seagulls flying inland in silent groups.
+
+At first, the rain was steady but gentle. Then the wind rose. Waves that had been lapping at the beach began crashing against the dock. By midnight, they were spilling over the top.
+
+Tidalhoof and Pearl Ripple went from house to house along the dock, helping families carry their belongings to the cliffs above the cove. Misty climbed onto the highest rock and wrapped the beach in a thick, heavy fog. The fog could not stop the waves, but it calmed the wind just enough to keep the houses' roofs from blowing away.
+
+Out beyond the beach, Mistreef took the worst of the storm. The reef broke the biggest waves before they reached the shore, turning walls of water into rolling foam.
+
+By dawn, the storm had passed. The beach was covered in seaweed and driftwood, and two boards were missing from the dock. It took a week to clean the beach. But every pony was safe, and every house was still standing.
+
+Nerida came to the cove that morning. She thanked Misty, Tidalhoof and Pearl, and then she swam out to check on the reef.`,
+      questions: [
+        { type: 'twoFact', question: 'What did Misty\'s fog do during the storm?',
+          choices: ['It stopped the waves from reaching the dock at all', 'It calmed the wind enough to save the roofs', 'It made the rain stop', 'It hid the cove from the storm'], correctIndex: 1,
+          hint: 'The passage says what the fog could and could not do.' },
+        { type: 'recall', question: 'What broke the biggest waves before they reached the shore?',
+          choices: ['The dock', 'Misty\'s fog', 'The cliffs', 'Mistreef'], correctIndex: 3,
+          hint: 'Read the fourth paragraph.' },
+      ],
+    },
+    {
+      title: 'Salt Water and Fresh Water',
+      passage: `Water ponies swim in salt water, but they drink fresh water. Visitors are sometimes surprised to learn that these are not the same thing.
+
+Salt water is found in the sea. It contains so much dissolved salt that it tastes sharp and bitter. Salt water is also heavier than fresh water, which means things float more easily in it. Water ponies say that swimming in the sea feels easier than swimming in a lake for this reason.
+
+Fresh water is found in rivers, streams, lakes and rain. It contains very little salt. All land creatures, including ponies, need fresh water to drink. Drinking salt water actually makes a pony thirstier, because the body has to use up its own water to get rid of the extra salt.
+
+So where do the ponies of Saltspray Cove get fresh water? A small stream flows down from the hills and into the cove. The ponies built a stone basin where the stream enters the bay, to collect clean water before it mixes with the sea. They also catch rainwater in barrels on their roofs.
+
+Where the stream meets the sea, the water is a mix of both kinds. Certain fish live only in this in-between water, and Splash Pebble likes to watch them in the evenings.`,
+      questions: [
+        { type: 'compare', question: 'How is salt water different from fresh water?',
+          choices: ['Salt water is heavier, so things float more easily', 'Salt water is lighter, so things sink to the bottom faster', 'Salt water is safe to drink', 'Salt water is found in rain'], correctIndex: 0,
+          hint: 'Read the second and third paragraphs.' },
+        { type: 'purpose', question: 'Why does the author explain the stone basin?',
+          choices: ['To describe the shape of the bay', 'To explain why fish live there', 'To show how the ponies get fresh water to drink', 'To tell where Splash likes to go in the evenings'], correctIndex: 2,
+          hint: 'Look at the question that starts the fourth paragraph.' },
+      ],
+    },
+    {
+      title: 'Advice from a Water Badge Winner',
+      passage: `Dear future trainer,
+
+When I arrived at the Coral Sanctum to challenge Tidecaller Nerida, I thought I was ready. I had already won the Earth badge, and I had trained my team hard. Nerida's ponies beat me in less than five minutes.
+
+The problem was speed. Nerida's ponies moved so fast that I could barely give a command before they struck. And their attacks seemed to slide right off my best defenders, as if they were covered in sea foam.
+
+So I spent two weeks in Saltspray Cove, watching and learning. I swam with Tidalhoof and noticed how he always paused for a breath before a big dive. I watched Misty Wave make fog and noticed that she always waited for a cool, damp moment.
+
+When I returned for my second try, I watched Nerida's ponies the same way. Sure enough, each one paused for the briefest moment before a big attack. I told my team to strike right then. I also brought an Earth pony, because water soaks into soil instead of sliding off.
+
+I won. Nerida smiled and gave me a small shell from her crown.
+
+My advice is simple. Before you battle in the Water zone, spend time in it. The sea will teach you more than any book.
+
+Good luck,
+Juniper`,
+      questions: [
+        { type: 'purpose', question: 'Why did Juniper write this letter?',
+          choices: ['To complain about losing', 'To describe Tidalhoof\'s diving', 'To thank Nerida for the shell', 'To give advice to future trainers'], correctIndex: 3,
+          hint: 'Look at who the letter is addressed to and how it ends.' },
+        { type: 'twoFact', question: 'What did Juniper notice about Nerida\'s ponies on her second try?',
+          choices: ['They paused briefly before a big attack', 'They were slower than before', 'They were covered in sea foam', 'They could not swim'], correctIndex: 0,
+          hint: 'Read the fourth paragraph.' },
+      ],
+    },
+  ],
   4: [],
   5: [],
   6: [],
