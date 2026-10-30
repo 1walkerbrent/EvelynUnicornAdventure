@@ -1339,5 +1339,285 @@ Feather Float wrapped the parrot feather in soft cloth. She took the coin, then 
       ],
     },
   ],
-  6: [],
+  // ── Zone 6 (Spirit): Whisperwood, Moonveil, Starfall Temple ───────────────
+  6: [
+    {
+      title: 'Astralhoof\'s Map',
+      passage: `Astralhoof has walked the paths of Whisperwood for many years, yet he still carries a map. The young ponies at Starfall Temple find this strange. "You know every path by heart," they say. "Why do you need a map?"
+
+Astralhoof always gives the same answer. He unrolls the map and shows them the tiny notes in its corners. One note marks a spot where a fox family lives in spring. Another shows a stream that floods after heavy rain. A third circles a hill where the stars look closest.
+
+"The paths stay the same," he explains, "but the forest changes every season. My map remembers what I learned, so I never have to learn it twice."
+
+Last winter, a storm knocked down a bridge near Moonveil. The next morning, Astralhoof added a new note to his map before anyone else had even seen the damage. By noon, he had warned every pony who used that path.`,
+      questions: [
+        { type: 'mainIdea', question: 'What is this passage mostly about?',
+          choices: ['How to fix a bridge that a winter storm knocked down', 'Why Astralhoof keeps a map of paths he knows', 'A fox family that lives in Whisperwood', 'Why young ponies get lost'], correctIndex: 1,
+          hint: 'Think about the question the young ponies ask and how the passage answers it.' },
+        { type: 'inference', question: 'What does the last paragraph show about Astralhoof?',
+          choices: ['He is afraid of storms and stays inside', 'He built the bridge himself', 'He often forgets the paths', 'He keeps a close eye on the forest'], correctIndex: 3,
+          hint: 'Think about how quickly he noticed the broken bridge.' },
+      ],
+    },
+    {
+      title: 'The Temple on the Hill',
+      passage: `Starfall Temple stands on the highest hill in the Spirit zone, above the trees of Whisperwood. It is the home of Starwarden Lumina, the guardian of the Spirit zone, and it is the most peaceful place in the realm.
+
+The temple is a sanctuary, a safe place where anyone can rest. Travelers who are tired or lost are always welcome. They are given a warm meal, a soft bed and quiet, and no one asks them for anything in return.
+
+The temple is also a place of study. Its library holds thousands of books about the stars, the moon and the history of every zone. On its roof sits a giant telescope that Dusk Twinkle uses every night.
+
+Visitors are asked to follow one rule: speak softly. Lumina believes that quiet helps ponies think clearly and rest deeply.`,
+      questions: [
+        { type: 'wordMeaning', question: 'In this passage, what does "sanctuary" mean?',
+          choices: ['A safe place to rest', 'A crowded market full of noise', 'A tall telescope', 'A kind of library book'], correctIndex: 0,
+          hint: 'The passage explains the word right after it.' },
+        { type: 'mainIdea', question: 'What is the main idea of this passage?',
+          choices: ['Dusk Twinkle studies the stars from the roof each night', 'Visitors must speak softly', 'Starfall Temple is a peaceful place for rest and study', 'Lumina is the Spirit guardian'], correctIndex: 2,
+          hint: 'Think about what all the paragraphs describe together.' },
+      ],
+    },
+    {
+      title: 'One Wish, Two Ponies',
+      passage: `Wishing Star can grant only one small wish each week, and the wish must always be for someone else. Usually, that rule is easy to follow. But one week, two ponies came to her on the same day.
+
+The first was Thistle, who wished for the rain to stop so his grandfather's barn roof could be fixed. The second was Clover, who wished for the rain to continue so her family's dry garden could finally grow.
+
+Wishing Star could not grant both wishes. They were exact opposites.
+
+She thought about it all night. In the morning, she did not grant either wish. Instead, she visited both families. She asked Thistle's family to help dig ditches that carried rainwater to Clover's garden. She asked Clover's family to help hold a big cloth over the barn roof while it was repaired.
+
+By the end of the week, the roof was fixed and the garden was green.`,
+      questions: [
+        { type: 'inference', question: 'Why did Wishing Star not grant either wish?',
+          choices: ['Both wishes were for the ponies themselves', 'She was too tired to grant wishes that week', 'She did not like either pony', 'Granting one would have hurt the other'], correctIndex: 3,
+          hint: 'Think about what the two wishes asked for.' },
+        { type: 'inference', question: 'What lesson does Wishing Star\'s plan show?',
+          choices: ['Neighbors can help each other', 'Wishes never come true', 'Rain is bad for gardens and roofs', 'It is best to ask for two wishes'], correctIndex: 0,
+          hint: 'Think about how both problems got solved.' },
+      ],
+    },
+    {
+      title: 'Lamps for the Library',
+      passage: `The library at Starfall Temple had a problem. Its old oil lamps were dim, and they made the air smoky. Ponies who read for long hours often left with sore eyes and a cough. But Lumina would not allow candles near the books, because one dropped flame could destroy centuries of writing.
+
+Moon Glimmer had an idea. For a whole month, she climbed the temple roof every clear night and caught moonbeams in glass jars. She chose only the nights when the moon was full, because those jars glowed the brightest.
+
+When she had filled sixty jars, she brought them to the library and hung them from the ceiling beams. The room filled with soft, silvery light that never flickered, never smoked and never got hot.
+
+Lumina walked slowly beneath the jars without speaking. Then she asked Moon Glimmer to fill sixty more for the reading rooms upstairs.`,
+      questions: [
+        { type: 'wordMeaning', question: 'In this passage, what does "dim" mean?',
+          choices: ['Very hot to touch', 'Brand new', 'Not very bright', 'Shaped like a jar'], correctIndex: 2,
+          hint: 'Readers left with sore eyes.' },
+        { type: 'inference', question: 'What did Lumina think of the moonbeam jars?',
+          choices: ['She thought they were too bright to read by', 'She liked them very much', 'She was worried about the books', 'She wanted candles instead'], correctIndex: 1,
+          hint: 'Think about what she asked Moon Glimmer to do next.' },
+      ],
+    },
+    {
+      title: 'The Missing Notebook',
+      passage: `Dusk Twinkle has filled forty notebooks with careful records of the stars. One morning, he discovered that notebook number twelve was missing from its shelf. It held his records from the year of the great comet, and there was no other copy.
+
+Dusk searched the whole temple. He checked under tables, behind shelves and inside every drawer. He did not sleep that night.
+
+The next day, a young pony named Juniper shyly knocked on his door. She was holding notebook twelve. "I borrowed it to learn about the comet," she said quietly. "I should have asked first. I'm sorry."
+
+Dusk took the notebook and was quiet for a moment. Then he pulled out a chair. "If you want to learn about comets," he said, "you could just sit with me tonight." Juniper has visited the roof with him every night since.`,
+      questions: [
+        { type: 'inference', question: 'How did Dusk feel while the notebook was missing?',
+          choices: ['Calm and patient', 'Very worried', 'Angry at Juniper', 'Happy to have more space'], correctIndex: 1,
+          hint: 'Think about how he searched and that he did not sleep.' },
+        { type: 'inference', question: 'Why did Dusk invite Juniper to sit with him?',
+          choices: ['He needed help carrying notebooks', 'He wanted to keep an eye on her', 'She asked him for a job at the temple', 'He saw that she wanted to learn'], correctIndex: 3,
+          hint: 'Think about why she borrowed the notebook.' },
+      ],
+    },
+    {
+      title: 'The Story of Nova\'s Trail',
+      passage: `Every pony in the Spirit zone has heard of Nova's Trail, the path in Whisperwood that seems to lead each traveler to what they need. But not everyone knows how it got its name.
+
+Years ago, Nova Drift was exploring the woods on a moonless night. She came across a narrow path she had never seen, lined with tiny glowing stones. Curious, she followed it. It led her to a hollow tree where a family of foxes was trapped by a fallen branch. Nova moved the branch, and the foxes ran free.
+
+The next night, Nova returned, but the path was gone. Weeks later, it appeared again, this time leading a thirsty traveler to a hidden spring.
+
+Since then, ponies have told stories of the trail appearing when someone needs help. Because Nova was the first to walk it, it carries her name.`,
+      questions: [
+        { type: 'mainIdea', question: 'What is this passage mostly about?',
+          choices: ['How Nova\'s Trail was discovered and named', 'How to rescue foxes trapped by a fallen branch', 'Why the woods are dark on moonless nights', 'Where to find a hidden spring'], correctIndex: 0,
+          hint: 'Look at the last sentence of the first paragraph.' },
+        { type: 'inference', question: 'What can you tell about the trail from this passage?',
+          choices: ['It is always in the same place in the woods, night after night', 'It only appears for Nova', 'It seems to appear when someone needs help', 'It leads to treasure'], correctIndex: 2,
+          hint: 'Think about the fox family and the thirsty traveler.' },
+      ],
+    },
+    {
+      title: 'Lumina\'s Trial',
+      passage: `Starwarden Lumina is the last of the five Trial guardians, and many trainers say her Trial is the hardest. That is not because her ponies are the strongest. It is because they are unpredictable.
+
+In most Trials, a careful trainer can learn the guardian's pattern. Bramblewood's ponies are steady. Cinda's ponies charge, then turn clever. But Lumina's Spirit ponies change their plan with every move. One moment they attack. The next moment they shield, heal or vanish into a shimmer of starlight.
+
+Trainers who try to memorize a plan usually lose. The trainers who win stay calm and watch closely. They answer each move as it comes, without guessing what will happen next.
+
+Lumina says her Trial is not really about battling. It is about paying attention to the present moment. Even experienced trainers often need more than one try.`,
+      questions: [
+        { type: 'wordMeaning', question: 'In this passage, what does "unpredictable" mean?',
+          choices: ['Very slow and careful', 'Easy to defeat in a battle at the temple', 'Always the same', 'Hard to guess what comes next'], correctIndex: 3,
+          hint: 'Lumina\'s ponies change their plan with every move.' },
+        { type: 'inference', question: 'Why do trainers who memorize a plan usually lose?',
+          choices: ['Lumina\'s ponies keep changing what they do', 'They forget the plan halfway', 'Memorizing makes them too tired to battle well', 'Lumina does not allow plans'], correctIndex: 0,
+          hint: 'Think about what makes Lumina\'s ponies different.' },
+      ],
+    },
+    {
+      title: 'The Changing Moon',
+      passage: `If you watch the moon for a month, you will notice that its shape seems to change. Some nights it is a full, round circle. Other nights it is a thin curve, or it disappears completely. These changing shapes are called the phases of the moon.
+
+The moon does not actually change shape. It is always a round ball. The moon does not make its own light, either. It shines because sunlight bounces off it. As the moon travels around our world, we see different amounts of its sunlit side.
+
+When the whole sunlit side faces us, we see a full moon. When the sunlit side faces away, we see almost nothing, and that is called a new moon. In between, we see a curved slice that grows bigger or smaller each night.
+
+The full cycle of phases takes about twenty-nine days. Dusk Twinkle has drawn every phase in his notebooks.`,
+      questions: [
+        { type: 'mainIdea', question: 'What is the main idea of this passage?',
+          choices: ['The moon makes its own silver light at night', 'A full moon is the brightest', 'The moon\'s shape only seems to change', 'The moon is very far away'], correctIndex: 2,
+          hint: 'Think about what the whole passage explains.' },
+        { type: 'wordMeaning', question: 'In this passage, what does "phases" mean?',
+          choices: ['Bright lights that move across the night sky', 'Different stages or shapes in a cycle', 'Kinds of stars', 'Long journeys'], correctIndex: 1,
+          hint: 'The passage uses it to name the moon\'s changing shapes.' },
+      ],
+    },
+    {
+      title: 'Star Sparkle\'s Night Garden',
+      passage: `Most gardens are at their best in the sunshine. Star Sparkle's garden is different. She only grows plants that bloom at night.
+
+During the day, her garden in Moonveil looks plain. The flowers are closed tight, and their leaves are a dull gray-green. Visitors who come at noon often wonder why Star Sparkle is so proud of it.
+
+But after sunset, everything changes. Pale moonflowers unfold their wide white petals. Starbells open and give off a faint blue glow. The air fills with a sweet smell that drifts all the way to the temple. Moths flutter from bloom to bloom.
+
+Star Sparkle has put a little bench in the middle of the garden. Every evening, she invites a few neighbors to sit with her. They drink warm tea and talk quietly until the moon is high. Last week, a visitor who had come at noon returned at night. She stayed until dawn.`,
+      questions: [
+        { type: 'inference', question: 'Why did the visitor stay until dawn?',
+          choices: ['She was too tired to walk all the way home', 'She finally saw the garden at its best', 'Star Sparkle asked her to guard it', 'She was waiting for the sun to rise'], correctIndex: 1,
+          hint: 'Think about how the garden looks at noon compared to night.' },
+        { type: 'mainIdea', question: 'What is this passage mostly about?',
+          choices: ['How moths find flowers in the dark', 'How to make warm tea for neighbors', 'Why Star Sparkle has a bench', 'A garden that is plain by day and beautiful by night'], correctIndex: 3,
+          hint: 'Think about how the whole passage describes the garden.' },
+      ],
+    },
+    {
+      title: 'Advice from the Champion',
+      passage: `Rowan had trained for months to face Starwarden Lumina. When the Trial finally came, it went badly. Lumina's ponies changed their plan with every move, and Rowan kept guessing wrong. In the end, she lost.
+
+Afterward, Rowan sat alone on the temple steps, staring at the ground. She did not notice someone sit down beside her until a quiet voice spoke.
+
+"I lost to Lumina three times," said the stranger.
+
+Rowan looked up and gasped. It was Vesper, the Grand Champion herself.
+
+"The first time, I was angry," Vesper went on. "The second time, I blamed my ponies. The third time, I finally asked what I could learn." She stood up and smiled. "You already look like you are asking that question."
+
+Rowan returned a month later. This time, she won.`,
+      questions: [
+        { type: 'inference', question: 'Why did Vesper tell Rowan that she had lost three times?',
+          choices: ['To show that losing is part of getting better', 'To brag about winning on her fourth try at the Trial', 'To warn her never to try again', 'To make Rowan feel worse'], correctIndex: 0,
+          hint: 'Think about how Rowan was feeling and what Vesper learned.' },
+        { type: 'inference', question: 'Why was Rowan surprised when she looked up?',
+          choices: ['It had started to rain', 'Lumina was standing there', 'The stranger was the Grand Champion', 'Her ponies had come back from the healer'], correctIndex: 2,
+          hint: 'Read what she saw when she gasped.' },
+      ],
+    },
+    {
+      title: 'The Night Messengers',
+      passage: `In most zones, messages are carried by ponies or by whirlwinds. In the Spirit zone, they are carried by owls.
+
+The owls of Whisperwood are wide awake at night, when most ponies are asleep. So a pony who needs to send a message writes it on a small scroll and leaves it on their windowsill before bed. During the night, an owl swoops down, picks up the scroll and delivers it. By morning, the message has arrived.
+
+Each owl knows the forest perfectly. They can find any house, even on the darkest night. In return for their work, ponies leave a small treat beside each scroll, usually a handful of seeds or a bit of dried fruit.
+
+Young ponies sometimes try to stay awake to see the owls arrive. They almost never succeed. The owls are silent fliers, and they always seem to come just after a pony's eyes have closed.`,
+      questions: [
+        { type: 'inference', question: 'Why are owls a good choice for carrying messages in the Spirit zone?',
+          choices: ['They are bigger and stronger than ponies', 'They can talk to ponies', 'They fly faster than the wind', 'They work at night and know the forest'], correctIndex: 3,
+          hint: 'Think about when owls are awake and what they know.' },
+        { type: 'inference', question: 'Why do young ponies rarely see the owls arrive?',
+          choices: ['The owls are silent and come after they fall asleep', 'The owls only come in winter', 'Their parents close the curtains', 'The owls are invisible'], correctIndex: 0,
+          hint: 'Read the last paragraph.' },
+      ],
+    },
+    {
+      title: 'The Silver Veil',
+      passage: `Moonveil is a quiet valley in the Spirit zone, and its name comes from something that happens there almost every night.
+
+After the sun sets, a thin silver mist rises from the valley floor. It is so light that you can see through it, like a veil, a thin cloth that partly covers a face. The mist does not hide the valley completely. Instead, it softens everything. Trees look like shadows, and the stars above seem to shimmer.
+
+When the moon rises, its light catches the mist and makes the whole valley glow. That is the moment the ponies of Moonveil love most. Families step outside and watch in silence. Visitors often say it looks like a dream.
+
+The mist fades just before dawn. By sunrise, the valley looks like an ordinary meadow again, until the next night.`,
+      questions: [
+        { type: 'wordMeaning', question: 'In this passage, what does "veil" mean?',
+          choices: ['A heavy wooden door', 'A bright light', 'A thin cloth that partly covers something', 'A kind of tree'], correctIndex: 2,
+          hint: 'The passage explains the word in the second paragraph.' },
+        { type: 'inference', question: 'Why do families watch the glowing valley in silence?',
+          choices: ['They are told to be quiet', 'They find it peaceful and beautiful', 'They are too sleepy to talk', 'They are scared of the mist'], correctIndex: 1,
+          hint: 'Think about how the valley looks at that moment.' },
+      ],
+    },
+    {
+      title: 'What Is a Shooting Star?',
+      passage: `Every summer, hundreds of shooting stars streak across the sky above Starfall Temple. They look like stars falling to the ground. But a shooting star is not a star at all.
+
+Space is full of tiny bits of rock and dust, most of them no bigger than a grain of sand. Sometimes our world passes through a cloud of these bits. When one of them rushes into the air high above us, it moves so fast that it heats up and burns. The burning bit makes a bright streak of light that lasts only a second or two. Most burn up long before they reach the ground.
+
+Real stars are completely different. They are enormous balls of burning gas, much bigger than our world, and so far away that they look like tiny dots.
+
+So when you make a wish on a shooting star, you are really wishing on a speck of dust. The Spirit ponies say the wish still counts.`,
+      questions: [
+        { type: 'mainIdea', question: 'What is this passage mostly about?',
+          choices: ['How to make a wish that will come true', 'What shooting stars really are', 'Why real stars are so big', 'When to watch the sky'], correctIndex: 1,
+          hint: 'Look at the title and the end of the first paragraph.' },
+        { type: 'inference', question: 'What do the Spirit ponies mean when they say "the wish still counts"?',
+          choices: ['Dust is more magical than stars', 'Only Spirit ponies can make wishes', 'Wishes on real stars do not work', 'Wishing is special no matter what the light is made of'], correctIndex: 3,
+          hint: 'Think about why ponies make wishes in the first place.' },
+      ],
+    },
+    {
+      title: 'Two Ways to Fix a Bridge',
+      passage: `The storm that knocked down the bridge near Moonveil left a deep stream with no way across. Astralhoof and Nova Drift both wanted to help, but they had very different plans.
+
+Astralhoof wanted to rebuild the bridge exactly as it had been, in the same spot, using the old stone steps on each side. "Ponies know where it is," he said. "Changing it would confuse them."
+
+Nova wanted to build it farther upstream, where the banks were higher and the water was calmer. "The old spot floods every spring," she said. "That is why it fell."
+
+They argued for a whole afternoon. Then Astralhoof unrolled his map and looked at his notes. Next to the old bridge, he had written the word "flood" four times.
+
+He rolled the map back up. "Upstream it is," he said. "And I'll draw the new path on every map in the temple."`,
+      questions: [
+        { type: 'inference', question: 'Why did Astralhoof change his mind?',
+          choices: ['His map showed the old spot often flooded', 'Nova shouted louder than he did', 'He was too tired to argue', 'The old stone steps had washed away'], correctIndex: 0,
+          hint: 'Think about what he read in his notes.' },
+        { type: 'inference', question: 'Why will he draw the new path on every map?',
+          choices: ['He likes to draw', 'Nova asked him to', 'So ponies are not confused by the change', 'The old maps were wrong about the stars'], correctIndex: 2,
+          hint: 'Think about his first worry about moving the bridge.' },
+      ],
+    },
+    {
+      title: 'The Lantern Walk',
+      passage: `At the end of their first year, the young trainers of the Spirit zone take part in an old tradition called the Lantern Walk.
+
+Each trainer is given an unlit lantern at the edge of Whisperwood. They must walk through the forest to Starfall Temple on a night with no moon. The journey takes about two hours. They are not allowed to light their lanterns until they reach the temple steps.
+
+Many trainers are nervous at first. The forest is dark, and every sound seems loud. But along the way, they learn to trust their other senses. They feel the path under their hooves, listen for the stream and smell the pine trees that grow near the temple.
+
+When they finally arrive, Lumina lights each lantern with her own. Many trainers say it is the proudest moment of their first year.`,
+      questions: [
+        { type: 'inference', question: 'Why are trainers not allowed to light their lanterns on the way?',
+          choices: ['The lanterns are broken', 'Fire is not allowed in the forest', 'Lumina wants to light them all at once', 'So they learn to trust their other senses'], correctIndex: 3,
+          hint: 'Think about what they learn during the walk.' },
+        { type: 'inference', question: 'Why is reaching the temple a proud moment?',
+          choices: ['They did something hard and scary', 'They get a new companion there', 'They win a prize for being fastest', 'They can finally go to sleep'], correctIndex: 0,
+          hint: 'Think about how they felt at the start of the walk.' },
+      ],
+    },
+  ],
 }
