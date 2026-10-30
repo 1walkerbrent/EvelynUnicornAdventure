@@ -263,7 +263,269 @@ By midnight, most of the fireflies have settled back into the grass. The hollow 
       ],
     },
   ],
-  2: [],
+  // ── Zone 2 (Earth): Pebblebrook, Mossgrove, Granite Hall ───────────────────
+  2: [
+    {
+      title: 'Carving Granite Hall',
+      passage: `Granite Hall, the home of Warden Bramblewood, is carved deep inside a mountain. Many visitors wonder how the Earth ponies built such an enormous place out of solid rock.
+
+The answer is that they did not build it quickly. Long ago, a small group of Earth ponies began carving a single room. They used stone tools and chipped away just a little rock each day. When they grew old, their children took over the work. Then their grandchildren did.
+
+It took more than one hundred years to finish the great hall. The Earth ponies who carved it were very patient. They knew they might never see the hall completed, but they kept working anyway.
+
+Today, a carving near the entrance shows the faces of the first ponies who started the work.`,
+      questions: [
+        { type: 'wordMeaning', question: 'In this passage, what does "patient" mean?',
+          choices: ['Calm about waiting', 'Very strong', 'Quick and clever', 'Sick and needing rest'], correctIndex: 0,
+          hint: 'They kept working for many years without seeing it finished.' },
+        { type: 'recall', question: 'How long did it take to finish the great hall?',
+          choices: ['About ten years', 'Just one long, cold winter in the mountain', 'More than one hundred years', 'Fifty years'], correctIndex: 2,
+          hint: 'Look in the third paragraph.' },
+      ],
+    },
+    {
+      title: 'Acorn\'s Rock Talk',
+      passage: `Acorn Sprout was asked to give a talk about rocks at the Pebblebrook school. She brought three rocks from her collection and set them on the table.
+
+"Rocks are made in different ways," she began. She held up a gray, sparkly rock. "This one formed deep underground, where it was very hot. Melted rock cooled slowly and hardened."
+
+Next she held up a tan rock with thin stripes. "This one formed from tiny bits of sand and mud. They settled in layers at the bottom of a lake and pressed together over a long time. You can see the layers in the stripes."
+
+Finally, she held up a shiny, swirly rock. "This one started as a different rock. Heat and pressure changed it into something new."
+
+The young ponies passed the rocks around and asked a dozen questions.`,
+      questions: [
+        { type: 'recall', question: 'How did the striped rock form?',
+          choices: ['From melted rock that cooled', 'From layers of sand and mud', 'From heat changing another rock', 'From a crystal growing slowly'], correctIndex: 1,
+          hint: 'Read the third paragraph.' },
+        { type: 'recall', question: 'Where did Acorn give her talk?',
+          choices: ['In the great hall of Granite Hall', 'At the Pebblebrook school', 'At the creek', 'In Mossgrove'], correctIndex: 1,
+          hint: 'Look at the first sentence.' },
+      ],
+    },
+    {
+      title: 'The Hidden Helper',
+      passage: `One afternoon, Fern Whisper heard a small, frightened bleat deep in Mossgrove. She followed the sound and found a baby deer tangled in a thorny bush. Its mother was pacing nearby, too nervous to come close.
+
+Fern wanted to help, but she knew the mother deer might run away if she saw a pony. So Fern used her special talent. Her soft green coat was the perfect camouflage among the ferns. She crept forward slowly, and the mother deer never noticed her.
+
+Fern carefully pulled the thorny branches apart, one at a time. The fawn wiggled free and bounded straight to its mother.
+
+Fern stayed hidden until the two deer had trotted away together. Then she stood up, brushed the leaves from her mane, and walked home smiling.`,
+      questions: [
+        { type: 'wordMeaning', question: 'In this story, what does "camouflage" mean?',
+          choices: ['A loud warning call', 'A way of blending in', 'A thick, warm coat for winter', 'A kind of thorny bush'], correctIndex: 1,
+          hint: 'Her green coat let her move among the ferns without being noticed.' },
+        { type: 'recall', question: 'What was the baby deer tangled in?',
+          choices: ['A fallen tree', 'A tangle of vines by the stream', 'A thorny bush', 'A fence'], correctIndex: 2,
+          hint: 'Read the first paragraph.' },
+      ],
+    },
+    {
+      title: 'Boulderhoof\'s Secret Garden',
+      passage: `Everyone in Pebblebrook knows that Boulderhoof is the strongest pony around. He can push boulders, carry tree trunks and lift a full wagon with one shoulder. So most ponies were surprised to learn about his secret hobby.
+
+Behind his house, hidden by a tall hedge, Boulderhoof grows tiny mountain flowers. Their petals are thin and delicate, so fragile that a strong breeze can tear them. Boulderhoof waters them with a little cup, one drop at a time. He covers them with a cloth on windy days.
+
+When Daisy Dapple discovered the garden, she asked if she could paint it. Boulderhoof blushed. "They are just little flowers," he mumbled. But he let her come every morning, and the painting now hangs in the entrance of Granite Hall.`,
+      questions: [
+        { type: 'wordMeaning', question: 'In this story, what does "delicate" mean?',
+          choices: ['Easily damaged', 'Very bright', 'Huge and heavy', 'Sweet-smelling'], correctIndex: 0,
+          hint: 'A strong breeze can tear them.' },
+        { type: 'recall', question: 'How does Boulderhoof water his flowers?',
+          choices: ['With a big bucket', 'With a hose from the stream', 'He waits for the rain', 'With a little cup'], correctIndex: 3,
+          hint: 'Look in the second paragraph.' },
+      ],
+    },
+    {
+      title: 'The Mural',
+      passage: `Warden Bramblewood asked Daisy Dapple to paint a mural on the long wall beside the entrance to Granite Hall. A mural is a large painting made directly on a wall.
+
+Daisy spent a week just planning. She decided the mural would show all of the Earth zone. On the left, she would paint Pebblebrook and its clear stream. In the middle, the giant ferns of Mossgrove. On the right, the mountain with Granite Hall inside it.
+
+The painting took her the entire summer. She stood on a tall ladder for the high parts and lay on a blanket for the low ones. Clay Canter mixed her paints. Acorn Sprout brought her lunch every day.
+
+When it was done, Bramblewood stood in front of it for a long time without saying a word. Then he bowed to Daisy.`,
+      questions: [
+        { type: 'recall', question: 'What did Daisy paint on the right side of the mural?',
+          choices: ['The clear stream of Pebblebrook', 'The mountain with Granite Hall', 'The ferns of Mossgrove', 'Old Timber'], correctIndex: 1,
+          hint: 'Read the second paragraph.' },
+        { type: 'recall', question: 'Who mixed Daisy\'s paints?',
+          choices: ['Acorn Sprout', 'Warden Bramblewood', 'Fern Whisper', 'Clay Canter'], correctIndex: 3,
+          hint: 'Look in the third paragraph.' },
+      ],
+    },
+    {
+      title: 'How Clay Becomes a Pot',
+      passage: `A pot begins as a lump of wet clay dug from a riverbank. At that stage, it is soft and easy to shape, but it is also weak. If you filled a wet clay pot with water, it would turn back into mud.
+
+To make a pot strong, a potter like Clay Canter follows several steps. First, she shapes the clay. Next, she lets it dry slowly in the shade for about a week. If it dries too fast, it can crack.
+
+Then comes the most important step. Clay places the dry pot in a kiln, which is a special oven that gets much hotter than any kitchen fire. The heat changes the clay so it becomes hard as stone.
+
+Finally, Clay paints a glaze on the pot and heats it once more. The glaze makes it shiny and keeps water in.`,
+      questions: [
+        { type: 'recall', question: 'What can happen if the clay dries too fast?',
+          choices: ['It turns into mud', 'It changes color', 'It can crack', 'It gets too heavy'], correctIndex: 2,
+          hint: 'Read the second paragraph.' },
+        { type: 'wordMeaning', question: 'In this passage, what does "kiln" mean?',
+          choices: ['A tool for digging up clay', 'A shiny paint for pots', 'A very hot oven for hardening clay', 'A cool, shady place to let pots dry slowly'], correctIndex: 2,
+          hint: 'The passage explains the word right after it.' },
+      ],
+    },
+    {
+      title: 'All About Moss',
+      passage: `Moss covers almost everything in Mossgrove: the rocks, the logs, and even the roofs of the houses. It looks like a soft green carpet. But moss is a very unusual plant.
+
+Most plants have roots that pull water up from the ground. Moss does not have real roots. Instead, it has tiny threads that hold it in place. Moss drinks through its leaves. When rain falls, moss can absorb many times its own weight in water, the way a sponge does.
+
+This makes moss very useful. It keeps the forest floor damp during dry weeks, which helps other plants grow. Mossy Tussock uses dry moss to stuff pillows and line her winter blankets. She says nothing is softer or warmer.`,
+      questions: [
+        { type: 'wordMeaning', question: 'In this passage, what does "absorb" mean?',
+          choices: ['Push away', 'Soak up', 'Grow taller', 'Dry out quickly'], correctIndex: 1,
+          hint: 'Moss takes in water the way a sponge does.' },
+        { type: 'recall', question: 'How does moss drink?',
+          choices: ['Through long roots', 'Through its leaves', 'Through its tiny threads', 'It does not need water'], correctIndex: 1,
+          hint: 'Read the second paragraph carefully.' },
+      ],
+    },
+    {
+      title: 'The Earth Zone\'s Guardian',
+      passage: `Warden Bramblewood is the guardian of the Earth zone. He has protected Pebblebrook, Mossgrove and Granite Hall for many years.
+
+Bramblewood is known for being calm and steady, like a mountain. He rarely raises his voice. When young ponies argue, he listens to both sides before he says anything.
+
+Trainers who want to earn the Earth badge must challenge Bramblewood in a battle called the Trial. The Trial takes place in the great hall of Granite Hall. Bramblewood's ponies are strong and hard to knock down, so trainers must be well prepared.
+
+Win or lose, Bramblewood always shakes each trainer's hoof afterward. He gives them one piece of advice to help them grow stronger. Many trainers say his advice helped them more than the badge did.`,
+      questions: [
+        { type: 'recall', question: 'Where does the Earth Trial take place?',
+          choices: ['In the great hall of Granite Hall', 'Beside the clear stream in Pebblebrook', 'Under Old Timber', 'In the Proving Glade'], correctIndex: 0,
+          hint: 'Look in the third paragraph.' },
+        { type: 'recall', question: 'What does Bramblewood give every trainer after the Trial?',
+          choices: ['A badge', 'A piece of advice', 'A rock from the hall', 'A new companion'], correctIndex: 1,
+          hint: 'Find the words "Win or lose".' },
+      ],
+    },
+    {
+      title: 'The Spring Flood',
+      passage: `For three days in early spring, rain fell on Pebblebrook without stopping. The little stream grew wider and faster. On the third night, it overflowed. Water spilled over the banks and crept toward the houses.
+
+Boulderhoof woke everyone up. "We need to build a wall!" he called.
+
+The ponies worked through the night by lantern light. Boulderhoof rolled large stones into a line along the bank. Acorn Sprout and Clay Canter filled the gaps with smaller rocks and mud. Fern Whisper and Mossy Tussock stuffed thick moss into the cracks to keep the water from leaking through.
+
+By morning, the rain had stopped. The stream was still high, but the wall had held. Not a single house was flooded. The tired ponies ate a big breakfast together and then slept until noon.`,
+      questions: [
+        { type: 'wordMeaning', question: 'In this story, what does "overflowed" mean?',
+          choices: ['Dried up completely', 'Froze into ice', 'Flowed over its edges', 'Changed direction and ran uphill'], correctIndex: 2,
+          hint: 'Read the next sentence: water spilled over the banks.' },
+        { type: 'recall', question: 'What did Fern and Mossy use to fill the cracks?',
+          choices: ['Mud and sticks', 'Thick moss', 'Small rocks', 'Old blankets'], correctIndex: 1,
+          hint: 'Read the third paragraph.' },
+      ],
+    },
+    {
+      title: 'Forgotten Acorns',
+      passage: `Every autumn, the squirrels of Mossgrove get very busy. Old Timber and the other oak trees drop thousands of acorns, and the squirrels hurry to collect them.
+
+A squirrel does not keep all its acorns in one place. Instead, it buries them one by one in hundreds of little holes all over the forest. In winter, when food is hard to find, the squirrel digs them up and eats them.
+
+But squirrels do not remember every hiding spot. Many acorns stay buried all winter. When spring comes, some of those forgotten acorns sprout and grow into tiny oak trees.
+
+This means squirrels are accidentally planting new forests. The ponies of Mossgrove say that many of the tall oaks around them were planted by squirrels long ago.`,
+      questions: [
+        { type: 'recall', question: 'What happens to some forgotten acorns in spring?',
+          choices: ['They rot away', 'Birds eat them', 'They grow into oak trees', 'The ponies collect them'], correctIndex: 2,
+          hint: 'Read the third paragraph.' },
+        { type: 'recall', question: 'Where does a squirrel hide its acorns?',
+          choices: ['In one big pile', 'In many holes all over the forest', 'Inside the hollow trunk of Old Timber', 'In its nest'], correctIndex: 1,
+          hint: 'Look in the second paragraph.' },
+      ],
+    },
+    {
+      title: 'How Crystals Grow',
+      passage: `The glowing crystals in the walls of Granite Hall did not appear overnight. They grew there gradually, over thousands of years.
+
+Crystals form from water that has minerals in it. Minerals are tiny bits of rock that are too small to see. As the water drips slowly through cracks in the mountain, it leaves some minerals behind. Those bits stick together in neat, flat-sided shapes. Then more bits stick to them, and the crystal grows a tiny bit larger.
+
+A crystal might grow only as much as the thickness of a hair in a whole year. That is why the biggest crystals in Granite Hall are so precious. The Earth ponies never break them off the walls. They want the crystals to keep growing for the ponies who will live there in the future.`,
+      questions: [
+        { type: 'wordMeaning', question: 'In this passage, what does "gradually" mean?',
+          choices: ['Slowly, a little at a time', 'All at once', 'By accident', 'Very loudly'], correctIndex: 0,
+          hint: 'They grew over thousands of years.' },
+        { type: 'recall', question: 'Why do the Earth ponies leave the crystals on the walls?',
+          choices: ['The crystals are too heavy', 'Bramblewood would be angry', 'They want them to keep growing', 'Broken crystals stop glowing right away'], correctIndex: 2,
+          hint: 'Read the last sentence.' },
+      ],
+    },
+    {
+      title: 'The Tunnel Mystery',
+      passage: `Acorn Sprout's garden had a problem. Every morning, she found new piles of dirt between her carrot rows. Some of her carrots had even disappeared, pulled down into the ground.
+
+Acorn decided to solve the mystery. That night, she hid behind her fence with a lantern and waited. For hours, nothing happened. Then, just before dawn, a little mound of dirt began to rise. Out popped a velvety gray nose with tiny pink whiskers. It was a mole!
+
+The mole had been digging tunnels right under her garden. Acorn did not want to hurt it. Instead, she planted a row of extra carrots at the far end of the garden, away from her own rows. The mole seemed to like that idea. After that, her own carrots were left alone.`,
+      questions: [
+        { type: 'recall', question: 'When did the mole appear?',
+          choices: ['Right at sunset', 'At noon', 'Just before dawn', 'In the middle of the afternoon'], correctIndex: 2,
+          hint: 'Read the second paragraph.' },
+        { type: 'recall', question: 'How did Acorn solve her problem?',
+          choices: ['She chased the mole away', 'She built a fence underground', 'She asked Boulderhoof for help', 'She planted extra carrots for the mole'], correctIndex: 3,
+          hint: 'Read the last paragraph.' },
+      ],
+    },
+    {
+      title: 'Market Day',
+      passage: `On the first day of every month, Pebblebrook has a market. Ponies from all over the Earth zone come to buy and sell things in the village square.
+
+Clay Canter and Daisy Dapple share a table. Clay sells bowls, cups and vases. Daisy sells her painted stones and small statues. Since they started selling together, both of them have sold more than ever. Ponies who come to buy a bowl often stop to admire a painted stone. Ponies who come for a stone often notice a pretty vase.
+
+At the end of each market day, they count their coins and split the cost of renting the table. Then they treat themselves to a slice of berry pie from the bakery stall. Clay always picks blueberry. Daisy always picks raspberry.`,
+      questions: [
+        { type: 'recall', question: 'When is market day in Pebblebrook?',
+          choices: ['Every Saturday', 'Only on the hottest days of summer', 'Once a year', 'The first day of every month'], correctIndex: 3,
+          hint: 'Look at the first sentence.' },
+        { type: 'recall', question: 'Which pie does Daisy always pick?',
+          choices: ['Apple', 'Blueberry', 'Cherry', 'Raspberry'], correctIndex: 3,
+          hint: 'Read the end of the passage carefully.' },
+      ],
+    },
+    {
+      title: 'The Echo Game',
+      passage: `Some of the halls inside Granite Hall have high, curved ceilings and smooth stone walls. When you shout in one of these halls, your voice bounces off the walls and comes back to you. This returning sound is called an echo.
+
+Mossy Tussock invented a game using echoes. One pony stands in the middle of the hall and calls out a word. The others listen carefully to the echo and try to guess how many times it repeats before it fades away.
+
+In the smallest hall, a word echoes about three times. In the Great Hall, where the Trial is held, it can echo as many as nine times. Mossy's record guess is perfect: nine out of nine. She says the trick is to close your eyes and count very slowly.`,
+      questions: [
+        { type: 'wordMeaning', question: 'In this passage, what does "echo" mean?',
+          choices: ['A loud scream', 'A sound that bounces back', 'A kind of stone wall', 'A guessing game'], correctIndex: 1,
+          hint: 'The passage explains the word in the first paragraph.' },
+        { type: 'recall', question: 'How many times can a word echo in the Great Hall?',
+          choices: ['Three times', 'Five times', 'Twelve times', 'Nine times'], correctIndex: 3,
+          hint: 'Read the last paragraph.' },
+      ],
+    },
+    {
+      title: 'Feeling the Ground',
+      passage: `Earth ponies have a special ability that surprises visitors. They can feel tiny vibrations in the ground through their hooves.
+
+A vibration is a very small, fast shaking. When something moves nearby, it sends vibrations through the earth. Most ponies cannot notice them. But an Earth pony standing still can tell when a rabbit is hopping across a field or when a wagon is rolling down a road far away.
+
+This ability helps keep the Earth zone safe. Before a rockslide, the mountain rumbles very faintly. Earth ponies can feel it long before anyone can hear it. Then they warn everyone to move away from the cliffs.
+
+Warden Bramblewood is said to have the most sensitive hooves of all. He can feel footsteps all the way across Pebblebrook.`,
+      questions: [
+        { type: 'recall', question: 'How do Earth ponies help before a rockslide?',
+          choices: ['They push the rocks away', 'They feel the rumble and warn everyone', 'They build a wall', 'They hide in Granite Hall'], correctIndex: 1,
+          hint: 'Read the third paragraph.' },
+        { type: 'wordMeaning', question: 'In this passage, what does "vibration" mean?',
+          choices: ['A very small, fast shaking', 'A loud crashing sound', 'A large crack in the ground', 'A strong gust of wind'], correctIndex: 0,
+          hint: 'The passage explains it at the start of the second paragraph.' },
+      ],
+    },
+  ],
   3: [],
   4: [],
   5: [],
