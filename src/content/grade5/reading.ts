@@ -1574,5 +1574,330 @@ Cloud Skip clapped louder than anyone. Afterward, she offered to teach Moss how 
       ],
     },
   ],
-  6: [],
+  // ── Zone 6 (Spirit): Whisperwood, Moonveil, Starfall Temple ───────────────
+  6: [
+    {
+      title: 'The Notebook and the Trail',
+      passage: `Dusk Twinkle and Nova Drift both love the night sky, but they study it in completely different ways. Dusk spends each evening on the roof of Starfall Temple with a notebook, recording the exact position of every star he can see. He has filled forty notebooks, and he can tell you where any star stood on any night for the last ten years.
+
+Nova rarely writes anything down. Instead, she flies through the dark, following whichever star catches her eye, and returns at dawn full of stories about what she discovered: a hidden waterfall, a meadow of glowing moss, a cave that hums when the wind blows through it.
+
+For years, each pony believed the other was wasting time. Dusk thought Nova's adventures were careless. Nova thought Dusk's notebooks were dull.
+
+Then, one cloudy autumn, a young pony became lost in Whisperwood. Without stars to guide her, no one knew which way to search. Dusk opened his notebooks and worked out exactly where the brightest star would rise behind the clouds. Nova remembered a hidden trail that ran in that direction. Together, they found the young pony before midnight.
+
+After that night, Dusk began taking short flights with Nova, and Nova started keeping a small notebook of her own. Neither has called the other careless or dull since.`,
+      questions: [
+        { type: 'theme', question: 'Which lesson does this story teach best?',
+          choices: ['Writing things down is always better than exploring', 'Different ways of thinking can work together', 'Never go into the woods at night', 'Cloudy nights are best for stargazing'], correctIndex: 1,
+          hint: 'Think about how the young pony was found.' },
+        { type: 'compare', question: 'How is Dusk\'s way of studying the sky different from Nova\'s?',
+          choices: ['Dusk flies far, while Nova stays on the temple roof every night', 'Both keep detailed notebooks', 'Dusk studies clouds, while Nova studies the moon', 'Dusk records stars; Nova explores'], correctIndex: 3,
+          hint: 'Compare the first and second paragraphs.' },
+      ],
+    },
+    {
+      title: 'The Quiet Rule',
+      passage: `Starfall Temple has only one rule for visitors: speak softly. Many first-time visitors find it strange. Some find it annoying. A young trainer named Ash was one of them.
+
+Ash had come to the temple to prepare for the Spirit Trial. He was talkative and energetic, and he liked to think out loud. On his first evening, he laughed loudly in the library and was gently asked to lower his voice. On his second evening, he argued with a friend in the hallway and was asked again.
+
+"Why does it matter?" he asked Starwarden Lumina. "It's just noise."
+
+Lumina did not answer directly. Instead, she invited him to sit with her on the temple roof. For an hour, neither of them spoke. At first, Ash fidgeted. Then, slowly, he began to notice things: the creak of branches in Whisperwood, an owl calling far away, his own breathing growing slower. He realized he had been planning his battle strategy in his head, and for the first time, his thoughts felt clear instead of crowded.
+
+When the hour ended, Lumina simply stood and went inside.
+
+Ash stayed on the roof until the stars came out. The next morning, he walked through the library without saying a word. A week later, he won the Spirit Trial.`,
+      questions: [
+        { type: 'theme', question: 'What is a theme of this story?',
+          choices: ['Quiet can help us think more clearly', 'Loud ponies always lose their battles at the temple', 'Rules should never be questioned', 'Libraries are boring places'], correctIndex: 0,
+          hint: 'Think about what Ash discovered on the roof.' },
+        { type: 'inference', question: 'Why did Lumina not answer Ash\'s question directly?',
+          choices: ['She did not know the answer to his question', 'She was angry at him', 'She wanted him to find out himself', 'She did not hear him'], correctIndex: 2,
+          hint: 'Think about what happened on the roof.' },
+      ],
+    },
+    {
+      title: 'The Wish She Did Not Grant',
+      passage: `Wishing Star grants one small wish each week, always for someone other than the pony who asks. Most weeks, choosing which wish to grant is easy. One winter, it was the hardest decision she had ever made.
+
+A young pony named Bryn came to her in tears. Bryn's best friend, Hollis, was moving far away to the Water zone. "Please," Bryn begged, "wish for Hollis's family to stay in Moonveil."
+
+The wish was for someone else, so it followed the rule. But Wishing Star hesitated. She had heard that Hollis's mother had been offered an important job at the Coral Sanctum, one she had dreamed about for years. Granting the wish would keep the friends together, but it would take that dream away.
+
+Wishing Star thought about it for three nights. Then she visited Bryn and said, gently, that she could not grant this wish. Bryn was heartbroken.
+
+But the following week, Wishing Star granted a different wish, one Bryn had never asked for. Every evening at sunset, a small owl began arriving at Bryn's window with a letter from Hollis. And every morning, it flew back with Bryn's reply.
+
+Bryn and Hollis are grown now. They still write to each other every week.`,
+      questions: [
+        { type: 'inference', question: 'Why did Wishing Star refuse Bryn\'s wish?',
+          choices: ['The wish was for Bryn herself', 'She did not like Hollis\'s family', 'She had used all her wishes', 'It would take away the mother\'s dream'], correctIndex: 3,
+          hint: 'Think about what she had heard about the new job.' },
+        { type: 'theme', question: 'What is a theme of this passage?',
+          choices: ['There is often more than one way to help', 'Friends always have to live close together to stay friends', 'Wishes never come true', 'Moving away is always a bad idea'], correctIndex: 0,
+          hint: 'Think about the second wish Wishing Star granted.' },
+      ],
+    },
+    {
+      title: 'Before She Was Champion',
+      passage: `Today, Vesper is the Grand Champion, the strongest trainer in the realm. Young trainers speak her name with awe. But very few know how her adventure actually began.
+
+Vesper grew up in Brindlewood Home, like most trainers. She chose Stella Dream's younger cousin as her companion and set off for the Earth zone full of confidence. She lost her first Trial against Warden Bramblewood. She lost her second too. After her third loss, she nearly gave up and went home.
+
+Instead, she stayed in Pebblebrook for a month. She helped Earth ponies repair the stream bank, carried stones for Boulderhoof and listened to every story Bramblewood told. She learned that her companion grew stronger not just from battles but from rest, good food and encouragement. When she finally won the Earth badge, it was by a single move.
+
+The rest of her journey followed the same pattern. She lost to Nerida twice, to Cinda once and to Lumina three times. Every loss taught her something new.
+
+When asked what made her a champion, Vesper does not talk about her victories. She talks about her losses. "Every Guardian beat me at least once," she says. "Each of them taught me something I could not have learned by winning."`,
+      questions: [
+        { type: 'purpose', question: 'Why did the author write about Vesper\'s early losses?',
+          choices: ['To prove that Vesper is not really as strong as she seems', 'To explain how Trials work', 'To show that losing helped her become champion', 'To describe Pebblebrook'], correctIndex: 2,
+          hint: 'Read the last paragraph.' },
+        { type: 'inference', question: 'Why did Vesper stay in Pebblebrook for a month?',
+          choices: ['She was too tired to travel any farther on her journey', 'She wanted to learn from the Earth ponies', 'She had lost her companion', 'Bramblewood told her to leave'], correctIndex: 1,
+          hint: 'Think about what she did during that month.' },
+      ],
+    },
+    {
+      title: 'The Night the Moon Disappeared',
+      passage: `Every few years, something strange happens in the night sky over Moonveil. The full moon slowly darkens, turning a deep reddish copper, as if it had been dipped in rust. For about an hour, it nearly disappears. Then, just as slowly, it brightens again. This event is called a lunar eclipse.
+
+An eclipse happens when our world passes directly between the sun and the moon. Normally, sunlight shines on the moon and bounces back to us, which is why the moon glows. During an eclipse, our world blocks most of that sunlight, casting a giant shadow across the moon's surface. The moon does not vanish completely, because a little sunlight bends around the edges of our world and reaches it. That bent light is reddish, the same color as a sunset, which is why the moon turns copper.
+
+Long ago, some ponies feared eclipses. They believed the moon was being swallowed. Today, the ponies of Moonveil know better, and an eclipse is one of their favorite nights. Families gather on the hillsides with blankets and warm drinks to watch.
+
+Moon Glimmer always tries to catch a moonbeam during an eclipse. The jars she fills on those nights glow a soft red instead of silver. She has only three of them, and she keeps them on her highest shelf.`,
+      questions: [
+        { type: 'purpose', question: 'Why does the author explain that ponies once feared eclipses?',
+          choices: ['To make readers afraid of the moon on dark nights', 'To show how understanding changed their feelings', 'To explain what causes sunsets', 'To describe Moon Glimmer\'s jars'], correctIndex: 1,
+          hint: 'Compare how ponies felt long ago and today.' },
+        { type: 'inference', question: 'Why does Moon Glimmer keep the red jars on her highest shelf?',
+          choices: ['They are too heavy to keep anywhere lower', 'They are broken', 'They glow too brightly', 'They are rare and special to her'], correctIndex: 3,
+          hint: 'Think about how often eclipses happen and how many jars she has.' },
+      ],
+    },
+    {
+      title: 'Hazel\'s Own Map',
+      passage: `When Hazel first arrived in Whisperwood, she got lost every single day. Astralhoof noticed and quietly made her a map, with the path to Starfall Temple drawn in bright red. After that, she was never late again.
+
+A year later, Hazel knew the forest well. She no longer needed Astralhoof's map. But she kept it pinned above her bed, and she began to notice things about the forest that the map did not show: a shortcut across a fallen log, a spring that only flowed in early summer, a patch of mushrooms that glowed faintly blue.
+
+One evening, she spread a fresh sheet of paper on her desk and began drawing a map of her own. It took her all winter. She marked every path, every stream and every landmark she had discovered. In the corners, like Astralhoof, she added small notes.
+
+In spring, a new pony arrived in Whisperwood. His name was Reed, and on his first morning he took a wrong turn and arrived at his lesson an hour late.
+
+That night, Hazel rolled up her map, tied it with a ribbon and left it outside Reed's door. She did not sign it.
+
+The next morning, Astralhoof saw Reed walking confidently toward the temple, holding a map he did not recognize. He looked at the handwriting, then smiled.`,
+      questions: [
+        { type: 'inference', question: 'Why did Astralhoof smile at the end?',
+          choices: ['He realized Hazel had passed on his kindness', 'He was happy Reed had found his map', 'He thought the map was funny', 'He knew Reed would get lost'], correctIndex: 0,
+          hint: 'Think about whose handwriting he recognized.' },
+        { type: 'theme', question: 'Which theme fits this story best?',
+          choices: ['Maps are the only way to learn a forest', 'New ponies should never be late', 'A kindness can be passed on to others', 'It is always best to sign your gifts'], correctIndex: 2,
+          hint: 'Compare the beginning and the end of the story.' },
+      ],
+    },
+    {
+      title: 'The Life of a Star',
+      passage: `Star Sparkle once sang to an old, dim star above Starfall Temple until it glowed bright again. Dusk Twinkle has explained to her, kindly, that her singing probably did not cause it. But he has also told her something even more amazing: stars have lives, just as living things do.
+
+A star is born inside a huge cloud of gas and dust floating in space. Over a very long time, part of the cloud pulls together and grows hotter and hotter, until it begins to shine. That is a new star.
+
+For most of its life, a star burns steadily, giving off light and heat. Our own sun is a star in the middle of its life. This stage can last for billions of years.
+
+When a star begins to run out of fuel, it changes. Some stars swell up into enormous red giants. Others flicker and brighten unexpectedly before fading. Dusk believes the old star Star Sparkle sang to was going through one of these changes. Its sudden brightness was a sign that it was nearing the end of its long life. Even so, it might shine for a long time yet.
+
+Star Sparkle was quiet when she heard this. Then she said she would keep singing to it anyway. "It has been shining for longer than anyone can remember," she said. "It deserves someone to keep it company."`,
+      questions: [
+        { type: 'purpose', question: 'Why does the author begin with Star Sparkle\'s singing?',
+          choices: ['To prove singing makes stars bright', 'To describe Starfall Temple', 'To show that Dusk is unkind', 'To connect the science to a story readers know'], correctIndex: 3,
+          hint: 'Think about how the first paragraph leads into the rest.' },
+        { type: 'inference', question: 'What does Star Sparkle\'s decision show about her?',
+          choices: ['She is caring and loyal', 'She does not believe what Dusk told her about stars', 'She wants to become a scientist', 'She is afraid of the dark'], correctIndex: 0,
+          hint: 'Read what she says at the end.' },
+      ],
+    },
+    {
+      title: 'When the Owls Stopped Coming',
+      passage: `For generations, the owls of Whisperwood have carried messages for the ponies of the Spirit zone. A pony leaves a scroll on the windowsill at night, along with a small treat, and by morning the message has been delivered.
+
+Last autumn, the deliveries stopped. Scrolls sat on windowsills for days. Ponies grew worried. Had the owls left the forest? Were they sick?
+
+Juniper decided to find out. She stayed awake for three nights, watching from her window. On the third night, an owl landed on her sill, looked at her scroll and then flew away without taking it.
+
+Juniper realized what was missing. Beside her scroll, there was no treat. She checked her neighbors' windowsills. None of them had treats either. Over the summer, the ponies had grown busy and forgetful, and one by one, they had stopped leaving seeds and dried fruit for the owls.
+
+The next evening, Juniper went from house to house, explaining what she had seen. It took her the whole evening. That night, every windowsill in Moonveil held a scroll and a small bowl of seeds.
+
+By morning, every message had been delivered. Some ponies even found a single feather left beside their empty bowls, as if the owls were saying thank you in return.`,
+      questions: [
+        { type: 'theme', question: 'What is a theme of this story?',
+          choices: ['Owls are smarter than ponies in every way that matters', 'Messages should be sent by ponies', 'Showing thanks keeps good relationships strong', 'Staying awake is dangerous'], correctIndex: 2,
+          hint: 'Think about why the owls stopped and then started again.' },
+        { type: 'inference', question: 'What did the feathers left beside the bowls most likely mean?',
+          choices: ['The owls were sick and losing their feathers', 'The owls were thanking the ponies', 'The owls wanted more food', 'The owls were leaving forever'], correctIndex: 1,
+          hint: 'Read the last sentence.' },
+      ],
+    },
+    {
+      title: 'Juniper\'s Comet',
+      passage: `Ever since she borrowed Dusk Twinkle's notebook about the great comet, Juniper had dreamed of seeing one herself. A comet is a ball of ice and dust that travels around the sun, growing a long, glowing tail when it passes close. Dusk's notebook said the great comet would not return for another seventy years.
+
+So Juniper began searching the sky for a new one. Every night, she sat beside Dusk on the temple roof, scanning the darkness with a small telescope. She compared what she saw to Dusk's star charts, looking for anything that did not belong.
+
+For eight months, she found nothing. Dusk told her that most astronomers search for years without success. Juniper kept looking anyway. Her friends teased her for staying up so late.
+
+Then, one cold night in early spring, she noticed a faint, fuzzy smudge near the edge of a constellation. It was not on any chart. The next night, it had moved, just slightly.
+
+Juniper's hooves shook as she called Dusk over. He looked through the telescope for a long time. Then he opened a brand-new notebook, wrote the date at the top and handed her the pen.
+
+"It is your discovery," he said. "You should be the one to write it down."
+
+The comet now bears her name.`,
+      questions: [
+        { type: 'inference', question: 'Why did Dusk hand Juniper the pen?',
+          choices: ['His hooves were much too cold to write anything that night', 'He wanted her to have credit for the discovery', 'He did not believe her', 'He was tired of writing'], correctIndex: 1,
+          hint: 'Read what Dusk says.' },
+        { type: 'theme', question: 'Which theme fits this story best?',
+          choices: ['Only experts can find comets', 'Telescopes are dangerous', 'Borrowing things without asking is fine if you return them', 'Patience and persistence can lead to discovery'], correctIndex: 3,
+          hint: 'Think about how long Juniper searched.' },
+      ],
+    },
+    {
+      title: 'The Trail That Did Not Appear',
+      passage: `Every pony in the Spirit zone knows that Nova's Trail appears when someone truly needs help. So when a young pony named Linden became lost in Whisperwood during a storm, she waited for the trail to appear.
+
+She waited for an hour. Rain poured through the leaves. Thunder rolled overhead. No glowing trail appeared.
+
+Linden felt panic rising in her chest. Then she remembered something her grandmother had told her: "When you are lost, stop. Breathe. Then use what you know."
+
+So Linden stopped. She breathed. Then she thought about what she knew. She knew that moss grows thickest on the north side of trees in Whisperwood. She knew that Starfall Temple was north of her home. She knew that the stream near the temple flowed downhill, toward Moonveil.
+
+Linden felt the trees until she found the thick moss. She walked north. When she heard rushing water, she followed it. Within an hour, the lights of Starfall Temple shone through the rain. She was cold and soaked, but safe.
+
+Later, she told Nova Drift that the trail had never come. Nova thought about this for a moment.
+
+"Maybe it did not need to," Nova said. "You already had everything you needed to find your way."`,
+      questions: [
+        { type: 'theme', question: 'What is a theme of this story?',
+          choices: ['Sometimes the help you need is within you', 'Magic trails always appear for ponies who wait long enough', 'Storms are too dangerous to walk in', 'Grandparents give the best gifts'], correctIndex: 0,
+          hint: 'Think about what Nova says at the end.' },
+        { type: 'inference', question: 'How did Linden find her way to the temple?',
+          choices: ['The trail appeared after all', 'Nova came to find her', 'She used what she knew about the forest', 'She followed the thunder'], correctIndex: 2,
+          hint: 'Read the fourth and fifth paragraphs.' },
+      ],
+    },
+    {
+      title: 'The Bell of Starfall Temple',
+      passage: `High in the tower of Starfall Temple hangs a bronze bell. It is rung only once a year, at midnight on the longest night of winter. Its deep, slow tone can be heard across the entire Spirit zone.
+
+The bell has a history that most visitors never learn. More than two hundred years ago, the Spirit zone suffered a long, dark winter. Storms hid the stars for weeks, and travelers lost in Whisperwood could not find their way to shelter. The guardian of that time asked the smiths of the Magma Forge to make a bell loud enough to guide travelers home.
+
+The Fire ponies worked for a whole season to cast it. When it was finished, Earth ponies carried it up Cinderpath and across the hills. Air ponies flew it the last part of the way, lifting it to the top of the tower with ropes. Water ponies polished it with sand from Saltspray Cove until it shone.
+
+Every night that winter, the bell was rung. Its sound was said to carry for miles. Travelers followed its sound through the dark and reached the temple safely.
+
+Today, the bell rings only once a year, as a reminder. Lumina says it reminds the Spirit zone of two things: how dark it once was, and how every element came together to bring light.`,
+      questions: [
+        { type: 'purpose', question: 'Why does the author describe how each element helped?',
+          choices: ['To explain how bronze is made', 'To list the five zones', 'To describe Saltspray Cove', 'To show the bell was a shared effort'], correctIndex: 3,
+          hint: 'Read Lumina\'s words at the end.' },
+        { type: 'compare', question: 'How is the way the bell is rung today different from that first winter?',
+          choices: ['Today it is rung once a year as a reminder', 'Today it is rung every night of the winter', 'Today it is rung by the Fire ponies', 'Today it is never rung'], correctIndex: 0,
+          hint: 'Compare the fourth and fifth paragraphs.' },
+      ],
+    },
+    {
+      title: 'Two Kinds of Light',
+      passage: `Moon Glimmer and Star Sparkle both bring light to the darkness of the Spirit zone, but their light is very different, and so are the ways they use it.
+
+Moon Glimmer catches moonbeams in glass jars. Her light is silver, soft and steady. It never flickers and never gets hot. Because it is so calm and even, she uses it in places where ponies need to focus or rest: the temple library, the bedrooms of foals who are afraid of the dark and the healer's rooms. Her jars must be filled on clear nights, and the brightest ones only on full moons.
+
+Star Sparkle's light comes from her own horn. It is golden and twinkles like a distant star, flashing brighter and dimmer in a gentle rhythm. Her light is lively rather than calm. She uses it to guide travelers through Whisperwood, because the twinkling catches the eye from far away. She can make it on any night, even cloudy ones, but it lasts only as long as she is there.
+
+The two friends sometimes argue playfully about whose light is better. Most ponies in the Spirit zone think the question is silly. A sleeping foal needs steady light. A lost traveler needs light that can be seen from a distance.
+
+Both, they say, are exactly what someone needs.`,
+      questions: [
+        { type: 'compare', question: 'How is Star Sparkle\'s light different from Moon Glimmer\'s?',
+          choices: ['It is silver, steady and must be caught in jars', 'It only works on full moons', 'It twinkles and can be seen from far away', 'It gets very hot'], correctIndex: 2,
+          hint: 'Compare the second and third paragraphs.' },
+        { type: 'theme', question: 'Which theme fits this passage best?',
+          choices: ['Silver light is always better than gold light for reading', 'Different gifts are useful in different ways', 'Friends should never argue', 'Light is only needed at night'], correctIndex: 1,
+          hint: 'Think about what the ponies of the Spirit zone say.' },
+      ],
+    },
+    {
+      title: 'Owls and Bats of Whisperwood',
+      passage: `When the sun sets over Whisperwood, two kinds of flying hunters wake up: owls and bats. Both hunt in the dark, and both are expert flyers. But they find their food in completely different ways.
+
+Owls hunt mainly with their ears and eyes. An owl's face is shaped like a dish, which gathers sound and directs it to its ears. Its ears are placed at slightly different heights on its head, so it can tell exactly where a sound is coming from, even the rustle of a mouse beneath fallen leaves. Owls also have huge eyes that see well in dim light. And their feathers have soft, fringed edges, which make their flight almost silent.
+
+Bats hunt with sound of their own. As a bat flies, it makes high squeaks, too high for ponies to hear. These squeaks bounce off objects and return to the bat's ears as echoes. By listening to the echoes, the bat can tell where an insect is, how big it is and which way it is moving. This is called echolocation.
+
+Their diets differ too. Owls mostly catch mice and other small animals on the ground. Most bats in Whisperwood catch insects in the air. Some can catch hundreds of insects in an hour.
+
+The ponies of the Spirit zone welcome both. Owls keep mice out of the grain stores, and bats keep the moths from eating the moonflowers.`,
+      questions: [
+        { type: 'compare', question: 'How do bats find food differently from owls?',
+          choices: ['Bats use dish-shaped faces to gather sound from the leaves', 'Bats make sounds and listen for echoes', 'Bats have huge eyes for dim light', 'Bats hunt on the ground'], correctIndex: 1,
+          hint: 'Compare the second and third paragraphs.' },
+        { type: 'purpose', question: 'Why does the author include the last paragraph?',
+          choices: ['To explain echolocation', 'To describe moonflowers', 'To warn about mice', 'To show how both animals help the ponies'], correctIndex: 3,
+          hint: 'Think about what the last paragraph adds.' },
+      ],
+    },
+    {
+      title: 'The Champion\'s Challenge',
+      passage: `After a trainer has earned all five badges, one final challenge remains: a battle against Vesper, the Grand Champion. It takes place on the steps of Starfall Temple, under the open sky.
+
+Rowan had earned her five badges over two long years. She had lost many times along the way, to Bramblewood, to Nerida and three times to Lumina. Each loss had taught her something. Now she stood across from Vesper, her heart pounding.
+
+The battle was unlike any other. Vesper's ponies seemed to use every element's strengths at once: the steadiness of Earth, the timing of Water, the boldness of Fire, the movement of Air and the unpredictability of Spirit. Rowan realized that she could not win by using just one lesson. She would need all of them.
+
+So she did. She waited for the right moment, like Bramblewood had taught. She watched for the pause before an attack, like she had learned from Nerida. She stayed calm when the battle turned fierce, worked with the wind instead of against it and answered each move as it came.
+
+It was the longest battle of her life. When it ended, Rowan had won by a single move. Her companion stood proudly beside her.
+
+Vesper smiled and bowed. "You did not beat me with strength," she said. "You beat me with everything you learned on the way here."`,
+      questions: [
+        { type: 'theme', question: 'What is the theme of this story?',
+          choices: ['Every lesson along the way adds up', 'The strongest pony always wins in the end', 'Champions never lose', 'Battles should be short'], correctIndex: 0,
+          hint: 'Read what Vesper says at the end.' },
+        { type: 'inference', question: 'Why did Rowan realize she needed all her lessons?',
+          choices: ['She had forgotten some of them before the battle', 'Lumina told her so', 'Vesper\'s ponies used every element\'s strengths', 'The battle was very short'], correctIndex: 2,
+          hint: 'Read the third paragraph.' },
+      ],
+    },
+    {
+      title: 'A Letter from Starwarden Lumina',
+      passage: `To every trainer who has just begun,
+
+You are standing in Brindlewood Home with a new companion beside you, and the whole realm is waiting. I remember that feeling. Let me tell you a few things I wish I had known.
+
+You will lose. Every trainer does, even the Grand Champion. When you lose, do not hurry to try again. Stay a while. Talk to the ponies who live in that zone. Watch how they work and play. The lesson you need is usually there, if you are patient enough to find it.
+
+Take care of your companion. Rest when they are tired. Celebrate when they do well. A companion who feels cared for will give you their best when it matters most.
+
+Pay attention to small things. The wind in the Air zone, the tides in the Water zone, the quiet in my temple. Each place has something to teach you, but it will not shout.
+
+And finally, remember that the badges are not the treasure. The treasure is who you become while earning them.
+
+When you reach Starfall Temple at last, I will be waiting. I hope you will tell me what you learned along the way.
+
+With warm wishes for your journey,
+Lumina`,
+      questions: [
+        { type: 'purpose', question: 'What is Lumina\'s main purpose in this letter?',
+          choices: ['To warn trainers about her difficult Trial so they stay away', 'To describe Starfall Temple', 'To list the five badges', 'To share advice with new trainers'], correctIndex: 3,
+          hint: 'Look at who the letter is for and what it gives them.' },
+        { type: 'theme', question: 'What does Lumina mean by "the badges are not the treasure"?',
+          choices: ['Growing as a trainer matters more than the prize', 'Badges are not made of gold', 'Trainers should not bother collecting badges at all', 'Treasure is hidden in each zone'], correctIndex: 0,
+          hint: 'Read the sentence that comes right after it.' },
+      ],
+    },
+  ],
 }
