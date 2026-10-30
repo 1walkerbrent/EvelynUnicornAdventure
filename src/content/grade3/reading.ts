@@ -252,7 +252,265 @@ Today, Sky tried again. She flew three perfect loops and landed softly on her ho
       ],
     },
   ],
-  2: [],
+  // ── Zone 2 (Earth): Pebblebrook, Mossgrove, Granite Hall ───────────────────
+  2: [
+    {
+      title: 'Acorn\'s Rock Box',
+      passage: `Acorn Sprout collects rocks. She keeps them in a wooden box under her window in Pebblebrook. Right now she has twenty-three rocks. Her little brother is not allowed to touch them.
+
+Most of them came from the bottom of the stream. Some are smooth and gray. Some are rough and brown. One sparkles when the sun hits it.
+
+Her favorite rock has white stripes around it, like a tiny striped egg. She found it on her birthday, when the water was very low.
+
+Every night before bed, Acorn opens the box. She picks up each rock and says its name. Yes, every rock has a name!`,
+      questions: [
+        { type: 'recall', question: 'How many rocks does Acorn have right now?',
+          choices: ['Thirteen', 'Twenty', 'Twenty-three', 'Thirty-three'], correctIndex: 2,
+          hint: 'Look in the first paragraph.' },
+        { type: 'recall', question: 'When did Acorn find her striped rock?',
+          choices: ['On her birthday', 'During a big storm', 'On the first day of school', 'Last winter'], correctIndex: 0,
+          hint: 'Find the words "white stripes".' },
+      ],
+    },
+    {
+      title: 'Fern in the Ferns',
+      passage: `Fern Whisper lives in Mossgrove, where giant ferns grow taller than a pony. Her coat is the same soft green as their leaves.
+
+Fern talks to the ferns every morning. She tells them about the weather and asks how they slept. She says ferns are the friendliest plants in the forest. She thinks they like to listen.
+
+Because of her green coat, Fern is hard to see. Last week a rabbit hopped right past her without noticing. Even her friends sometimes walk by her. "Oh!" they say. "I thought you were a bush!"`,
+      questions: [
+        { type: 'recall', question: 'What color is Fern Whisper\'s coat?',
+          choices: ['Bright yellow', 'Soft green', 'Dark brown'], correctIndex: 1,
+          hint: 'Look at the end of the first paragraph.' },
+        { type: 'recall', question: 'What do Fern\'s friends sometimes think she is?',
+          choices: ['A rabbit', 'A big rock', 'A tree stump', 'A bush'], correctIndex: 3,
+          hint: 'Read what her friends say at the end.' },
+      ],
+    },
+    {
+      title: 'The Big Push',
+      passage: `One morning, a huge boulder rolled down the hill. It stopped right in the middle of the path to Granite Hall. No pony could get past. The ponies on the other side had to wait.
+
+Boulderhoof is the strongest pony in the Earth zone. He walked up to the boulder and looked at it. It was twice as big as he was.
+
+He put his shoulder against the rock and pushed. Nothing happened. He pushed again, harder. The boulder slowly began to roll.
+
+It took him all morning to move it off the path. When he finished, his friends brought him a big bucket of cool water.`,
+      questions: [
+        { type: 'recall', question: 'Where did the boulder stop?',
+          choices: ['In the stream', 'On the path to Granite Hall', 'In front of Boulderhoof\'s barn', 'At the bottom of the hill'], correctIndex: 1,
+          hint: 'Look at the first paragraph.' },
+        { type: 'recall', question: 'What did his friends bring Boulderhoof?',
+          choices: ['A basket of apples', 'A warm blanket', 'A bucket of water', 'A shiny medal'], correctIndex: 2,
+          hint: 'Read the very last sentence.' },
+      ],
+    },
+    {
+      title: 'Painted Stones',
+      passage: `Daisy Dapple is an artist. She does not paint on paper. She paints on flat stones that she finds in Pebblebrook. She keeps her paints in little clay pots.
+
+Daisy has painted flowers, frogs and even a rainbow. But her favorite thing to paint is butterflies. She paints their wings in orange, purple and blue. Each one takes her a whole afternoon.
+
+When a stone is dry, Daisy gives it away. She leaves them in places where ponies will find them, like on a fence post or beside a door. Finding a painted stone always makes a pony smile.`,
+      questions: [
+        { type: 'recall', question: 'What does Daisy paint on?',
+          choices: ['Paper', 'Pieces of tree bark', 'Flat stones', 'Old boards'], correctIndex: 2,
+          hint: 'The first paragraph tells you.' },
+        { type: 'recall', question: 'What is Daisy\'s favorite thing to paint?',
+          choices: ['Butterflies', 'Rainbows', 'Green frogs', 'Flowers'], correctIndex: 0,
+          hint: 'Find the word "favorite".' },
+      ],
+    },
+    {
+      title: 'The Hardest Thing to Make',
+      passage: `Clay Canter makes pots in a little shop near Granite Hall. She digs wet clay from the riverbank and shapes it with her hooves.
+
+Bowls are easy for Clay. Plates are easy too. But cups are very hard to make. The tricky part is the handle. If it is too thin, it snaps off. If it is too thick, the cup tips over.
+
+Clay made six cups that broke before she got one right. Now that cup sits on the shelf above her door. She drinks her tea from it every morning. It is the best cup she has ever made.`,
+      questions: [
+        { type: 'recall', question: 'What is the hardest thing for Clay to make?',
+          choices: ['Bowls', 'Plates', 'Vases', 'Cups'], correctIndex: 3,
+          hint: 'Find the words "very hard".' },
+        { type: 'recall', question: 'Where does Clay get her clay?',
+          choices: ['From the riverbank', 'From Granite Hall', 'From a shop in town', 'From under her barn'], correctIndex: 0,
+          hint: 'Look at the second sentence.' },
+      ],
+    },
+    {
+      title: 'Hide-and-Seek Champion',
+      passage: `Mossy Tussock is the best hide-and-seek player in Mossgrove. Before every game, she rolls in a patch of thick moss. Then she lies very still on the forest floor. She looks just like a mossy log.
+
+Once, Mossy stayed hidden for two whole hours. Her friends looked under bushes and behind trees. They even looked in the stream.
+
+In the end, they only found her because she sneezed. A bit of moss had tickled her nose!
+
+"Next time," Mossy said, "I will use less moss."`,
+      questions: [
+        { type: 'recall', question: 'How long did Mossy stay hidden that time?',
+          choices: ['Ten minutes', 'Two whole hours', 'One whole afternoon'], correctIndex: 1,
+          hint: 'Find the word "Once".' },
+        { type: 'recall', question: 'How did her friends find Mossy?',
+          choices: ['She laughed out loud', 'She called their names', 'She sneezed', 'She rolled over'], correctIndex: 2,
+          hint: 'Read the third paragraph.' },
+      ],
+    },
+    {
+      title: 'The Glowing Walls',
+      passage: `Granite Hall is a great hall carved inside a mountain. It is the home of Warden Bramblewood, the guardian of the Earth zone.
+
+You might think a hall inside a mountain would be dark. But it is not. The walls are full of crystals. When a pony walks by, the crystals near them begin to glow. The light is soft and pale green.
+
+Because of the crystals, the ponies of Granite Hall never need torches or lanterns. They just walk, and the walls light the way.`,
+      questions: [
+        { type: 'recall', question: 'What makes the light inside Granite Hall?',
+          choices: ['Torches hung on the walls', 'Crystals in the walls', 'Windows in the roof', 'Glowing mushrooms'], correctIndex: 1,
+          hint: 'Read the second paragraph.' },
+        { type: 'recall', question: 'What color is the crystal light?',
+          choices: ['Pale green', 'Bright red', 'Deep blue', 'Gold'], correctIndex: 0,
+          hint: 'Find the word "light".' },
+      ],
+    },
+    {
+      title: 'Counting Ducks',
+      passage: `Every morning after breakfast, Acorn Sprout takes a walk around the pond in Pebblebrook. She likes to count the ducks.
+
+Most days there are eight ducks. They paddle in a line, one behind the other. The biggest duck always swims in front.
+
+This morning, Acorn counted nine. She counted again to be sure. Yes, nine! At the very end of the line was a tiny, fuzzy duckling. It was paddling as fast as it could to keep up.
+
+Acorn ran all the way home to tell her mother.`,
+      questions: [
+        { type: 'recall', question: 'How many ducks are there on most days?',
+          choices: ['Six', 'Seven', 'Nine', 'Eight'], correctIndex: 3,
+          hint: 'Look for "Most days".' },
+        { type: 'recall', question: 'Which duck always swims in front?',
+          choices: ['The tiny duckling', 'The biggest duck', 'The loudest duck'], correctIndex: 1,
+          hint: 'Read the second paragraph.' },
+      ],
+    },
+    {
+      title: 'Old Timber',
+      passage: `In the middle of Mossgrove stands the oldest tree in the forest. The ponies call it Old Timber.
+
+Nobody knows exactly how old it is. Old Timber is very wide. It takes five ponies standing nose to tail to reach all the way around it. Its bark is rough and covered in moss.
+
+High up in the branches, a family of owls lives in a hollow. During the day, they sleep. At night, they hoot softly to each other.
+
+The ponies of Mossgrove take good care of Old Timber. No pony is allowed to carve the bark or break the branches.`,
+      questions: [
+        { type: 'recall', question: 'How many ponies does it take to reach around Old Timber?',
+          choices: ['Three', 'Four', 'Five', 'Ten'], correctIndex: 2,
+          hint: 'Read the second paragraph.' },
+        { type: 'recall', question: 'Who lives high up in Old Timber?',
+          choices: ['A family of squirrels', 'A family of owls', 'A family of bats', 'A family of bees'], correctIndex: 1,
+          hint: 'Look in the third paragraph.' },
+      ],
+    },
+    {
+      title: 'Tuesdays at the Creek',
+      passage: `Daisy Dapple and Clay Canter are best friends. Every Tuesday, they meet at the creek behind Pebblebrook.
+
+Each friend has a job. Clay digs up wet clay from the bank. Daisy looks for flat stones in the shallow water. Then they sit on the grass and trade.
+
+Clay gives Daisy a lump of clay to make small statues. Daisy gives Clay a painted stone to put on her shop window.
+
+When the sun gets low, they wash their hooves in the creek. Then they walk home together. They are always back in time for supper.`,
+      questions: [
+        { type: 'recall', question: 'On which day do Daisy and Clay meet?',
+          choices: ['Monday', 'Tuesday', 'Friday', 'Wednesday'], correctIndex: 1,
+          hint: 'Look at the first paragraph.' },
+        { type: 'recall', question: 'What does Daisy give Clay?',
+          choices: ['A lump of clay', 'A small statue', 'A painted stone', 'A bunch of flowers'], correctIndex: 2,
+          hint: 'Read the third paragraph carefully.' },
+      ],
+    },
+    {
+      title: 'Boulderhoof Tiptoes',
+      passage: `Boulderhoof is so big and heavy that the ground shakes when he walks. Pebbles hop up and down. Cups rattle on the shelves. Everyone in Pebblebrook knows when he is coming.
+
+But there is one place where Boulderhoof walks very softly. That place is the nursery, where the baby ponies take their naps.
+
+When he goes past the nursery, Boulderhoof lifts each hoof slowly. He sets it down as gently as a feather. Not one baby wakes up. Then, once he is past, he goes back to his normal stomping.`,
+      questions: [
+        { type: 'recall', question: 'Where does Boulderhoof walk very softly?',
+          choices: ['Past the nursery', 'Inside Granite Hall', 'Across the bridge', 'Through the garden'], correctIndex: 0,
+          hint: 'Read the second paragraph.' },
+        { type: 'recall', question: 'What happens to the pebbles when he walks?',
+          choices: ['They roll away', 'They hop up and down', 'They sink into the mud'], correctIndex: 1,
+          hint: 'Look at the first paragraph.' },
+      ],
+    },
+    {
+      title: 'Feather Pillows',
+      passage: `Mossy Tussock picks up every feather she finds. She finds them in the grass, on the paths and under the trees of Mossgrove.
+
+When her basket is full, Mossy sews the feathers into soft pillows. Each pillow takes about one hundred feathers.
+
+She gave her very first pillow to Fern Whisper. Fern had been sleeping on a pile of leaves, and they crunched all night long.
+
+Now Fern sleeps very well. And Mossy is collecting feathers again. This time, the pillow will be for Acorn Sprout.`,
+      questions: [
+        { type: 'recall', question: 'Who got Mossy\'s very first pillow?',
+          choices: ['Acorn Sprout', 'Daisy Dapple', 'Boulderhoof', 'Fern Whisper'], correctIndex: 3,
+          hint: 'Find the words "very first".' },
+        { type: 'recall', question: 'How many feathers go in one pillow?',
+          choices: ['About ten', 'About fifty', 'About one hundred', 'About one thousand'], correctIndex: 2,
+          hint: 'Look in the second paragraph.' },
+      ],
+    },
+    {
+      title: 'The Wishing Stones',
+      passage: `Pebblebrook is named after the stream that runs through the village. The water is so clear that you can see all the way to the bottom.
+
+The bottom of the stream is covered in pebbles. There are red ones, white ones and blue ones. When the sun shines, they look like a carpet of jewels.
+
+The ponies of Pebblebrook have a custom. To make a wish, a pony stacks three pebbles on the bank. Each one goes on top of the last. If the stack does not fall over, the wish might come true.`,
+      questions: [
+        { type: 'recall', question: 'How many pebbles do you stack to make a wish?',
+          choices: ['One', 'Two', 'Three', 'Seven'], correctIndex: 2,
+          hint: 'Read the last paragraph.' },
+        { type: 'recall', question: 'What do the pebbles look like when the sun shines?',
+          choices: ['A carpet of jewels', 'A field of flowers', 'Drops of rain', 'Tiny stars'], correctIndex: 0,
+          hint: 'Look at the end of the second paragraph.' },
+      ],
+    },
+    {
+      title: 'The Warden\'s Lantern',
+      passage: `A green lantern hangs beside the great door of Granite Hall. It has been glowing since before any pony now living was born.
+
+Warden Bramblewood takes care of the lantern. Every morning, he climbs a little ladder and polishes the glass until it shines. He never lets the light go out.
+
+The lantern helps travelers. When a pony is lost in the hills at night, they look for the green glow. Then they know which way to go. Bramblewood says the lantern has guided hundreds of lost ponies home.`,
+      questions: [
+        { type: 'recall', question: 'What does Bramblewood do to the lantern every morning?',
+          choices: ['Fills it up with oil', 'Polishes the glass', 'Paints it green', 'Moves it inside'], correctIndex: 1,
+          hint: 'Read the second paragraph.' },
+        { type: 'recall', question: 'Who does the lantern help?',
+          choices: ['Baby ponies at naptime', 'Ponies digging for clay', 'Ponies lost in the hills', 'Owls hunting at night'], correctIndex: 2,
+          hint: 'Read the last paragraph.' },
+      ],
+    },
+    {
+      title: 'Rainy Day in Mossgrove',
+      passage: `Most ponies stay inside when it rains. Fern Whisper does not. Rainy days are her favorite days of all.
+
+When it rains in Mossgrove, the moss soaks up the water like a sponge. It gets thick, soft and bouncy. Fern loves to jump on it. Each jump makes a squishy sound.
+
+The ferns love the rain too. They stretch out their leaves and turn a brighter green. Little frogs come out to sing.
+
+When the rain stops, Fern shakes the water from her mane and goes home for a warm cup of tea.`,
+      questions: [
+        { type: 'recall', question: 'What does the moss do when it rains?',
+          choices: ['It dries out', 'It soaks up the water', 'It turns brown', 'It washes away'], correctIndex: 1,
+          hint: 'Read the second paragraph.' },
+        { type: 'recall', question: 'What does Fern do when the rain stops?',
+          choices: ['She sings with the frogs', 'She jumps on the moss', 'She has a warm cup of tea', 'She takes a nap'], correctIndex: 2,
+          hint: 'Read the last sentence.' },
+      ],
+    },
+  ],
   3: [],
   4: [],
   5: [],
