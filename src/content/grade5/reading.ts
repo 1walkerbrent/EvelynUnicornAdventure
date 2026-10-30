@@ -297,7 +297,316 @@ On the first day of the fair, more than a hundred ponies tried the maze. The fas
       ],
     },
   ],
-  2: [],
+  // ── Zone 2 (Earth): Pebblebrook, Mossgrove, Granite Hall ───────────────────
+  2: [
+    {
+      title: 'The Carvers of Granite Hall',
+      passage: `Granite Hall, the great hall inside the mountain where Warden Bramblewood lives, was not carved by a single group of ponies. It was carved over five generations, and each generation left its own mark.
+
+The first carvers, more than a century ago, had only simple stone tools. They worked slowly, chipping out one small room at a time. Their walls are rough and uneven, and their ceilings are low. Visitors can still see the marks of their tools in the stone.
+
+Their grandchildren discovered a better method. They learned that pouring water into a crack and letting it freeze overnight would split the rock open. This let them carve much larger rooms, including the Great Hall where the Trial is held today.
+
+The most recent carvers have focused on beauty rather than size. They polished the walls of the entrance until they shine and carved patterns of leaves and acorns around every doorway.
+
+The Earth ponies are proud that no generation tried to undo the work of the one before. Walking through Granite Hall today is like reading a history book written in stone. The oldest, roughest rooms lie at the very back, where the work first began.`,
+      questions: [
+        { type: 'wordMeaning', question: 'In this passage, what does "generations" mean?',
+          choices: ['Kinds of stone tools used for carving the rock', 'Family groups born around the same time', 'Rooms in a hall', 'Long winters'], correctIndex: 1,
+          hint: 'The first carvers were followed by their grandchildren.' },
+        { type: 'twoFact', question: 'What did the most recent carvers focus on?',
+          choices: ['Carving the largest rooms', 'Splitting rock with ice', 'Using simple stone tools', 'Making the hall beautiful'], correctIndex: 3,
+          hint: 'Each generation focused on something different.' },
+      ],
+    },
+    {
+      title: 'Three Kinds of Soil',
+      passage: `Every Earth pony learns early that not all dirt is the same. Gardeners in Pebblebrook talk about three main kinds of soil, and each one behaves differently.
+
+Sandy soil is made of large, gritty grains. If you squeeze a handful, it falls apart as soon as you open your hoof. Water drains through sandy soil very quickly, which means plants growing in it can dry out. Carrots and other root vegetables do well in it, because their roots can push through easily.
+
+Clay soil is the opposite. Its grains are so tiny and packed so tightly that it feels smooth and sticky when wet. Squeeze a handful, and it holds its shape like dough. Clay soil holds water for a long time, sometimes too long, so plant roots can rot. But it is rich in minerals, and Clay Canter digs it from the riverbank to make her pots.
+
+The best garden soil is called loam. Loam is a mix of sand, clay and bits of old leaves and plants. It holds enough water for plants to drink but lets the rest drain away. When squeezed, it forms a loose ball that crumbles when you poke it.
+
+Acorn Sprout spent two whole summers mixing sand and dead leaves into the clay of her garden. Now it is the best loam in Pebblebrook.`,
+      questions: [
+        { type: 'twoFact', question: 'Which soil holds water for a very long time?',
+          choices: ['Clay soil', 'Sandy soil', 'Loam', 'All three equally'], correctIndex: 0,
+          hint: 'The passage compares how each soil handles water.' },
+        { type: 'recall', question: 'What happens when you squeeze a handful of loam?',
+          choices: ['It falls apart right away', 'It holds its shape like a lump of dough', 'It forms a loose ball that crumbles', 'It turns into water'], correctIndex: 2,
+          hint: 'Read the paragraph about loam.' },
+      ],
+    },
+    {
+      title: 'The Warden\'s Advice',
+      passage: `Every trainer who faces Warden Bramblewood in the Earth Trial receives one piece of advice afterward, win or lose. Over the years, trainers have shared the advice they were given, and a few pieces have become famous.
+
+To a trainer who rushed every move, Bramblewood said, "A mountain is not built in a day, and neither is a victory. Wait for the right moment." The trainer later became known for her patience in long battles.
+
+To a trainer who had lost because he never changed his plan, Bramblewood said, "Water flows around a rock. Be water when you need to be." That trainer went on to win the Water Trial on his very first try.
+
+To a trainer who won easily and bragged about it, Bramblewood said only, "The ground remembers who walks on it gently." She did not understand at first. Years later, she told the story to her own students as a lesson about humility.
+
+Not all of Bramblewood's advice is so serious. To one young trainer who was clearly exhausted, he simply said, "Eat a good dinner and go to bed early." She says it was the most useful thing anyone told her during her entire adventure.
+
+Bramblewood never writes his advice down. He says each trainer needs something different.`,
+      questions: [
+        { type: 'recall', question: 'What did Bramblewood tell the trainer who never changed his plan?',
+          choices: ['Wait for the right moment', 'Eat a good dinner and go to bed early', 'The ground remembers', 'Be water when you need to be'], correctIndex: 3,
+          hint: 'Read the third paragraph.' },
+        { type: 'recall', question: 'Why does Bramblewood never write his advice down?',
+          choices: ['He says each trainer needs something different', 'He forgets it right away', 'He wants it to stay a secret between him and each trainer', 'He cannot write'], correctIndex: 0,
+          hint: 'Read the last paragraph.' },
+      ],
+    },
+    {
+      title: 'Counting the Forest',
+      passage: `Every five years, Fern Whisper leads a census of the animals living in Mossgrove. A census is an official count, and this one helps the Earth ponies understand whether the forest is healthy.
+
+Counting animals in a thick forest is not easy. Many creatures hide during the day, and some only come out at night. So Fern divides Mossgrove into twenty sections and assigns two volunteers to each one. For one week, the volunteers visit their section at dawn, at noon and at dusk. They write down every animal they see or hear, along with any tracks, nests or droppings they find.
+
+At the end of the week, Fern adds up all the numbers. Then she compares them to the census from five years earlier.
+
+This year's results held good news and bad news. The number of owls had grown by almost a third, which Fern believes is because ponies stopped cutting down old hollow trees. But the number of frogs had dropped. After some investigation, Fern discovered that a small pond in the eastern section had been slowly filling with fallen leaves.
+
+The Earth ponies spent a weekend clearing the pond. Fern hopes the frogs will be back by the next census.`,
+      questions: [
+        { type: 'wordMeaning', question: 'In this passage, what does "census" mean?',
+          choices: ['A kind of owl', 'A section of forest', 'An official count', 'A walk at dawn'], correctIndex: 2,
+          hint: 'The passage explains the word in the first paragraph.' },
+        { type: 'twoFact', question: 'Which animals had grown in number since the last census?',
+          choices: ['Frogs', 'Owls', 'Foxes', 'Both owls and frogs'], correctIndex: 1,
+          hint: 'There was good news about one animal and bad news about another.' },
+      ],
+    },
+    {
+      title: 'How Boulderhoof Trains',
+      passage: `Boulderhoof is the strongest pony in the Earth zone, and visitors often ask how he became so powerful. Most expect to hear about lifting giant boulders every day. His real routine surprises them.
+
+Boulderhoof trains only four days a week. He says muscles grow stronger while they rest, not while they work, so resting days are just as important as training days. On those days, he walks slowly through Mossgrove or helps Daisy Dapple carry her paints.
+
+On training days, he does not lift his heaviest boulder right away. He begins with small stones and works up to bigger ones over the course of a morning. He also practices balance by standing on one hoof on a narrow log. "Strength is useless if you fall over," he likes to say.
+
+What he eats matters too. Boulderhoof eats a large breakfast of oats, apples and carrots, and he drinks plenty of water throughout the day. He avoids sweets before training, though he admits he has a weakness for honey cakes on rest days.
+
+Finally, Boulderhoof sleeps at least nine hours every night. He goes to bed when the sun sets and wakes when it rises. Young ponies who copy his routine are often surprised to find that the sleeping part is the hardest.`,
+      questions: [
+        { type: 'recall', question: 'Why does Boulderhoof think resting days are important?',
+          choices: ['He gets bored of training', 'Muscles grow stronger while they rest', 'He needs time to eat honey cakes with his friends', 'Daisy needs his help'], correctIndex: 1,
+          hint: 'Read the second paragraph.' },
+        { type: 'recall', question: 'How does Boulderhoof practice balance?',
+          choices: ['By lifting small stones', 'By walking slowly through the ferns of Mossgrove', 'By carrying paint', 'By standing on one hoof on a log'], correctIndex: 3,
+          hint: 'Read the third paragraph.' },
+      ],
+    },
+    {
+      title: 'Colors from the Earth',
+      passage: `Daisy Dapple never buys her paints. She makes every color herself from things she finds in the Earth zone. The colored powder at the heart of each paint is called a pigment, and Daisy has spent years learning where to find the best ones.
+
+Her reds and browns come from clay. Different riverbanks hold clay of different colors, from pale orange to deep rusty red. Daisy dries the clay in the sun, grinds it into a fine powder with a stone and mixes it with a little oil.
+
+Her purples and blues come from berries. She crushes ripe blackberries and elderberries and strains out the seeds. Berry colors are bright and beautiful, but they have a weakness. Over a few years, sunlight slowly fades them. So Daisy uses berry paints only for indoor paintings.
+
+Her black comes from charcoal, the burned ends of sticks from old campfires. Charcoal black never fades at all, so Daisy uses it for outlines on her outdoor murals.
+
+The hardest color for Daisy to make is green. Most green plants turn brown when they are crushed and dried. After many experiments, she found that a certain moss from Mossgrove keeps its color if she dries it in the shade. She guards the exact location of that moss carefully.`,
+      questions: [
+        { type: 'wordMeaning', question: 'In this passage, what does "pigment" mean?',
+          choices: ['The colored powder in paint', 'A kind of paintbrush', 'A type of berry', 'A large painting on the wall of a building'], correctIndex: 0,
+          hint: 'The passage explains the word in the first paragraph.' },
+        { type: 'twoFact', question: 'Why does Daisy use berry paints only indoors?',
+          choices: ['They are too dark', 'They smell too strong to use in the sun', 'Sunlight slowly fades them', 'They are hard to make'], correctIndex: 2,
+          hint: 'Compare berry paints with charcoal black.' },
+      ],
+    },
+    {
+      title: 'Acorn Learns the Wheel',
+      passage: `Acorn Sprout had collected rocks for years, but last spring she decided to try something new. She asked Clay Canter if she could learn to make pots.
+
+Clay agreed, but she warned Acorn that the first lessons would be frustrating. She was right. Clay sat Acorn down at the potter's wheel, a flat round table that spins when you press a pedal with your hoof. The idea is to place a lump of wet clay in the center and shape it with your hooves while it spins.
+
+The first problem was centering. If the clay is even slightly off-center, it wobbles and eventually flies off the wheel. Acorn's first six lumps all ended up on the floor. One hit Clay's cat.
+
+The second problem was pressure. Pressing too hard made the walls of the pot collapse. Pressing too softly did nothing at all. Clay told her to imagine she was holding a baby bird.
+
+After a month of practice, Acorn made her first bowl. It was lopsided and much too thick on one side. But Clay fired it in the kiln anyway, and Acorn uses it every morning for her oats. She says it is the best bowl in Pebblebrook. Clay says it is the most determined.`,
+      questions: [
+        { type: 'twoFact', question: 'What happened when Acorn pressed too hard?',
+          choices: ['The clay flew off the wheel and hit the cat', 'Nothing happened at all', 'The wheel stopped spinning', 'The walls of the pot collapsed'], correctIndex: 3,
+          hint: 'The passage describes pressing too hard and pressing too softly.' },
+        { type: 'recall', question: 'What does Acorn use her first bowl for?',
+          choices: ['Her oats every morning', 'Holding her rocks', 'Mixing Daisy\'s paints', 'Watering plants'], correctIndex: 0,
+          hint: 'Read the last paragraph.' },
+      ],
+    },
+    {
+      title: 'The Forest\'s Recyclers',
+      passage: `Every autumn, the trees of Mossgrove drop millions of leaves. Branches fall in storms, and old logs topple over. Yet the forest floor never becomes buried under a mountain of dead wood. Where does it all go?
+
+The answer lies with some of the forest's smallest workers: mushrooms, worms and tiny creatures called beetles. Together, they decompose dead plants. To decompose means to break something down into smaller and smaller pieces until it becomes part of the soil again.
+
+Mushrooms do much of the work. What we see above ground is only a small part of a mushroom. Underneath, it spreads a web of thin white threads through the dead wood. These threads slowly soften the wood from the inside. Then worms and beetles chew through the softened wood and leaves, turning them into rich, dark soil.
+
+This process is extremely important. The new soil is full of nutrients, the food that plants need to grow. Without decomposers, the forest would run out of nutrients, and new trees could not grow.
+
+Fern Whisper tells young ponies never to kick over mushrooms in Mossgrove. "They may not look like much," she says, "but they are feeding every tree in the forest."`,
+      questions: [
+        { type: 'wordMeaning', question: 'In this passage, what does "decompose" mean?',
+          choices: ['To grow tall', 'To fall from a tree', 'To break down into smaller pieces', 'To hide underground until spring comes'], correctIndex: 2,
+          hint: 'The passage explains the word in the second paragraph.' },
+        { type: 'recall', question: 'What does the white web of a mushroom do?',
+          choices: ['It catches insects', 'It slowly softens wood from the inside', 'It holds up the tree when the wind blows hard', 'It turns leaves green'], correctIndex: 1,
+          hint: 'Read the third paragraph.' },
+      ],
+    },
+    {
+      title: 'Cleaning the Stream',
+      passage: `The stream that gives Pebblebrook its name is famous for being clear enough to see every pebble on the bottom. But last summer, the ponies noticed a problem. The water near the village had turned cloudy, and the fish had begun to disappear.
+
+Acorn Sprout and Boulderhoof decided to find the cause. They walked upstream, following the cloudy water. About a mile above the village, they found it. A section of the riverbank had collapsed after a heavy rain, and loose mud was pouring into the stream every time the water rose.
+
+The fix took a full week. Boulderhoof rolled large flat stones into place along the bottom of the bank to hold it steady. Acorn and a group of young ponies planted willow cuttings in the soil above. Willows grow quickly, and their roots spread out and grip the earth, which keeps a riverbank from washing away.
+
+Fern Whisper added a layer of thick moss over the bare dirt between the willows. The moss would hold the soil in place until the willow roots grew strong enough to take over.
+
+Within a month, the water ran clear again. By autumn, the fish had returned, and the willows were already taller than Acorn.`,
+      questions: [
+        { type: 'recall', question: 'What was making the stream cloudy?',
+          choices: ['Trash thrown in by ponies in the village', 'Mud from a collapsed riverbank', 'Too many fish', 'Paint from Daisy\'s studio'], correctIndex: 1,
+          hint: 'Read the second paragraph.' },
+        { type: 'twoFact', question: 'What was the job of the moss?',
+          choices: ['To feed the fish', 'To grip the earth with deep roots', 'To block the stream', 'To hold soil until the willow roots grew'], correctIndex: 3,
+          hint: 'The willows and the moss each had a different job.' },
+      ],
+    },
+    {
+      title: 'Icicles of Stone',
+      passage: `Deep in the caves beneath Granite Hall, visitors find strange stone shapes that look like giant icicles. Some hang down from the ceiling, while others rise up from the floor. They are called stalactites and stalagmites, and they form in a fascinating way.
+
+Rainwater seeps slowly through the ground above the cave. As it travels, it picks up tiny amounts of a mineral from the rock. When a drop of this water reaches the cave ceiling, it hangs there for a moment before falling. During that moment, a tiny bit of the mineral is left behind on the ceiling. Drop after drop, over thousands of years, these tiny bits build a stone icicle hanging down. That is a stalactite.
+
+When the drop finally falls and splashes on the floor, it leaves a bit of mineral there too. Over time, these build a stone column rising up from the floor. That is a stalagmite.
+
+Here is an easy way to remember which is which. Stalactites hold tight to the ceiling. Stalagmites might reach it someday.
+
+In a few places in the caves, a stalactite and a stalagmite have grown so long that they have met in the middle, forming a single stone pillar from floor to ceiling.`,
+      questions: [
+        { type: 'twoFact', question: 'Which formation rises up from the floor?',
+          choices: ['A stalagmite', 'A stalactite', 'An icicle', 'A crystal'], correctIndex: 0,
+          hint: 'One hangs down and one rises up.' },
+        { type: 'recall', question: 'What happens when a stalactite and a stalagmite meet?',
+          choices: ['They both break', 'They stop growing forever', 'They form a single stone pillar', 'They turn into crystals'], correctIndex: 2,
+          hint: 'Read the last paragraph.' },
+      ],
+    },
+    {
+      title: 'Mossy\'s Winter Burrow',
+      passage: `Most Earth ponies stay in their houses during the cold months, but Mossy Tussock prefers something cozier. Every autumn, she digs a winter burrow in a hillside at the edge of Mossgrove.
+
+Mossy chooses her spot carefully. It must face south, so the sun warms the entrance during the short winter days. It must be on a slope, so rain and melting snow run away instead of flooding in. And it must be under the roots of a large tree, which hold the soil together and stop the ceiling from caving in.
+
+Digging takes about a week. The entrance tunnel slopes slightly upward before opening into a round room. Mossy explains that warm air rises, so the upward slope traps warmth inside the room and keeps cold air near the entrance.
+
+Then comes the best part. Mossy lines the floor and walls with thick layers of dry moss that she has been collecting all summer. Moss traps air between its tiny leaves, and that trapped air keeps the warmth in.
+
+On the coldest nights of winter, when frost covers the whole forest, Mossy's burrow stays warm enough that she sleeps without a blanket. Her friends often visit just to sit inside it for a while.`,
+      questions: [
+        { type: 'recall', question: 'Why must Mossy\'s burrow face south?',
+          choices: ['So she can see Granite Hall from her bed', 'So rain runs away from it', 'So it is under a tree', 'So the sun warms the entrance'], correctIndex: 3,
+          hint: 'Read the second paragraph.' },
+        { type: 'twoFact', question: 'Why does the entrance tunnel slope upward?',
+          choices: ['To trap warm air inside the room', 'To keep rain out', 'To make digging easier', 'To hide it from visitors'], correctIndex: 0,
+          hint: 'Read the third paragraph.' },
+      ],
+    },
+    {
+      title: 'Bare Trees and Green Trees',
+      passage: `In winter, Mossgrove looks like two different forests mixed together. Some trees stand completely bare, their branches gray against the sky. Others stay green all year long. The difference comes down to the leaves.
+
+Trees like Old Timber, the great oak, have wide, flat leaves. These leaves are excellent at catching sunlight in summer, but they are thin and would freeze in winter. So every autumn, these trees stop sending water to their leaves. The leaves change color, turning red, orange and yellow, and then fall off. The tree rests through the winter and grows new leaves in spring.
+
+Pine and fir trees are different. They are called evergreens because they keep their leaves all year. Their leaves are long and narrow, shaped like needles, and covered with a waxy coating. The narrow shape and the wax keep the needles from losing water or freezing. Evergreens keep making food from sunlight all winter, though more slowly than in summer.
+
+Each kind of tree has an advantage. The broad-leaved trees grow faster in summer. The evergreens can keep working when the others are resting.
+
+The Earth ponies of Mossgrove love both. In autumn they celebrate the colors, and in winter they decorate the evergreens with strings of dried berries.`,
+      questions: [
+        { type: 'wordMeaning', question: 'In this passage, what does "evergreen" mean?',
+          choices: ['A tree with red leaves', 'A very old tree', 'A tree that keeps its leaves all year', 'A tree that grows quickly in the summer sun'], correctIndex: 2,
+          hint: 'The passage explains the word in the third paragraph.' },
+        { type: 'twoFact', question: 'What advantage do broad-leaved trees have?',
+          choices: ['They keep working all winter', 'They grow faster in summer', 'They never lose water', 'They have waxy needles'], correctIndex: 1,
+          hint: 'Each kind of tree has a different advantage.' },
+      ],
+    },
+    {
+      title: 'A Trainer\'s Letter Home',
+      passage: `Dear Grandma,
+
+I made it to the Earth zone! The walk from Brindlewood took four days. On the first night, I camped by the stream in Pebblebrook, which is so clear that I could count the pebbles by moonlight. A pony named Acorn Sprout showed me her rock collection. She has a striped one that looks like an egg.
+
+Yesterday I explored Mossgrove. The ferns are taller than I am, and I almost walked right past a pony named Fern Whisper because her coat is the same green as the leaves. She laughed and said it happens all the time.
+
+Today I challenged Warden Bramblewood in the Trial. His ponies are so sturdy that my attacks barely moved them. I lost in the end, but it was close. Afterward, he shook my hoof and told me to stop rushing. He said I should wait for the right moment, the way a mountain waits.
+
+So tomorrow I am going to practice being patient. Acorn says I can help her clear rocks from her garden, which she promises is excellent patience training. Then I will try the Trial again next week.
+
+I miss your apple pie. Please save me a slice.
+
+Love,
+Rowan`,
+      questions: [
+        { type: 'recall', question: 'What advice did Bramblewood give Rowan?',
+          choices: ['To train with heavier rocks', 'To stop rushing and wait for the right moment', 'To go home and rest', 'To choose a new companion'], correctIndex: 1,
+          hint: 'Read the third paragraph.' },
+        { type: 'recall', question: 'How long did the walk from Brindlewood take?',
+          choices: ['One day', 'Two days', 'A whole week', 'Four days'], correctIndex: 3,
+          hint: 'Look at the start of the letter.' },
+      ],
+    },
+    {
+      title: 'When the Ground Trembles',
+      passage: `Once or twice a year, the ponies of the Earth zone feel the ground shake. Usually it is just a gentle tremble that rattles cups on a shelf and is over in a few seconds. These small shakes are called tremors.
+
+Tremors happen because the ground beneath us is not one solid piece. Deep underground, the earth is made of enormous slabs of rock that fit together like pieces of a puzzle. These slabs move very slowly, about as fast as a fingernail grows. Usually they slide past each other smoothly. But sometimes two slabs get stuck, and pressure builds up. When the pressure finally releases, the slabs jerk forward, and the ground above them shakes.
+
+Earth ponies can often feel a tremor coming before anyone else, because their hooves sense the tiny vibrations that come first. Warden Bramblewood says he can tell how strong a tremor will be by how it feels in the first moment.
+
+The ponies of Granite Hall have a simple rule for tremors. Anyone inside moves to stand under a stone doorway, which is the strongest part of any room. Anyone outside moves away from cliffs and tall trees.
+
+In all its history, Granite Hall has never been seriously damaged. The Earth ponies say that is because they carved it into the strongest rock in the mountain.`,
+      questions: [
+        { type: 'recall', question: 'What causes the ground to shake during a tremor?',
+          choices: ['Stuck slabs of rock suddenly moving', 'Boulderhoof stomping', 'Water freezing deep underground in winter', 'Strong winds'], correctIndex: 0,
+          hint: 'Read the second paragraph.' },
+        { type: 'twoFact', question: 'What should ponies who are outside do during a tremor?',
+          choices: ['Stand under a stone doorway', 'Lie flat on the ground', 'Move away from cliffs and tall trees', 'Run into Granite Hall'], correctIndex: 2,
+          hint: 'The rule is different for ponies inside and outside.' },
+      ],
+    },
+    {
+      title: 'Acorn\'s Fossil',
+      passage: `Acorn Sprout has found many interesting rocks, but last autumn she found something truly special. While splitting a flat gray stone from the creek bank, she noticed a pattern inside it: the perfect shape of a fern leaf, every tiny leaflet pressed into the rock.
+
+She carried it straight to Fern Whisper, who studied it carefully. "This is a fossil," Fern said. A fossil is the remains or the shape of a living thing from long ago, preserved in rock.
+
+Fern explained how it probably formed. Long ago, a fern leaf fell into soft mud at the bottom of a pond. More mud settled on top of it, layer after layer. Over a very long time, the layers pressed together and hardened into stone. The leaf itself rotted away, but it left its shape behind, like a footprint.
+
+What surprised Acorn most was that this kind of fern does not grow anywhere in Mossgrove today. Fern said it might be a kind that no longer exists at all.
+
+Acorn now keeps the fossil in a special box lined with cloth, separate from her other rocks. She has started searching the creek bank every week. So far she has found two more fossils: a tiny shell and what might be part of an insect wing.`,
+      questions: [
+        { type: 'wordMeaning', question: 'In this passage, what does "fossil" mean?',
+          choices: ['A very smooth stone from a creek', 'A kind of fern', 'A box for rocks', 'An ancient shape saved in rock'], correctIndex: 3,
+          hint: 'Fern explains the word in the second paragraph.' },
+        { type: 'recall', question: 'What surprised Acorn most about the fossil?',
+          choices: ['That kind of fern no longer grows in Mossgrove', 'It was very heavy', 'Fern Whisper had already seen hundreds of them before', 'It glowed in the dark'], correctIndex: 0,
+          hint: 'Read the fourth paragraph.' },
+      ],
+    },
+  ],
   3: [],
   4: [],
   5: [],
