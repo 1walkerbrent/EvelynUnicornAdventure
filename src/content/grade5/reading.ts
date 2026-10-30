@@ -1243,6 +1243,336 @@ Cloud Skip of the Air zone visited this workshop once. She says it gave her the 
       ],
     },
   ],
-  5: [],
+  // ── Zone 5 (Air): Windwhistle Pass, Cloudperch, Galecrest Spire ───────────
+  5: [
+    {
+      title: 'The Race Around the Spire',
+      passage: `Every autumn, the Air ponies hold a race three times around Galecrest Spire. Galehoof had won it six years in a row, and this year he was expected to win again easily.
+
+Halfway through the second lap, Galehoof was far ahead. Then he glanced back and saw that a young racer named Lark had flown too close to the Spire. A sudden gust had slammed her against the stone, and she was tumbling toward the clouds below with one wing folded.
+
+Galehoof did not think. He turned around, dove past the other racers and caught Lark just before she dropped out of sight. He carried her gently to the nearest balcony, where a healer was waiting.
+
+By the time he returned to the race, it was over. A pony named Swift had won. Galehoof finished last.
+
+That evening, the Air ponies held their usual celebration for the winner. Swift received the trophy and gave a short speech. Then, to everyone's surprise, Swift walked across the room and placed the trophy in Galehoof's hooves.
+
+"I crossed the finish line first," Swift said. "But you were the fastest flyer today."
+
+Galehoof tried to give it back. Swift refused. The trophy still sits on Galehoof's windowsill, and he says it is the only one he is truly proud of.`,
+      questions: [
+        { type: 'theme', question: 'Which lesson does this story teach best?',
+          choices: ['The fastest pony always wins the race in the end', 'Helping others matters more than winning', 'Never fly close to tall buildings', 'Trophies are not important'], correctIndex: 1,
+          hint: 'Think about why Galehoof is proud of this trophy.' },
+        { type: 'inference', question: 'Why did Swift give Galehoof the trophy?',
+          choices: ['Swift did not want it', 'The judges told Swift to', 'Swift had cheated', 'Swift respected him'], correctIndex: 3,
+          hint: 'Read what Swift said.' },
+      ],
+    },
+    {
+      title: 'The Song Contest',
+      passage: `For the first time in years, Breezy Lark entered the Cloudperch Song Contest. Everyone expected her to sing her famous autumn song, the one that made ponies stop and close their eyes. Instead, she announced a brand-new song that no one had ever heard.
+
+The other singers looked at one another. A new song was a risk. If she forgot a line or her voice cracked on a high note, the judges would notice.
+
+Breezy's new song was not smooth and beautiful like her autumn song. It was quick and bumpy, with sudden pauses and strange high notes that seemed to tumble over each other. At first, the audience did not know what to make of it. A few ponies frowned. Then a young foal near the front began to laugh and clap along. Soon others joined in. Some ponies said it sounded like a bird learning to sing. By the end, half the crowd was on its feet, flapping their wings to the rhythm.
+
+Breezy did not win. The judges gave first prize to a singer who performed a traditional lullaby perfectly.
+
+Afterward, a reporter asked Breezy why she had not sung the song everyone loved. Breezy smiled. "I already know I can sing that one," she said. "I wanted to find out if I could sing something new."`,
+      questions: [
+        { type: 'inference', question: 'Why did Breezy choose a new song?',
+          choices: ['She wanted to challenge herself', 'She forgot the words to the old one', 'The judges asked for a new song', 'Her autumn song was too short'], correctIndex: 0,
+          hint: 'Read what she says at the end.' },
+        { type: 'inference', question: 'How did the audience\'s feelings change during the song?',
+          choices: ['From excited and happy to bored', 'From happy to angry', 'From unsure to delighted', 'They did not change'], correctIndex: 2,
+          hint: 'Compare how they acted at the start and at the end.' },
+      ],
+    },
+    {
+      title: 'Bridges in the Sky',
+      passage: `Ponies who cannot fly once had a hard time visiting the Air zone. The only way up was a long, steep climb through Windwhistle Pass, followed by a basket ride to the top of Galecrest Spire. Today, thanks to Cloud Skip, there is another way.
+
+Cloud Skip has spent the last ten years building cloud bridges. Her first was a short bridge between two clouds in Cloudperch. It blew apart in its first strong wind. Since then, she has learned to pack clouds tighter, to anchor the ends with stone pillars and, with help from Fire ponies, to harden the clouds with gentle heat so that they cannot melt or break.
+
+There are now seven cloud bridges in the realm. Each one took about a year to build. The longest stretches from Cloudperch all the way to Ashfall Camp in the Fire zone. Another connects Galecrest Spire to the hills above Pebblebrook. Earth ponies, who once rarely left the ground, now visit the Air zone every week.
+
+Each bridge is checked every morning by a team of Air ponies. If they find a weak spot, they close the bridge until it is repaired.
+
+Cloud Skip is now working on her most ambitious bridge yet. It will connect the Air zone to Starfall Temple in the Spirit zone, crossing the deepest valley in the realm.`,
+      questions: [
+        { type: 'purpose', question: 'Why did the author write this passage?',
+          choices: ['To tell a funny story about Cloud Skip falling', 'To explain how clouds form', 'To warn ponies about weak bridges', 'To describe how cloud bridges changed travel'], correctIndex: 3,
+          hint: 'Look at the first paragraph and what the rest explains.' },
+        { type: 'inference', question: 'What does the third paragraph suggest about Earth ponies?',
+          choices: ['The bridges let them travel more', 'They are afraid of heights', 'They build bridges too', 'They do not like visiting the Air zone at all'], correctIndex: 0,
+          hint: 'Think about how often they visit now compared with before.' },
+      ],
+    },
+    {
+      title: 'The Wind Map',
+      passage: `Wind Whistle has been calming the winds of Windwhistle Pass for over thirty years. Recently, she began a new project. She is drawing a map of the wind.
+
+It is not a map of places. It is a map of patterns. Every day, Wind Whistle records which direction the wind blows, how strong it is and what time it changes. She marks the strongest gusts in red and the calmest hours in pale blue. After several months, patterns began to appear. The wind in the pass is almost always calm for an hour after sunrise. It grows strongest in the late afternoon. And on the day before a storm, it shifts from the west to the north.
+
+Young pony travelers have started asking Wind Whistle for copies of the map before they cross the pass. Some of them plan their trips around the calm morning hour.
+
+Wind Whistle's apprentice, Zuri, asked her why she bothered. "You already know the wind better than anyone," Zuri said. "Why write it down?"
+
+Wind Whistle looked out at the pass for a long time before answering. "I will not always be here," she said. "Someday, someone will need to know what I know. The map will still be here when I am not."
+
+Zuri did not say anything. But the next morning, she started a map of her own.`,
+      questions: [
+        { type: 'inference', question: 'Why did Zuri start a map of her own?',
+          choices: ['She wanted to compete with Wind Whistle', 'Wind Whistle ordered her to', 'She saw why it must be saved', 'She was bored'], correctIndex: 2,
+          hint: 'Think about what Wind Whistle told her.' },
+        { type: 'theme', question: 'What is a theme of this passage?',
+          choices: ['Wind is dangerous and should be avoided', 'Sharing knowledge helps those who come after', 'Maps are only useful for finding places you have never been', 'Young ponies ask too many questions'], correctIndex: 1,
+          hint: 'Think about why Wind Whistle is making the map.' },
+      ],
+    },
+    {
+      title: 'Two Flight Teachers',
+      passage: `Every spring, young Air ponies learn to fly, and they can choose between two teachers. Their styles are so different that the young ponies argue every year about which is better.
+
+Galehoof teaches speed. His lessons begin with racing straight from day one. He pushes his students to fly faster each day, and he times every practice. His students learn quickly, but they also fall more often. Galehoof says that falling is just part of flying fast, and he always flies down to catch them.
+
+Feather Float teaches control. Her lessons begin with slow gliding and gentle landings. For the first two weeks, her students are not allowed to flap hard at all. Many young ponies find this boring at first. But by the end of spring, Feather's students rarely crash, and they can land so softly that you can barely hear them.
+
+At the end of the season, both groups fly together in a show. Galehoof's students zoom through the sky in fast, exciting loops. Feather's students drift down in perfect formation and land on a single cloud without a sound.
+
+When asked which teacher is better, Skywarden Zephyra simply says, "The best flyers learn from both." And many young ponies do exactly that, spending one spring with each teacher.`,
+      questions: [
+        { type: 'compare', question: 'How are the two teachers\' lessons different?',
+          choices: ['Both teach only gliding', 'One starts with racing, one with gliding', 'Feather times every practice', 'Galehoof never lets his students flap hard at all'], correctIndex: 1,
+          hint: 'Compare the second and third paragraphs.' },
+        { type: 'inference', question: 'What does Zephyra mean by "The best flyers learn from both"?',
+          choices: ['Both teachers are bad at teaching young ponies to fly', 'Students should skip lessons', 'Only Galehoof\'s way works', 'Speed and control are both worth learning'], correctIndex: 3,
+          hint: 'Think about what each teacher is best at.' },
+      ],
+    },
+    {
+      title: 'Zephyra\'s Lesson',
+      passage: `A young trainer named Kestrel came to Galecrest Spire determined to win the Air badge on her first try. She had trained harder than anyone she knew. She climbed to the Sky Chamber, bowed to Skywarden Zephyra and began the battle at once.
+
+Kestrel's team attacked with everything they had. But the wind in the Sky Chamber never stopped shifting. Every attack was blown off course. Her ponies grew tired from fighting against the gusts, while Zephyra's ponies glided easily, riding each breeze.
+
+Kestrel lost. She asked to try again the next day. She lost again. On the third day, she lost a third time.
+
+That evening, Zephyra found her sitting alone on a balcony, staring at the sky. Zephyra sat beside her and said nothing for a long time. Then she pointed at a hawk circling far below. "Watch it," she said.
+
+Kestrel watched. The hawk barely moved its wings. It simply waited for each rising breeze, then let the air lift it higher.
+
+The next morning, Kestrel entered the Sky Chamber and did not attack right away. She waited, feeling the wind, until she sensed a calm moment between gusts. Only then did she strike.
+
+That afternoon, Zephyra placed the Air badge in her hoof.`,
+      questions: [
+        { type: 'theme', question: 'Which theme fits this story best?',
+          choices: ['Working with your surroundings beats fighting them', 'Hard training always wins on the very first try, no matter what', 'Hawks are better flyers than ponies', 'Never battle when you are tired'], correctIndex: 0,
+          hint: 'Think about what Kestrel learned from the hawk.' },
+        { type: 'inference', question: 'Why did Zephyra point at the hawk instead of giving advice?',
+          choices: ['She did not know what to say to Kestrel', 'She was tired of talking', 'She wanted Kestrel to see it herself', 'The hawk was her pet'], correctIndex: 2,
+          hint: 'Think about how Kestrel learned the lesson.' },
+      ],
+    },
+    {
+      title: 'The Whirlwind That Would Not Stop',
+      passage: `Gust Dancer has sent thousands of messages in tiny whirlwinds, but last spring she tried something bigger. She wanted to send a basket of fresh peaches to her cousin in Saltspray Cove, far away in the Water zone.
+
+A message weighs almost nothing. A basket of peaches is heavy. To carry it, Gust had to spin the biggest whirlwind she had ever made. She worked on it for most of the morning, layer after layer of spinning air, until it was as tall as a house. Then she placed the basket in the center and sent it off toward the sea.
+
+At first, everything went well. But as the whirlwind passed over Cloudperch, it picked up a few loose feathers. Then a small cloud. Then three laundry baskets from a backyard. The faster it spun, the more it collected, and the more it collected, the stronger it grew.
+
+Gust chased after it in a panic. She caught up just above Windwhistle Pass, where Wind Whistle was already whistling the lowest, calmest note she knew. Slowly, the whirlwind wound down and dropped everything it had collected onto a soft meadow.
+
+The peaches were bruised but safe. Gust spent the afternoon returning laundry baskets to embarrassed neighbors. She has decided to send her cousin a letter next time.`,
+      questions: [
+        { type: 'inference', question: 'Why did the whirlwind keep getting stronger?',
+          choices: ['Gust kept adding wind to it', 'The heavy peaches made it grow heavier and stronger', 'Wind Whistle whistled at it', 'It picked things up and spun faster'], correctIndex: 3,
+          hint: 'Read the third paragraph.' },
+        { type: 'inference', question: 'Why were the neighbors embarrassed?',
+          choices: ['Their laundry flew across the sky', 'They had lost all of their peaches on the way', 'They had to whistle', 'Gust had shouted at them'], correctIndex: 0,
+          hint: 'Think about what Gust returned to them.' },
+      ],
+    },
+    {
+      title: 'Why Birds Fly in a V',
+      passage: `Every autumn, flocks of geese pass over Galecrest Spire on their way south. Air ponies have long noticed that the geese fly in a neat V shape, with one bird at the front and two long lines trailing behind. This shape is not an accident. It helps the birds save energy on their long journey.
+
+When a bird flaps its wings, it pushes air downward. But at the tips of its wings, some of that air swirls upward. A bird flying just behind and to the side of another can catch this rising air. It gets a small lift for free, so it does not have to flap as hard.
+
+The bird at the front of the V does not get this help. It works the hardest of all. So the geese take turns. When the leader grows tired, it drops back into the line, and another goose moves up to take its place.
+
+Scientists among the Air ponies estimate that geese flying in a V can travel much farther than a goose flying alone. Some flocks travel thousands of miles.
+
+Galehoof once tried flying in a V with a group of young racers. He says it worked, but only after he agreed to take his turn at the back.`,
+      questions: [
+        { type: 'purpose', question: 'What is the author\'s main purpose?',
+          choices: ['To tell a story about Galehoof racing', 'To describe Galecrest Spire', 'To explain why geese fly in a V shape', 'To convince readers to watch birds'], correctIndex: 2,
+          hint: 'Look at the title and the end of the first paragraph.' },
+        { type: 'inference', question: 'What does Galehoof\'s comment suggest about him?',
+          choices: ['He dislikes flying with others', 'He usually wants to be in front', 'He is the slowest flyer', 'He prefers flying alone at night'], correctIndex: 1,
+          hint: 'Think about what "agreed to take his turn at the back" tells you.' },
+      ],
+    },
+    {
+      title: 'The Last Day at the Window',
+      passage: `For forty years, an old Air pony named Nimbus sat at the small round window on the east side of Galecrest Spire and watched the sky. She was the Spire's storm watcher. Whenever she saw a storm coming, she rang a silver bell, and every pony in the Spire knew to hurry home.
+
+This spring, Nimbus decided it was time to stop. Her eyes were not as sharp as they used to be, and climbing to the window every morning had become hard. She chose a young pony named Wren to take her place and spent a month teaching her everything she knew.
+
+On her last day, Nimbus did not ring the bell even once. The sky was clear and bright from morning to evening. Wren worried that it was a disappointing way to end such a long career.
+
+But Nimbus seemed perfectly content. She sat at the window all day, sipping tea and watching the clouds drift by. At sunset, she handed Wren the silver bell.
+
+"Forty years," Nimbus said, "and today is the first day I watched the sky just because it is beautiful."
+
+She walked slowly down the stairs. Wren sat at the window and watched the sky change from gold to purple. For the first time, she understood why Nimbus had loved this job.`,
+      questions: [
+        { type: 'inference', question: 'Why was Nimbus content on her last day?',
+          choices: ['She was glad no storm came', 'She could enjoy the sky without worrying', 'She was happy to finally leave the Spire for good', 'Wren made her tea'], correctIndex: 1,
+          hint: 'Read what Nimbus says at sunset.' },
+        { type: 'theme', question: 'What is a theme of this passage?',
+          choices: ['Hard jobs should be avoided', 'Storms are the most important thing to watch for', 'Old ponies should not work', 'Take time to enjoy what you usually just watch'], correctIndex: 3,
+          hint: 'Think about how Nimbus spent her final day.' },
+      ],
+    },
+    {
+      title: 'Pip\'s Long Flight',
+      passage: `A year ago, Pip was afraid of heights. Cloud Skip had helped him slowly, building bridges a little higher each day until he could stand on one high above Cloudperch. Since then, Pip had flown short loops around the village, but never far.
+
+Then a message arrived. Pip's grandmother, who lived on the far side of the Air zone, had fallen ill. The basket ride through Windwhistle Pass would take two days. Flying would take two hours.
+
+Pip stood at the edge of the highest cloud for a long time. Below him, the ground looked impossibly far away. His legs began to shake, the way they used to.
+
+He thought about turning back. Then he remembered something Cloud had told him while they stood on the tallest bridge together: "Being scared doesn't mean you can't do it. It just means it matters."
+
+Pip took a deep breath, spread his wings and jumped.
+
+The flight was long, and twice the wind pushed him off course. But he kept going, and just after noon he landed on his grandmother's doorstep. When she saw him, she sat up in bed, astonished.
+
+"You flew here?" she whispered.
+
+Pip nodded. He was still shaking a little. But he was smiling too.`,
+      questions: [
+        { type: 'theme', question: 'Which theme fits this story best?',
+          choices: ['Being brave means acting even when you are afraid', 'Flying is easy once you learn', 'Never travel alone', 'Grandparents should always live close by their families'], correctIndex: 0,
+          hint: 'Think about what Cloud told Pip.' },
+        { type: 'inference', question: 'Why did Pip decide to fly instead of taking the basket?',
+          choices: ['The basket was broken', 'Cloud Skip told him to', 'He wanted to reach his grandmother quickly', 'He wanted to win a race against Cloud Skip again'], correctIndex: 2,
+          hint: 'Compare how long each way would take.' },
+      ],
+    },
+    {
+      title: 'The History of Windwhistle Pass',
+      passage: `Today, Windwhistle Pass is the main walking path into the Air zone, and travelers cross it every day. But long ago, it was considered almost impossible to cross.
+
+The pass is a narrow gap between two tall mountains. When wind is squeezed into a narrow space, it speeds up, the way water rushes faster through a narrow part of a stream. On stormy days, the wind in the pass could knock a pony off its hooves. Early travelers who tried to cross often turned back, and some were blown off the trail entirely.
+
+Everything changed when a young Air pony discovered that she could calm the wind with her whistle. Certain notes seemed to soothe the air, slowing it down. She began meeting travelers at the bottom of the pass and whistling them safely across. Her skill was passed down to apprentices over many generations. Today, that role belongs to Wind Whistle.
+
+Other changes helped too. Earth ponies carved handholds into the rock walls. A rest bench was built at the start of the path, with a sign reading "Listen before you go."
+
+Even now, the pass can be dangerous on stormy days. But no traveler has been lost there in more than fifty years.`,
+      questions: [
+        { type: 'purpose', question: 'Why does the author compare the wind to water in a stream?',
+          choices: ['To show that the pass has a river running through it', 'To describe Water ponies', 'To explain how streams form', 'To explain why wind speeds up in the pass'], correctIndex: 3,
+          hint: 'Read the second paragraph.' },
+        { type: 'compare', question: 'How is crossing the pass today different from long ago?',
+          choices: ['It is now much safer', 'It is now more dangerous', 'Nothing has changed at all', 'It is now closed'], correctIndex: 0,
+          hint: 'Compare the first and last paragraphs.' },
+      ],
+    },
+    {
+      title: 'A Disagreement in the Clouds',
+      passage: `Breezy Lark and Wind Whistle have performed together for years, but this autumn they disagreed about their annual concert.
+
+Breezy wanted to perform on the highest cloud above Cloudperch. "The view is beautiful," she said, "and the wind will carry our music to every zone." She remembered the year their music had reached the Fire and Water zones, and how many ponies had written to thank them.
+
+Wind Whistle wanted to perform inside the Spire's great hall. "Up on the cloud, the wind is too unpredictable," she said. "Last year, a gust blew away half our sheet music, and I had to whistle the wind calm in the middle of a song. Inside, we can focus on the music."
+
+They argued for a week. Neither would give in.
+
+Finally, Feather Float suggested a compromise. They could perform the first half of the concert inside the hall, where the music could be heard clearly. Then, for the final song, everyone could move outside to the highest balcony, where the wind could carry it to the rest of the realm.
+
+Breezy and Wind Whistle looked at each other and laughed. Neither had thought of that.
+
+The concert was the best they had ever given. The last song reached all the way to Starfall Temple. Many ponies still talk about it.`,
+      questions: [
+        { type: 'compare', question: 'How did Breezy and Wind Whistle disagree?',
+          choices: ['Both wanted to perform in the hall', 'Wind Whistle wanted a louder show', 'Breezy wanted outside; Wind Whistle wanted inside', 'They disagreed about which songs to sing at the concert'], correctIndex: 2,
+          hint: 'Read the second and third paragraphs.' },
+        { type: 'theme', question: 'What lesson does this story teach?',
+          choices: ['The loudest pony should always decide', 'A compromise can work for both sides', 'Concerts should always be indoors', 'Friends should never argue'], correctIndex: 1,
+          hint: 'Think about how Feather\'s idea solved the problem.' },
+      ],
+    },
+    {
+      title: 'The Science of Kites',
+      passage: `Kites are a favorite toy in the Air zone, but they are also a perfect lesson in how air works.
+
+A kite stays up because of the way wind moves around it. When wind hits the front of a kite, which is tilted slightly upward, the air is pushed downward. As the air is pushed down, the kite is pushed up. This upward push is called lift. At the same time, the string pulls the kite down and back toward the pony holding it. If the lift is stronger than the pull of the string and the weight of the kite, the kite rises.
+
+The tail of a kite is important too. Without a tail, a kite tends to spin and flip in gusty wind. The tail adds a little weight to the bottom and drags behind, keeping the kite pointed in the right direction.
+
+This is why Sky Dancer's famous feather kite worked so well. Feathers are very light, so her tail added drag to keep the kite steady without adding much weight. Her kite could climb higher than kites with heavy paper tails.
+
+Gust Dancer, who always wins the high-kite prize at the Cloudperch festival, has one more trick. When a strong gust comes, she lets out more string. That lets the kite rise with the wind instead of being yanked against it. A longer string also lets a kite reach the stronger winds higher up.`,
+      questions: [
+        { type: 'purpose', question: 'Why does the author mention Sky Dancer\'s feather kite?',
+          choices: ['To tell readers about a contest winner', 'To give an example of how a tail affects a kite', 'To explain how feathers grow', 'To describe Sky Dancer\'s home'], correctIndex: 1,
+          hint: 'Read the paragraph about tails, then the one about Sky\'s kite.' },
+        { type: 'inference', question: 'What would happen to a kite in gusty wind if its tail were removed?',
+          choices: ['It would fly higher', 'It would land softly', 'Nothing would change', 'It would likely spin and flip'], correctIndex: 3,
+          hint: 'Read the third paragraph.' },
+      ],
+    },
+    {
+      title: 'The Hidden Library',
+      passage: `Galecrest Spire has a library near its base, full of books about weather, flight and the history of the Air zone. Most ponies believe that is the only library in the Spire. They are wrong.
+
+Last winter, a curious young pony named Tansy noticed something strange. On the map of the Spire posted near the kitchens, the third floor from the top showed only a narrow hallway. But from outside, she could see four windows on that floor, glowing softly every evening.
+
+Tansy began to investigate. She counted the rooms on the floors above and below. She measured the hallway with a piece of string. The numbers did not add up. There had to be a hidden room.
+
+One evening, she followed the hallway slowly, tapping on every wall panel. Near the end, one panel sounded hollow. She pressed it, and it swung open.
+
+Inside was a small, round room lined with shelves. Every shelf held handwritten journals, hundreds of them. They had been written by every storm watcher, wind caller and flight teacher in the Air zone's history. Some were so old that their pages had turned yellow.
+
+At a desk in the center sat Skywarden Zephyra, reading by lamplight. She looked up, raised an eyebrow and smiled.
+
+"It took you longer than I expected," she said. "Come in. Sit down."`,
+      questions: [
+        { type: 'inference', question: 'What does Zephyra\'s greeting suggest?',
+          choices: ['She had been expecting Tansy to find it', 'She was angry Tansy found the room', 'She did not recognize Tansy', 'She wanted Tansy to leave'], correctIndex: 0,
+          hint: 'Read what Zephyra says.' },
+        { type: 'inference', question: 'What clue first made Tansy suspicious?',
+          choices: ['A hollow wall panel', 'Zephyra told her about it', 'The map did not match the windows', 'She found a journal'], correctIndex: 2,
+          hint: 'Read the second paragraph.' },
+      ],
+    },
+    {
+      title: 'The Cloud Sculpture Contest',
+      passage: `Each summer, Cloudperch holds a contest for cloud sculptures. Ponies shape clouds into animals, buildings or anything they can imagine. The sculptures float above the village for a single afternoon before the wind slowly pulls them apart.
+
+This year, the favorite was Cloud Skip, who had built a perfect copy of Galecrest Spire, every window and balcony carefully shaped. It took her three days and was by far the most detailed sculpture anyone had ever seen.
+
+The other entries were simpler. A young pony named Moss had made a lumpy, lopsided cloud shaped like a turtle. One leg was much longer than the others, and its head kept drooping. When the judges asked Moss about it, he explained that it was a gift for his little sister, who was sick at home and could see it from her window.
+
+The judges looked up. Across the village, a small face was pressed against a window, grinning at the lopsided turtle.
+
+When the winners were announced, Cloud Skip received the prize for best craftsmanship. But the judges created a new award that afternoon, the Heart Prize, and gave it to Moss.
+
+Cloud Skip clapped louder than anyone. Afterward, she offered to teach Moss how to shape turtle legs.`,
+      questions: [
+        { type: 'theme', question: 'Which theme fits this story best?',
+          choices: ['The most detailed work always wins', 'Turtles are hard to sculpt', 'Contests are unfair to beginners', 'The reason behind a gift can matter more than how perfect it is'], correctIndex: 3,
+          hint: 'Think about why the judges created a new award.' },
+        { type: 'compare', question: 'How was Moss\'s sculpture different from Cloud Skip\'s?',
+          choices: ['It was simple and made for someone special', 'It was more detailed and took longer', 'It was a copy of the Spire', 'It lasted for several days'], correctIndex: 0,
+          hint: 'Compare the second and third paragraphs.' },
+      ],
+    },
+  ],
   6: [],
 }
