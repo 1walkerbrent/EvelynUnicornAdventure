@@ -1298,5 +1298,281 @@ Air ponies can fly over the strong winds. Ponies from other zones must walk. Nex
       ],
     },
   ],
-  6: [],
+  // ── Zone 6 (Spirit): Whisperwood, Moonveil, Starfall Temple ───────────────
+  6: [
+    {
+      title: 'The Silver Lantern',
+      passage: `Moon Glimmer has a small silver lantern. She carries it through Moonveil every night. One evening, she set it down to help a baby owl back into its nest. When she turned around, the lantern was gone.
+
+Moon Glimmer looked under every bush. She looked behind every tree. Her eyes filled with tears.
+
+Then she saw a soft glow far down the path. Star Sparkle was walking toward her with the silver lantern.
+
+"I found this by the owl tree," Star Sparkle said. "I knew you would be looking for it."
+
+Moon Glimmer smiled so wide that her whole face seemed to shine. She gave Star Sparkle a big hug.`,
+      questions: [
+        { type: 'inference', question: 'How did Moon Glimmer feel at the end?',
+          choices: ['Angry at Star Sparkle', 'Scared of the owl', 'Too tired to talk', 'Very happy'], correctIndex: 3,
+          hint: 'Look at how she smiled.' },
+        { type: 'inference', question: 'How did Star Sparkle know the lantern was Moon Glimmer\'s?',
+          choices: ['She had seen Moon Glimmer carry it', 'The baby owl told her whose it was', 'She found it in Moon Glimmer\'s barn'], correctIndex: 0,
+          hint: 'The first sentences tell you how often Moon Glimmer carries it.' },
+      ],
+    },
+    {
+      title: 'Singing to the Old Star',
+      passage: `High above Starfall Temple, there is a very old star. For years it had been getting dimmer and dimmer. Most ponies had stopped looking at it.
+
+But Star Sparkle did not forget it. Every night, she climbed to the temple roof and sang it a quiet song. She sang about all the travelers it had guided long ago.
+
+One night, as she sang the last note, the old star flickered. Then it began to glow. It glowed brighter than every other star in the sky.
+
+Star Sparkle did not say a word. She just sat on the roof with a big smile and watched it shine.`,
+      questions: [
+        { type: 'inference', question: 'Why did Star Sparkle keep singing to the old star?',
+          choices: ['She was told to by the temple', 'She cared about it', 'She wanted to win a prize', 'She liked being up high'], correctIndex: 1,
+          hint: 'Other ponies stopped looking at it. Why didn\'t she?' },
+        { type: 'recall', question: 'Where did Star Sparkle sing?',
+          choices: ['In the woods of Whisperwood', 'By the stream in Moonveil', 'On the temple roof', 'Inside the great hall'], correctIndex: 2,
+          hint: 'Look in the second paragraph.' },
+      ],
+    },
+    {
+      title: 'Two Wishes',
+      passage: `Wishing Star can grant one small wish each week. But she has a rule. The wish must be for someone else.
+
+One day, a young pony named Pip came to see her. "I wish for a new kite," he said.
+
+Wishing Star shook her head gently. "That wish is for you," she said.
+
+Pip thought for a long time. His little sister had been sick in bed for a week. She could not go outside to play.
+
+"Then I wish for my sister to feel better," he said.
+
+The next morning, Pip's sister was running in the meadow. Wishing Star watched from the hill and smiled.`,
+      questions: [
+        { type: 'inference', question: 'Why did Wishing Star grant Pip\'s second wish?',
+          choices: ['It was for a new kite', 'He asked very loudly', 'It was for someone else', 'His sister asked for it too'], correctIndex: 2,
+          hint: 'Think about her rule.' },
+        { type: 'inference', question: 'How did Pip\'s sister feel the next morning?',
+          choices: ['Better', 'Still sick', 'Sad about the kite', 'Sleepy'], correctIndex: 0,
+          hint: 'What was she doing in the meadow?' },
+      ],
+    },
+    {
+      title: 'Let\'s Find Out',
+      passage: `Dusk Twinkle lives at Starfall Temple. He has a whole room full of notebooks about the stars.
+
+Young ponies often come to Dusk with questions. Why is the moon sometimes round and sometimes thin? Why do some stars twinkle red? How far away is the sky?
+
+Dusk never just gives them the answer. Instead, he smiles and says, "Let's find out together." Then he pulls down a notebook, and they look through it side by side. Sometimes they climb to the roof to look at the sky.
+
+The young ponies always leave knowing the answer. And they usually come back the next day with a new question.`,
+      questions: [
+        { type: 'inference', question: 'Why do the young ponies keep coming back?',
+          choices: ['They have to come for their school lessons', 'Dusk gives them sweets', 'Finding answers with Dusk is fun', 'Dusk asks them to'], correctIndex: 2,
+          hint: 'Think about how Dusk helps them.' },
+        { type: 'recall', question: 'What does Dusk say when a pony asks a question?',
+          choices: ['"Let\'s find out together."', '"Look it up yourself."', '"Come back tomorrow."', '"That is too hard for you."'], correctIndex: 0,
+          hint: 'Find the words he says in the third paragraph.' },
+      ],
+    },
+    {
+      title: 'Nova\'s Trail',
+      passage: `Deep in Whisperwood, there is a trail that seems to know what each pony needs. Nova Drift found it first, so the ponies call it Nova's Trail.
+
+Once, a pony walked the trail on a hot day. She was very thirsty. The trail led her to a cool spring she had never seen before.
+
+Another time, a pony walked the trail feeling lonely. He had just moved to the Spirit zone and did not know anyone yet. The trail led him to a clearing. Sitting there was another young pony, sharing a picnic with no one.
+
+By sunset, the two of them had made plans to meet again.`,
+      questions: [
+        { type: 'inference', question: 'What did the trail help the lonely pony find?',
+          choices: ['A cool spring', 'A way back home', 'A new friend', 'A picnic basket'], correctIndex: 2,
+          hint: 'What happened between the two ponies by sunset?' },
+        { type: 'recall', question: 'Who found the trail first?',
+          choices: ['Nova Drift', 'Dusk Twinkle', 'Starwarden Lumina', 'Moon Glimmer'], correctIndex: 0,
+          hint: 'Look at the first paragraph.' },
+      ],
+    },
+    {
+      title: 'Candles in the Windows',
+      passage: `Starfall Temple sits on a hill in the Spirit zone. On clear nights, the stars shine so brightly that the whole hill glows. Visitors can see the temple from miles away.
+
+Cloudy nights are different. The stars hide, and the hill is very dark. That is when Starwarden Lumina gets to work.
+
+Lumina walks from room to room with a long stick. She lights a candle in every single window of the temple. There are more than one hundred windows.
+
+Down below, a traveler who has lost the path looks up. She sees the little lights and starts to walk toward them.`,
+      questions: [
+        { type: 'inference', question: 'Why does Lumina light the candles on cloudy nights?',
+          choices: ['To keep the temple warm', 'So travelers can find the temple', 'Because she is afraid of the dark', 'To make the stars come out'], correctIndex: 1,
+          hint: 'Think about what the traveler does at the end.' },
+        { type: 'twoFact', question: 'What is the hill like on clear nights?',
+          choices: ['Very dark', 'Full of candles in every window', 'Covered in fog', 'Glowing with starlight'], correctIndex: 3,
+          hint: 'Clear nights and cloudy nights are different.' },
+      ],
+    },
+    {
+      title: 'A Jar of Moonlight',
+      passage: `Moon Glimmer knows how to catch moonbeams. She holds up a glass jar on a clear night, and the moonlight slides right in. Then she puts the lid on tight.
+
+A jar filled on a full moon glows the brightest. It can light up a whole room.
+
+One evening, Moon Glimmer heard crying coming from a little house in Moonveil. A young foal was scared of the dark and could not fall asleep.
+
+Moon Glimmer knocked softly on the door. She handed the foal her brightest jar. The crying stopped. Soon the little house was quiet, and the foal was fast asleep.`,
+      questions: [
+        { type: 'inference', question: 'Why did Moon Glimmer give the foal her brightest jar?',
+          choices: ['The foal asked to buy it', 'To help the foal not be scared', 'She had too many jars', 'It was the foal\'s birthday that very night'], correctIndex: 1,
+          hint: 'Why was the foal crying?' },
+        { type: 'recall', question: 'Which jars glow the brightest?',
+          choices: ['Ones filled on a cloudy night', 'Ones filled at sunset', 'Ones filled on a full moon', 'The biggest ones'], correctIndex: 2,
+          hint: 'Look at the second paragraph.' },
+      ],
+    },
+    {
+      title: 'The Running Pony Path',
+      passage: `The garden of Starfall Temple has many stone paths. Each one is shaped like a group of stars in the sky. There is a path shaped like a fish, one like a crown and one like a running pony.
+
+Astralhoof walks a path every day. When he is cheerful, he walks the short crown path. But when he has a big problem to think about, he walks the Running Pony path. It is the longest one in the garden. It twists and turns for a very long time.
+
+Today, Astralhoof has been on the Running Pony path since breakfast.`,
+      questions: [
+        { type: 'inference', question: 'What can you tell about Astralhoof today?',
+          choices: ['He is feeling very cheerful', 'He is lost somewhere in the twisty garden', 'He has just finished breakfast', 'He is thinking about a big problem'], correctIndex: 3,
+          hint: 'Think about when he walks the Running Pony path.' },
+        { type: 'twoFact', question: 'Which path does Astralhoof walk when he is cheerful?',
+          choices: ['The fish path', 'The Running Pony path', 'The crown path', 'The moon path'], correctIndex: 2,
+          hint: 'He walks different paths for different moods.' },
+      ],
+    },
+    {
+      title: 'Wishing Star\'s First Wish',
+      passage: `Long ago, when Wishing Star was young, she found a little foal crying in Whisperwood. The foal was lost. It was getting dark, and the woods were full of strange sounds.
+
+Wishing Star closed her eyes and made her very first wish. "I wish this foal could find the way home."
+
+A soft light appeared between the trees. It floated ahead like a tiny star. The foal followed it all the way to her front door.
+
+Now Wishing Star is grown up. Every night, she still walks through Whisperwood with a lantern. She stops and listens for anyone who might be lost.`,
+      questions: [
+        { type: 'inference', question: 'Why does Wishing Star still walk through Whisperwood every night?',
+          choices: ['She is looking for her own way home', 'She wants to help lost ponies', 'She likes the strange sounds', 'She is searching for the light'], correctIndex: 1,
+          hint: 'Think about her first wish and what she listens for.' },
+        { type: 'recall', question: 'What did the foal follow home?',
+          choices: ['A soft floating light', 'Wishing Star\'s voice', 'A trail of flowers', 'The sound of the stream'], correctIndex: 0,
+          hint: 'Read the third paragraph.' },
+      ],
+    },
+    {
+      title: 'Seven or Eight?',
+      passage: `Dusk Twinkle and Nova Drift were looking at a little group of stars. "There are seven," said Dusk. He had counted them many times.
+
+"I see eight," said Nova.
+
+Dusk counted again. Seven. Nova counted again. Eight. They argued until the moon came up.
+
+Finally, they climbed to the top of Starfall Temple and looked through the big telescope. There were eight stars. But one of them was so faint that Dusk had never noticed it.
+
+Dusk was quiet for a moment. Then he opened his notebook and wrote a number eight. Next to it he wrote, "Thanks, Nova."`,
+      questions: [
+        { type: 'inference', question: 'What does Dusk\'s note to Nova show?',
+          choices: ['He is still angry', 'He admits Nova was right', 'He thinks the telescope is broken', 'He wants to stop counting'], correctIndex: 1,
+          hint: 'Think about what he wrote next to the number.' },
+        { type: 'inference', question: 'Why had Dusk only counted seven stars?',
+          choices: ['He forgot how to count', 'Nova was hiding one of the stars behind her wing', 'The moon was in the way', 'One star was too faint for him to see'], correctIndex: 3,
+          hint: 'Read what they saw through the telescope.' },
+      ],
+    },
+    {
+      title: 'Vesper\'s Lantern',
+      passage: `Vesper is the Grand Champion, the strongest trainer in the whole land. Sometimes she trains at night in a clearing in Whisperwood.
+
+One night, three young trainers sneaked out to watch her. They hid behind a big log and peeked over the top. Vesper practiced for an hour. She never once looked their way.
+
+When she finished, Vesper walked to the edge of the clearing. She set her lantern down right next to the big log. Then she walked off into the dark without it.
+
+The three trainers looked at each other. They used the lantern to find their way safely home.`,
+      questions: [
+        { type: 'inference', question: 'What can you tell about Vesper from this story?',
+          choices: ['She did not see the trainers', 'She knew they were there', 'She forgot her lantern by mistake', 'She was angry at the trainers'], correctIndex: 1,
+          hint: 'Think about where she put the lantern.' },
+        { type: 'recall', question: 'Where did the young trainers hide?',
+          choices: ['Behind a big log', 'Up in a tree', 'Behind a bush', 'In a cave'], correctIndex: 0,
+          hint: 'Look in the second paragraph.' },
+      ],
+    },
+    {
+      title: 'Going in Circles',
+      passage: `Willow was walking Nova's Trail on a windy day. She wanted to reach the far side of Whisperwood before lunch.
+
+But something strange happened. Every time she came around a bend, she ended up back at the same old tree stump. She tried three times. Each time, there was the stump again.
+
+On the third time, Willow sat down on the stump to rest. That is when she saw it. Her red scarf was lying in the grass right beside her. It must have blown off her neck that morning.
+
+Willow wrapped the scarf tightly around her neck. This time, the trail led her straight ahead.`,
+      questions: [
+        { type: 'inference', question: 'Why did the trail keep bringing Willow back to the stump?',
+          choices: ['The trail was broken', 'It wanted her to find her scarf', 'She was walking backward', 'The stump was the prettiest one in the woods'], correctIndex: 1,
+          hint: 'What happened after she found the scarf?' },
+        { type: 'recall', question: 'What color was Willow\'s scarf?',
+          choices: ['Blue', 'Yellow', 'Green', 'Red'], correctIndex: 3,
+          hint: 'Look in the third paragraph.' },
+      ],
+    },
+    {
+      title: 'The Moon Moths',
+      passage: `In Moonveil, everyone speaks in whispers. That is because of the moon moths. These silver moths rest on the trees at night, and their wings glow like tiny moons. A loud noise makes them fly away.
+
+One night, a young pony named Thistle came to visit. He saw the glowing trees and shouted, "Wow! Look at that!"
+
+In a flash, every moth flew off into the sky. The trees went dark. The other ponies did not say a word. They just looked at Thistle.
+
+The next night, Thistle came back. This time, he tiptoed in and did not make a sound.`,
+      questions: [
+        { type: 'inference', question: 'Why did Thistle tiptoe in the next night?',
+          choices: ['His hooves were sore', 'He did not want to scare the moths', 'He was playing hide-and-seek', 'He was sneaking out of bed'], correctIndex: 1,
+          hint: 'What happened the first time he made noise?' },
+        { type: 'recall', question: 'Why does everyone in Moonveil whisper?',
+          choices: ['Loud noises scare the moths away', 'It is the middle of the night', 'Lumina asked them to', 'The trees are sleeping'], correctIndex: 0,
+          hint: 'Read the first paragraph.' },
+      ],
+    },
+    {
+      title: 'A Map of Your Own',
+      passage: `Hazel was new to Whisperwood. Every day, she tried to walk to Starfall Temple for her lessons. And every day, she took a wrong turn and arrived late.
+
+Astralhoof noticed. He has walked the paths of Whisperwood for many years, and he always carries a map. One evening, he sat down at his desk with a fresh piece of paper. He worked until long after dark.
+
+The next morning, Hazel found a rolled-up paper outside her door. It was a map of Whisperwood, with the path to the temple drawn in bright red.
+
+That day, Hazel was the first pony at her lesson.`,
+      questions: [
+        { type: 'inference', question: 'Who made the map for Hazel?',
+          choices: ['Hazel herself', 'Astralhoof', 'Her teacher', 'Nova Drift'], correctIndex: 1,
+          hint: 'Who stayed up late at his desk with fresh paper?' },
+        { type: 'inference', question: 'Why was Hazel first to her lesson that day?',
+          choices: ['She woke up extra early', 'Her lesson was moved', 'The map showed her the way', 'Astralhoof walked with her'], correctIndex: 2,
+          hint: 'What was different about that morning?' },
+      ],
+    },
+    {
+      title: 'Why It Is Called Starfall',
+      passage: `Starfall Temple got its name from something that happens every year. At the end of summer, hundreds of shooting stars streak across the sky above it. They fall so fast that they look like silver rain.
+
+The shooting stars come late at night, long after bedtime. But on those nights, nobody in the Spirit zone goes to bed early. Families carry blankets to the hill and lie on their backs to watch.
+
+Every time a star falls, the ponies make a wish. Starwarden Lumina counts every star. Last year, she counted three hundred and twelve.`,
+      questions: [
+        { type: 'inference', question: 'Why does nobody go to bed early at the end of summer?',
+          choices: ['It is too hot to sleep', 'Lumina keeps them awake', 'There is a big party at school every night', 'They want to see the shooting stars'], correctIndex: 3,
+          hint: 'When do the shooting stars come?' },
+        { type: 'recall', question: 'How many stars did Lumina count last year?',
+          choices: ['One hundred', 'Two hundred and five', 'Three hundred and twelve', 'Four hundred'], correctIndex: 2,
+          hint: 'Look at the last sentence.' },
+      ],
+    },
+  ],
 }
