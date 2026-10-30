@@ -1039,6 +1039,264 @@ A wooden sign stands between the two springs. It says, "Small spring for eggs. B
       ],
     },
   ],
-  5: [],
+  // ── Zone 5 (Air): Windwhistle Pass, Cloudperch, Galecrest Spire ───────────
+  5: [
+    {
+      title: 'The Autumn Song',
+      passage: `Breezy Lark sings all year long, but her autumn song is the one everyone waits for.
+
+In autumn, the wind in Cloudperch blows cool and steady. Breezy stands on the highest cloud and sings into it. The wind carries her song across the sky, past the falling leaves and over the hills below.
+
+When the song reaches the village, ponies stop what they are doing. Some close their eyes. Some sit down right where they are. The older ponies smile and hum along softly.
+
+When the song ends, nobody speaks for a long moment. Then they all go slowly back to work.`,
+      questions: [
+        { type: 'inference', question: 'How do the ponies feel about Breezy\'s autumn song?',
+          choices: ['They find it much too loud for the village', 'They feel scared of the wind', 'They wish she sang in spring', 'They love it and find it calming'], correctIndex: 3,
+          hint: 'Think about what the ponies do when they hear it.' },
+        { type: 'recall', question: 'Where does Breezy stand when she sings?',
+          choices: ['On the highest cloud', 'At the top of Galecrest Spire', 'In the village square', 'On a hill below'], correctIndex: 0,
+          hint: 'Look in the second paragraph.' },
+      ],
+    },
+    {
+      title: 'The Cloud Bridge',
+      passage: `Cloud Skip wanted to build a bridge from Cloudperch to Galecrest Spire. The bridge would be made of clouds, packed together tight.
+
+On the first day, she gathered clouds and pressed them into a long path. But that night, a strong gust blew the whole thing apart.
+
+On the second day, she started over. This time, she packed the clouds twice as tight. The wind pushed and pulled, but the bridge held.
+
+On the third day, she finished the last piece. Cloud Skip walked all the way across. Then she turned around and walked back, just to be sure.`,
+      questions: [
+        { type: 'inference', question: 'What kind of pony is Cloud Skip?',
+          choices: ['One who gives up easily', 'One who is afraid of heights', 'One who keeps trying', 'One who works very fast'], correctIndex: 2,
+          hint: 'Think about what she did after the gust broke her bridge.' },
+        { type: 'twoFact', question: 'What did Cloud do differently on the second day?',
+          choices: ['She packed the clouds tighter', 'She asked Galehoof to help her carry clouds', 'She built it lower down', 'She used fewer clouds'], correctIndex: 0,
+          hint: 'Compare the first day to the second day.' },
+      ],
+    },
+    {
+      title: 'Soft Landings',
+      passage: `Galehoof is the fastest flyer in the Air zone. He zooms across the sky like an arrow. But when he lands, he comes down hard. Thump! The ground shakes, and dust flies everywhere.
+
+Feather Float is not very fast. She drifts along slowly, like a leaf. But when she lands, she touches down so softly that you can barely hear it.
+
+Every spring, the young ponies of Cloudperch learn to fly. When it is time to practice landing, they line up in front of Feather Float. Only a few of them line up in front of Galehoof. Feather is always happy to help.`,
+      questions: [
+        { type: 'inference', question: 'Why do most young ponies line up in front of Feather Float?',
+          choices: ['She is the fastest flyer', 'Galehoof is not at practice', 'She gives out treats', 'She lands very softly'], correctIndex: 3,
+          hint: 'Think about what they are practicing and what Feather is good at.' },
+        { type: 'twoFact', question: 'Which pony is the fastest flyer?',
+          choices: ['Feather Float', 'Cloud Skip', 'Galehoof', 'Breezy Lark'], correctIndex: 2,
+          hint: 'Read the first paragraph.' },
+      ],
+    },
+    {
+      title: 'The Wrong Note',
+      passage: `Wind Whistle can talk to the wind. When she whistles a high note, the wind blows gently. When she whistles a low note, the wind blows hard.
+
+On Monday, the ponies of Cloudperch hung their wet blankets out to dry. "Just a gentle breeze, please," they asked Wind Whistle.
+
+Wind Whistle took a deep breath. But she had a bit of a cold, and her whistle came out low and rumbly.
+
+A minute later, the ponies were running across the sky. They were chasing their blankets. Wind Whistle covered her face with her hooves and promised to rest her voice.`,
+      questions: [
+        { type: 'inference', question: 'Why were the ponies chasing their blankets?',
+          choices: ['They were playing a game', 'Wind Whistle threw them', 'The low note made a strong wind', 'The blankets were dry and ready to fold'], correctIndex: 2,
+          hint: 'Think about what a low note does to the wind.' },
+        { type: 'inference', question: 'How did Wind Whistle feel at the end?',
+          choices: ['Embarrassed', 'Proud', 'Bored', 'Angry at the ponies'], correctIndex: 0,
+          hint: 'Look at what she did with her hooves.' },
+      ],
+    },
+    {
+      title: 'The First Feather',
+      passage: `Feather Float collects feathers. She has hundreds of them. There are white feathers from seagulls and brown ones from owls. There is even a long, bright one from a parrot.
+
+Most of her feathers are kept in big baskets. But one is different. It is a small blue jay feather, and it is a little bent at the tip.
+
+Feather keeps that one in a tiny wooden box lined with soft cloth. It was the very first feather she ever found, when she was just a little foal.
+
+Sometimes, when she feels homesick, she opens the box and looks at it for a while.`,
+      questions: [
+        { type: 'inference', question: 'Why does Feather keep the blue jay feather in its own box?',
+          choices: ['It is the biggest feather she has', 'It means a lot to her', 'It is too dirty for the baskets', 'It belongs to a friend'], correctIndex: 1,
+          hint: 'Think about when she found it and what she does with it.' },
+        { type: 'recall', question: 'Where are most of her feathers kept?',
+          choices: ['In a tiny wooden box', 'In big baskets', 'In a nest on a cloud', 'In her bed'], correctIndex: 1,
+          hint: 'Read the start of the second paragraph.' },
+      ],
+    },
+    {
+      title: 'Special Delivery',
+      passage: `Gust Dancer sends messages in tiny whirlwinds. She rolls up a note, spins a little wind around it and sends it flying. It always lands right at the door of the pony it is for.
+
+Last week, it was Breezy Lark's birthday. Gust wanted to send her a cake. So she spun the biggest whirlwind she had ever made and put the cake right in the middle.
+
+When Breezy opened her door, the cake was there. But so was frosting. It was on the door, on the walls, on the windows and in Breezy's mane.
+
+Breezy laughed so hard she had to sit down.`,
+      questions: [
+        { type: 'inference', question: 'What happened to the cake inside the whirlwind?',
+          choices: ['It arrived perfect and neat', 'It flew to the wrong house in the village', 'It melted in the sun', 'It got spun around and messy'], correctIndex: 3,
+          hint: 'Look at where the frosting ended up.' },
+        { type: 'inference', question: 'How did Breezy feel about the messy cake?',
+          choices: ['She was upset about her mane', 'She thought it was funny', 'She was scared', 'She did not care'], correctIndex: 1,
+          hint: 'Read the last sentence.' },
+      ],
+    },
+    {
+      title: 'Visitors in the Clouds',
+      passage: `In Cloudperch, the houses sit on top of clouds. Sometimes a little cloud drifts right through the middle of a house. The Air ponies do not mind at all. They just keep eating breakfast while the mist floats past.
+
+Last spring, a group of Earth ponies from Pebblebrook came to visit. They were used to solid ground under their hooves.
+
+When the first cloud drifted through, the Earth ponies froze. They pressed themselves against the walls. One of them grabbed a blanket and pulled it over his head. None of them finished breakfast that day. The next morning, they ate on the porch instead.`,
+      questions: [
+        { type: 'inference', question: 'How did the Earth ponies feel about the drifting clouds?',
+          choices: ['Nervous and uneasy', 'Happy and very excited', 'Sleepy and calm', 'Hungry and grumpy'], correctIndex: 0,
+          hint: 'Look at what they did when the cloud came through.' },
+        { type: 'twoFact', question: 'What do the Air ponies do when a cloud drifts through?',
+          choices: ['Hide under blankets', 'Keep eating breakfast', 'Press against the walls', 'Run outside'], correctIndex: 1,
+          hint: 'The Air ponies and the Earth ponies act differently.' },
+      ],
+    },
+    {
+      title: 'The Two-Zone Concert',
+      passage: `Breezy Lark sings, and Wind Whistle plays a flute made from a hollow reed. When they perform together on Galecrest Spire, something amazing happens.
+
+Wind Whistle asks the wind to carry the music. The wind picks up every note and takes it far away. The music floats over the mountains and down the valleys.
+
+At Ashfall Camp, in the Fire zone, the ponies stop cooking dinner. They tilt their ears toward the sky. Far away in Saltspray Cove, Bubble Brook stops blowing bubbles.
+
+The next day, ponies from both zones sent letters to say thank you. Some letters even had drawings of music notes.`,
+      questions: [
+        { type: 'inference', question: 'Why did ponies in the Fire and Water zones stop what they were doing?',
+          choices: ['A storm was coming', 'They heard the music on the wind', 'It was time for bed', 'Their friends called them in for dinner'], correctIndex: 1,
+          hint: 'Think about what the wind was carrying.' },
+        { type: 'recall', question: 'What is Wind Whistle\'s flute made from?',
+          choices: ['A hollow reed', 'A seashell', 'A piece of wood', 'A bird bone'], correctIndex: 0,
+          hint: 'Look at the first sentence.' },
+      ],
+    },
+    {
+      title: 'The Melting Bridge',
+      passage: `After her bridge to Galecrest Spire, Cloud Skip wanted to build a bigger one. This time, she would build a cloud bridge all the way to the Fire zone.
+
+The first half went well. Then the bridge got close to the Fire zone. The air there grew hotter and hotter. Each morning, Cloud found that the end of the bridge had shrunk. The clouds had turned into steam and floated away.
+
+Cloud thought for a long time. Then she flew to the Magma Forge and asked Emberwarden Cinda for help.`,
+      questions: [
+        { type: 'inference', question: 'Why did the end of the bridge keep shrinking?',
+          choices: ['The wind blew it away', 'Other ponies took the clouds home to play with', 'The hot air turned the clouds to steam', 'Cloud did not finish it'], correctIndex: 2,
+          hint: 'Think about what the air was like near the Fire zone.' },
+        { type: 'inference', question: 'Why did Cloud go to see Cinda?',
+          choices: ['To give up on the bridge', 'To buy more clouds', 'To battle Cinda in the Fire Trial', 'To get help with the heat'], correctIndex: 3,
+          hint: 'Cinda is the guardian of the Fire zone. What was Cloud\'s problem?' },
+      ],
+    },
+    {
+      title: 'Galehoof Watches the Sky',
+      passage: `Galehoof flies every single day. He has flown through rain, snow and fog. But in all his years of flying, he has never once been caught in a storm.
+
+Before every flight, Galehoof looks at the sky for a long time. He checks the color of the clouds and which way the wind is blowing.
+
+Sometimes he sees dark clouds piling up in the west. Then he turns around and flies home early. His friends sometimes tease him for leaving. But when the thunder starts, Galehoof is already home. He is warm and dry.`,
+      questions: [
+        { type: 'inference', question: 'Why has Galehoof never been caught in a storm?',
+          choices: ['He only flies on sunny days', 'He is very lucky', 'He watches the sky and heads home early', 'Storms never come anywhere near the Air zone'], correctIndex: 2,
+          hint: 'Think about what he does before every flight.' },
+        { type: 'recall', question: 'What makes Galehoof turn around and fly home?',
+          choices: ['Dark clouds in the west', 'His friends calling him', 'A strong wind from the east', 'Getting tired'], correctIndex: 0,
+          hint: 'Read the last paragraph.' },
+      ],
+    },
+    {
+      title: 'Gust Dancer\'s House',
+      passage: `Galecrest Spire is a tall tower made of white stone. Most Air ponies want to live near the top, where the view is best.
+
+But Gust Dancer lives near the very bottom, right next to the kitchen. Every morning, she wakes up to the smell of warm muffins. She is always the first pony at the breakfast table. At lunch, she helps the cooks taste the soup. At night, she sneaks down for one more cookie.
+
+Her friends ask why she does not move up higher. Gust just smiles. Then she licks the crumbs off her lips.`,
+      questions: [
+        { type: 'inference', question: 'Why does Gust Dancer live near the bottom of the spire?',
+          choices: ['She is afraid of heights', 'Her family lives there', 'All of the rooms at the top were full', 'She loves being close to the food'], correctIndex: 3,
+          hint: 'Think about everything she does near the kitchen.' },
+        { type: 'twoFact', question: 'Where do most Air ponies want to live?',
+          choices: ['Near the kitchen', 'Near the top', 'In the middle', 'Outside the spire'], correctIndex: 1,
+          hint: 'Read the first paragraph.' },
+      ],
+    },
+    {
+      title: 'Zephyra at Sunset',
+      passage: `Skywarden Zephyra is the guardian of the Air zone. Every evening at sunset, she does something unusual. She flies in slow, wide circles above Galecrest Spire.
+
+Her wings catch the last light of the sun. They shine bright pink and gold. You can see them from far, far away.
+
+Travelers crossing Windwhistle Pass often get lost when it starts to get dark. But they look up, see the shining circles in the sky and turn toward them. By the time the stars come out, they have reached the spire safely. Not one traveler has been lost for years.`,
+      questions: [
+        { type: 'inference', question: 'Why does Zephyra fly in circles at sunset?',
+          choices: ['To show lost travelers the way', 'To stay warm before bed', 'To practice for a race', 'To chase the evening clouds away from the spire'], correctIndex: 0,
+          hint: 'Think about what the travelers do when they see her.' },
+        { type: 'recall', question: 'What colors do her wings shine at sunset?',
+          choices: ['Silver and blue', 'Green and white', 'Pink and gold', 'Red and purple'], correctIndex: 2,
+          hint: 'Look in the second paragraph.' },
+      ],
+    },
+    {
+      title: 'The Height Contest',
+      passage: `Every summer, the Air ponies have a contest to see who can fly the highest. This year, Cloud Skip was sure she could win.
+
+She flew up and up, past the other ponies. She was almost at the top. Then she heard a tiny peep. A baby bird had fallen out of its nest on a high cliff.
+
+Cloud stopped. She scooped up the baby bird and carried it gently back to its nest.
+
+By the time she flew up again, the contest was over. Breezy Lark had won. Cloud did not mind at all. She smiled the whole way home.`,
+      questions: [
+        { type: 'inference', question: 'Why was Cloud happy even though she lost?',
+          choices: ['She did not like contests', 'She was glad she had helped the bird', 'She won a different prize for her speed', 'She was too tired to care'], correctIndex: 1,
+          hint: 'Think about what she did instead of finishing the contest.' },
+        { type: 'recall', question: 'Who won the height contest?',
+          choices: ['Cloud Skip', 'Galehoof', 'Gust Dancer', 'Breezy Lark'], correctIndex: 3,
+          hint: 'Read the last paragraph.' },
+      ],
+    },
+    {
+      title: 'One Trophy, Two Winners',
+      passage: `Galehoof and Breezy Lark raced around Galecrest Spire. The judges stood at the finish line, watching closely.
+
+Galehoof was faster on the straight parts. Breezy was faster on the curves. They traded places again and again.
+
+At the finish line, they crossed at exactly the same moment. The judges looked at each other. They talked for a long time. Finally, they brought out the trophy and handed it to both of them.
+
+Now the trophy spends one week at Galehoof's house and the next week at Breezy's house. Both ponies agree that this is fair.`,
+      questions: [
+        { type: 'inference', question: 'Why did the judges give the trophy to both ponies?',
+          choices: ['They liked both ponies', 'The race was a tie', 'There was a second trophy', 'Galehoof gave his half away'], correctIndex: 1,
+          hint: 'Think about what happened at the finish line.' },
+        { type: 'twoFact', question: 'Where was Breezy faster?',
+          choices: ['On the straight parts', 'At the very start', 'On the curves', 'At the finish line'], correctIndex: 2,
+          hint: 'Each pony was faster on a different part of the track.' },
+      ],
+    },
+    {
+      title: 'The Whistling Pass',
+      passage: `Windwhistle Pass is a narrow path between two tall mountains. It is the only way to walk into the Air zone.
+
+The pass got its name from the sound it makes. When wind blows between the mountains, it makes a long whistle. A soft whistle means a gentle breeze. A loud, shrill whistle means a very strong wind.
+
+Air ponies can fly over the strong winds. Ponies from other zones must walk. Next to the start of the path, there is a bench and a sign. The sign says, "Listen before you go."`,
+      questions: [
+        { type: 'inference', question: 'What should a walking pony do if the pass is whistling loudly?',
+          choices: ['Hurry through the pass as fast as she can', 'Whistle back at the wind', 'Fly over the mountains', 'Wait on the bench until it is quieter'], correctIndex: 3,
+          hint: 'Think about what a loud whistle means and what the sign says.' },
+        { type: 'twoFact', question: 'What does a soft whistle mean?',
+          choices: ['A gentle breeze', 'A very strong wind', 'Rain is coming', 'The pass is closed'], correctIndex: 0,
+          hint: 'The pass can whistle softly or loudly.' },
+      ],
+    },
+  ],
   6: [],
 }
