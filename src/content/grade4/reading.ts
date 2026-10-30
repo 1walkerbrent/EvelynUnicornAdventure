@@ -791,7 +791,553 @@ She plans to add five more places by the end of summer.`,
       ],
     },
   ],
-  4: [],
-  5: [],
+  // ── Zone 4 (Fire): Cinderpath, Ashfall Camp, the Magma Forge ──────────────
+  4: [
+    {
+      title: 'Ember Glow\'s Lesson',
+      passage: `Ember Glow was asked to teach the young ponies of Ashfall Camp about embers. She brought her stone jar and poured out two embers onto a flat rock: one red and one blue.
+
+"Red embers are the most common," she explained. "They form when wood burns down slowly. They glow for about a day and give off gentle heat. That makes them perfect for warming a tent or cooking a meal."
+
+Then she pointed to the blue one. "Blue embers are rare. They only form deep inside the Magma Forge, where the heat is much stronger than any campfire. A blue ember can glow for a whole month, and it is hot enough to melt metal. So we use them only for forging."
+
+The young ponies leaned in close. None of them had ever seen a blue ember before.`,
+      questions: [
+        { type: 'mainIdea', question: 'What is this passage mostly about?',
+          choices: ['How to cook a meal over a campfire at night', 'Why the Magma Forge is so hot', 'How young ponies learn at camp', 'How red and blue embers are different'], correctIndex: 3,
+          hint: 'Think about what Ember Glow spends the whole lesson explaining.' },
+        { type: 'twoFact', question: 'How long can a blue ember glow?',
+          choices: ['A whole month', 'About one day', 'A single hour', 'Forever'], correctIndex: 0,
+          hint: 'Red embers and blue embers glow for different amounts of time.' },
+      ],
+    },
+    {
+      title: 'Campfire Rules',
+      passage: `Spark Flicker lights every campfire at Ashfall Camp, so she also makes sure everyone follows the two campfire rules.
+
+The first rule is about where to build a fire. A fire must always sit inside a ring of stones. The stones stop burning logs from rolling out and keep sparks from reaching the dry grass. Spark checks every ring before she lights a fire. If even one stone is missing, she will not light it.
+
+The second rule is about leaving. Nobody may walk away from a fire until it is completely out. When a fire is finished, ponies pour sand over the coals and stir them until no smoke rises.
+
+Spark says the first rule keeps a fire where it belongs and the second keeps it from coming back. In all her years at camp, there has never been a wildfire.`,
+      questions: [
+        { type: 'twoFact', question: 'Which rule keeps sparks away from the dry grass?',
+          choices: ['The rule about leaving a fire', 'The rule about pouring sand', 'The ring of stones rule', 'The rule about stirring coals'], correctIndex: 2,
+          hint: 'One rule is about where to build a fire. The other is about leaving.' },
+        { type: 'recall', question: 'What do ponies pour over a finished fire?',
+          choices: ['Cold water from the spring', 'Ash from the mountain', 'Dirt from the path', 'Sand'], correctIndex: 3,
+          hint: 'Read the third paragraph.' },
+      ],
+    },
+    {
+      title: 'Cocoa\'s Two Drinks',
+      passage: `Cinder Cocoa runs a drink stand at the edge of Ashfall Camp. Most of the year, she sells her famous hot chocolate, stirred slowly with cinnamon added last.
+
+But summers in the Fire zone are scorching. On the hottest days, even Fire ponies do not want a steaming drink. So Cocoa invented a second recipe: iced cocoa. She makes the chocolate the same way, then pours it over chips of ice that she keeps in a cold cave behind the stand.
+
+Her hot chocolate is still her best seller overall. But from midsummer until the first cool week of autumn, the iced cocoa sells three times as fast.
+
+Cocoa keeps a chalkboard by the stand. Every morning, she writes the day's temperature on it, so customers know which drink she recommends.`,
+      questions: [
+        { type: 'twoFact', question: 'Which drink sells faster in midsummer?',
+          choices: ['Iced cocoa', 'Hot chocolate', 'Cinnamon tea', 'They sell the same'], correctIndex: 0,
+          hint: 'One drink sells best overall, but a different one sells fastest in summer.' },
+        { type: 'wordMeaning', question: 'In this passage, what does "scorching" mean?',
+          choices: ['Very rainy', 'Extremely hot', 'Short and quick', 'Quiet and calm'], correctIndex: 1,
+          hint: 'Even Fire ponies do not want a hot drink then.' },
+      ],
+    },
+    {
+      title: 'The Sleeping Mountain',
+      passage: `The mountain that holds the Magma Forge is not an ordinary mountain. It is a volcano. Long ago, melted rock called lava poured out of its top and flowed down its sides. Over many years, the lava cooled and hardened, building the mountain taller and taller.
+
+Today, the volcano is dormant. That means it is resting. Lava has not reached the top in hundreds of years. But the mountain is not completely asleep. Deep inside, a river of lava still flows slowly. Its heat keeps the forge warm and the hot springs of Ashfall Camp bubbling.
+
+Fire ponies watch the mountain closely. If the ground shakes or steam starts rising from new cracks, they know the volcano may be waking up. So far, it has stayed quiet.`,
+      questions: [
+        { type: 'wordMeaning', question: 'In this passage, what does "dormant" mean?',
+          choices: ['Burning brightly', 'Resting and not active', 'Growing taller every day', 'Broken apart'], correctIndex: 1,
+          hint: 'The passage explains it in the very next sentence.' },
+        { type: 'mainIdea', question: 'What is the main idea of this passage?',
+          choices: ['The Magma Forge sits inside a resting volcano', 'Hot springs are fun to swim in', 'Lava is very dangerous to touch, even when it looks cool', 'Fire ponies like to climb mountains'], correctIndex: 0,
+          hint: 'Think about what every paragraph is describing.' },
+      ],
+    },
+    {
+      title: 'Strong and Quick',
+      passage: `Blazehoof and Flame Twirl both battle for Emberwarden Cinda, but they could not be more different.
+
+Blazehoof is all strength. He is the biggest pony at the Magma Forge, and his hooves can crack stone. In a battle, he does not dodge. He simply stands his ground and takes each hit, then strikes back with one powerful blow.
+
+Flame Twirl is all speed. She is small and light, and she moves like a spinning flame. In a battle, she never stands still. She darts left and right, so her opponent can hardly touch her, and she strikes with many quick little hits.
+
+Trainers who face them in the Trial have to change their plans for each one. Against Blazehoof, they try to outlast him. Against Flame, they try to slow her down.`,
+      questions: [
+        { type: 'twoFact', question: 'How does Flame Twirl battle?',
+          choices: ['She stands her ground and takes each hit', 'She darts around and strikes quickly', 'She cracks stone with her hooves', 'She waits for Blazehoof to help'], correctIndex: 1,
+          hint: 'The passage describes Blazehoof first, then Flame.' },
+        { type: 'twoFact', question: 'What do trainers try to do against Blazehoof?',
+          choices: ['Slow him down', 'Outlast him', 'Make him dodge', 'Hide from him'], correctIndex: 1,
+          hint: 'Read the last paragraph.' },
+      ],
+    },
+    {
+      title: 'Traveling on Cinderpath',
+      passage: `Cinderpath is the only road into the Fire zone, and it can be a tough trip for visitors. Fire ponies offer two pieces of advice, one for the day and one for the night.
+
+During the day, the sun beats down on the dark cinders. The road becomes very hot. Travelers should carry plenty of water and rest in the shade of the big boulders along the way. Fire ponies say it is best to walk only in the morning and late afternoon.
+
+At night, the road is much cooler. The cinders glow orange, so there is no need for a lantern. But the glow can make it hard to see the stars. Travelers who want to know which way is north should check the sky before the sun sets.
+
+Most visitors choose to travel at night.`,
+      questions: [
+        { type: 'twoFact', question: 'What should travelers do during the day?',
+          choices: ['Look at the stars', 'Light a lantern', 'Walk only at noon when it is brightest', 'Carry water and rest in the shade'], correctIndex: 3,
+          hint: 'There is advice for the day and advice for the night.' },
+        { type: 'twoFact', question: 'What problem does the glowing road cause at night?',
+          choices: ['It is too hot to walk on at night', 'It wakes up the animals', 'It makes the stars hard to see', 'It burns their hooves'], correctIndex: 2,
+          hint: 'Read the third paragraph.' },
+      ],
+    },
+    {
+      title: 'Why It Is Called Ashfall',
+      passage: `Ashfall Camp sits at the bottom of the volcano that holds the Magma Forge. It got its name from something that happens every few weeks.
+
+Now and then, the volcano lets out a puff of gray smoke. The smoke carries tiny bits of ash high into the air. When the wind dies down, the ash floats back to earth like soft gray snow. It covers the tents, the paths and the ponies' manes.
+
+You might think the Fire ponies would mind. But ash is very good for gardens. It is full of minerals that help plants grow. Because of the ashfall, the gardens around the camp grow the biggest peppers and the sweetest melons in the whole realm.
+
+After every ashfall, the young ponies sweep off the tents. Then they gently spread the extra ash over the gardens.`,
+      questions: [
+        { type: 'mainIdea', question: 'What is this passage mostly about?',
+          choices: ['How to sweep a tent', 'Which melons are the sweetest in the realm', 'How smoke gets into the air', 'Why ash falls on the camp and why it helps'], correctIndex: 3,
+          hint: 'Think about the name of the camp and the whole passage.' },
+        { type: 'recall', question: 'What do the young ponies do with the extra ash?',
+          choices: ['Throw it in the hot spring', 'Pile it by the gate', 'Spread it over the gardens', 'Carry it up the mountain'], correctIndex: 2,
+          hint: 'Read the last sentence.' },
+      ],
+    },
+    {
+      title: 'The Ember Festival',
+      passage: `At the end of every autumn, the Fire zone celebrates the Ember Festival. Ponies come from all over the realm for two famous events.
+
+The first is the Lantern Parade. As soon as the sun sets, hundreds of ponies walk down Cinderpath carrying paper lanterns, each with a red ember glowing inside. They walk from the edge of the zone all the way to Ashfall Camp. From the mountain, the parade looks like a river of light.
+
+The second event is the Fire Dance Contest, held at midnight around the biggest bonfire of the year. Dancers spin and leap while sparks fly from their hooves. Flame Twirl has won it four years in a row.
+
+The festival ends at sunrise, when everyone shares a giant breakfast of roasted apples and hot chocolate.`,
+      questions: [
+        { type: 'twoFact', question: 'When is the Fire Dance Contest held?',
+          choices: ['As soon as the sun sets', 'At sunrise', 'At midnight', 'In the afternoon'], correctIndex: 2,
+          hint: 'The festival has two events at different times.' },
+        { type: 'recall', question: 'What is inside each paper lantern?',
+          choices: ['A small candle', 'A blue ember', 'A firefly', 'A red ember'], correctIndex: 3,
+          hint: 'Read the second paragraph.' },
+      ],
+    },
+    {
+      title: 'Cinda\'s Trial',
+      passage: `Emberwarden Cinda guards the Magma Forge and the Fire badge. Trainers who come to challenge her in the Trial discover that it tests two different things.
+
+The first part of the battle tests courage. Cinda's ponies charge in fast, with flames roaring. Many trainers panic and make hasty choices. Cinda watches to see whether a trainer can stay calm when things look scary.
+
+The second part tests cleverness. Once a trainer has shown courage, Cinda changes her plan. Her ponies start using tricks, like pretending to be tired and then attacking suddenly. To win, a trainer must notice the pattern and plan ahead.
+
+"Courage gets you through the door," Cinda likes to say. "Cleverness gets you to the other side." Only trainers who show both earn her badge.`,
+      questions: [
+        { type: 'twoFact', question: 'What does the second part of the Trial test?',
+          choices: ['Cleverness', 'Courage', 'Speed', 'Strength and size'], correctIndex: 0,
+          hint: 'The Trial has a first part and a second part.' },
+        { type: 'wordMeaning', question: 'In this passage, what does "hasty" mean?',
+          choices: ['Rushed', 'Very brave', 'Slow and careful', 'Kind and friendly'], correctIndex: 0,
+          hint: 'The trainers panic when this happens.' },
+      ],
+    },
+    {
+      title: 'Plants That Love Heat',
+      passage: `Most plants would wilt in the heat of the Fire zone. But two kinds of plants grow happily on the warm slopes of the volcano.
+
+Fireflowers have bright orange petals shaped like flames. They grow best in full sunlight, right next to the glowing cinders. Their roots reach deep underground to find water, so they rarely need rain. Fire ponies weave fireflowers into crowns for the Ember Festival.
+
+Ash ferns grow in the shade, under rocky ledges. Their soft gray leaves are covered in tiny hairs that trap moisture from the air. Unlike fireflowers, ash ferns need a cool, damp spot to survive. Fire ponies use their leaves to wrap food before baking it in the coals.
+
+Both plants are protected. Visitors may look at them, but they must never pick them.`,
+      questions: [
+        { type: 'twoFact', question: 'Where do ash ferns grow?',
+          choices: ['In full sunlight', 'In the shade under rocky ledges', 'Right next to the glowing cinders on the road', 'In the hot springs'], correctIndex: 1,
+          hint: 'The two plants grow in different places.' },
+        { type: 'twoFact', question: 'What do Fire ponies make with fireflowers?',
+          choices: ['Wrappers for baking food', 'Crowns for the festival', 'Medicine for burns', 'Tea for breakfast'], correctIndex: 1,
+          hint: 'Each plant has a different use.' },
+      ],
+    },
+    {
+      title: 'Sunny\'s Pepper Patch',
+      passage: `Sunny Scorch grows peppers in a sunny patch behind her tent. She grows two kinds, and they could not be more different.
+
+The yellow sun peppers are sweet and mild. They grow quickly and are ready to pick by early summer. Sunny eats them raw as a snack, and young ponies love them because they are not spicy at all.
+
+The red fire peppers are another story. They grow slowly and are not ready until late summer. But they are so spicy that even Fire ponies take only a tiny bite. Sunny dries them in the sun, grinds them into powder and sells it at the market in small jars.
+
+Every year, Sunny holds a pepper-tasting day. Visitors can try both kinds. She keeps a bucket of milk nearby for anyone who bites into a red one too quickly.`,
+      questions: [
+        { type: 'twoFact', question: 'Which peppers are ready to pick by early summer?',
+          choices: ['The yellow sun peppers', 'The red fire peppers', 'Both kinds', 'Neither kind'], correctIndex: 0,
+          hint: 'One pepper grows quickly and one grows slowly.' },
+        { type: 'recall', question: 'Why does Sunny keep a bucket of milk nearby?',
+          choices: ['To water the peppers', 'To make hot chocolate', 'To wash the jars before filling them', 'For ponies who bite a spicy pepper'], correctIndex: 3,
+          hint: 'Read the last sentence.' },
+      ],
+    },
+    {
+      title: 'Bells and Horseshoes',
+      passage: `The ponies of the Magma Forge make many things from metal, but their two most famous products are horseshoes and bells.
+
+Horseshoes must be tough. To make one, a smith heats a bar of iron in the forge until it glows bright orange. Then she hammers it into a curved shape on a heavy anvil. Finally, she dips it in cold water with a loud hiss, which makes the metal harder.
+
+Bells must sing. They are made from a softer, golden metal called bronze. Instead of hammering, the smith melts the bronze completely and pours it into a clay mold shaped like a bell. When it cools, she breaks the mold away and polishes the bell until it shines.
+
+Every bell is tested before it leaves the forge. If its sound is not clear and sweet, it is melted down and poured again.`,
+      questions: [
+        { type: 'twoFact', question: 'How is a bell shaped?',
+          choices: ['By hammering it flat on a heavy anvil', 'By pouring melted metal into a mold', 'By dipping it in cold water', 'By bending a bar of iron'], correctIndex: 1,
+          hint: 'Horseshoes and bells are made in different ways.' },
+        { type: 'twoFact', question: 'What metal are horseshoes made from?',
+          choices: ['Bronze', 'Gold', 'Iron', 'Silver'], correctIndex: 2,
+          hint: 'Read the paragraph about horseshoes.' },
+      ],
+    },
+    {
+      title: 'Fire Ponies and Water',
+      passage: `It is well known that Fire ponies do not like rain. A sudden shower sends them running for their tents. Cold water on their manes makes them shiver and feel weak, and a heavy storm can leave them tired for a whole day.
+
+But that does not mean Fire ponies never touch water. Like every living creature, they need to drink it to stay healthy. The difference is that they prefer it warm. Most Fire ponies sip from the hot springs at Ashfall Camp, where the water is heated by the volcano.
+
+Fire ponies also enjoy warm baths. Soaking in the big hot spring relaxes their muscles after a long day of training.
+
+So it is not water itself that Fire ponies dislike. It is cold water falling from the sky.`,
+      questions: [
+        { type: 'mainIdea', question: 'What is the main idea of this passage?',
+          choices: ['Fire ponies are afraid of storms', 'They like warm water, not cold rain', 'The hot springs are heated by the volcano', 'Fire ponies need to drink water'], correctIndex: 1,
+          hint: 'Read the last two sentences again.' },
+        { type: 'recall', question: 'Where do most Fire ponies drink?',
+          choices: ['From rain barrels', 'From the hot springs', 'From a cold stream', 'From the Magma Forge'], correctIndex: 1,
+          hint: 'Read the second paragraph.' },
+      ],
+    },
+    {
+      title: 'The Slow Dance',
+      passage: `Two weeks before the Ember Festival, Flame Twirl twisted her ankle while practicing a leap. The healer told her she could walk, but she must not jump or spin fast for a month.
+
+Flame was heartbroken. She had won the Fire Dance Contest four years in a row, and now she would have to miss it.
+
+But then she remembered the Swirl, the slow dance she had learned the year before. It had no jumping at all. Flame practiced it every day, carefully and gently. She added long, sweeping turns and let the sparks from her hooves drift through the air like falling leaves.
+
+On festival night, she performed the Swirl. The crowd was completely silent until she finished. Then they cheered louder than ever. Flame did not win first place, but she said it was her favorite dance of all.`,
+      questions: [
+        { type: 'mainIdea', question: 'What is this story mostly about?',
+          choices: ['How to treat a twisted ankle', 'Who won the Fire Dance Contest', 'Flame finding a new way to dance after getting hurt', 'Why sparks fly from Fire ponies\' hooves during dances at night'], correctIndex: 2,
+          hint: 'Think about Flame\'s problem and how she solved it.' },
+        { type: 'twoFact', question: 'What could Flame still do after her injury?',
+          choices: ['Jump and leap', 'Spin very fast', 'Walk', 'Run races'], correctIndex: 2,
+          hint: 'The healer said what she could do and what she could not.' },
+      ],
+    },
+    {
+      title: 'Glass Rock and Sponge Rock',
+      passage: `Two very different rocks are found on the slopes of the Fire zone's volcano. Both were made from lava, but they cooled in different ways.
+
+Obsidian formed when lava cooled very quickly, so fast that it turned into a kind of natural glass. It is black and shiny, and when it breaks, its edges are sharper than any knife. Long ago, Fire ponies made tools from obsidian. Today, they mostly polish it into mirrors.
+
+Pumice formed when lava full of gas bubbles cooled. The bubbles left tiny holes all through the rock. That makes pumice so light that it floats in water. Fire ponies use pumice to scrub their hooves and smooth rough wood.
+
+Spark Flicker has a piece of each on her shelf. She likes to show visitors how one sinks and the other floats.`,
+      questions: [
+        { type: 'twoFact', question: 'What do Fire ponies use pumice for?',
+          choices: ['Scrubbing hooves and smoothing wood', 'Making mirrors', 'Cutting rope', 'Building walls'], correctIndex: 0,
+          hint: 'Obsidian and pumice have different uses.' },
+        { type: 'twoFact', question: 'Why does obsidian have sharp edges?',
+          choices: ['It is full of tiny holes', 'It is light enough to float', 'It cooled quickly into a kind of glass', 'Fire ponies sharpen it'], correctIndex: 2,
+          hint: 'Read the paragraph about obsidian.' },
+      ],
+    },
+  ],
+  // ── Zone 5 (Air): Windwhistle Pass, Cloudperch, Galecrest Spire ───────────
+  5: [
+    {
+      title: 'The Tower in the Clouds',
+      passage: `Galecrest Spire is the tallest building in the realm. It rises from the top of a mountain in the Air zone, and its pointed tip often disappears into the clouds. A spire is a tall, narrow tower that comes to a point. This one is made of white stone that sparkles in the sun.
+
+The Spire has more than two hundred rooms stacked on top of one another. Near the bottom are the kitchens, the library and the training halls. Air ponies live in the middle floors. At the very top is the Sky Chamber, where Skywarden Zephyra, the guardian of the Air zone, battles trainers in the Trial.
+
+There are no stairs inside the Spire. Air ponies simply fly from floor to floor through a tall open shaft in the center. Visitors who cannot fly ride up in a basket pulled by ropes.`,
+      questions: [
+        { type: 'mainIdea', question: 'What is this passage mostly about?',
+          choices: ['How Zephyra battles trainers in the Trial at the top', 'What Galecrest Spire is like inside and out', 'How to ride a basket pulled by ropes', 'Why Air ponies like to fly'], correctIndex: 1,
+          hint: 'Think about what every paragraph describes.' },
+        { type: 'wordMeaning', question: 'In this passage, what does "spire" mean?',
+          choices: ['A thick cloud', 'A kind of mountain with snow on top', 'A large basket', 'A tall, pointed tower'], correctIndex: 3,
+          hint: 'The passage explains the word in the first paragraph.' },
+      ],
+    },
+    {
+      title: 'Breezy\'s Spring Song',
+      passage: `Everyone in Cloudperch loves Breezy Lark's autumn song. For years, ponies had begged her to write one for spring, too. But every time she tried, the words came out wrong.
+
+This year, Breezy decided to stop trying so hard. She spent each morning of early spring just listening. She listened to the baby birds chirping in their nests. She listened to the ice melting off the edges of the clouds and dripping into the valley below. She listened to the wind, which had changed from cold and sharp to soft and warm.
+
+On the first warm day of spring, Breezy flew to the highest cloud. She did not bring any notes with her. She simply opened her mouth and sang everything she had heard.
+
+When she landed, a crowd was waiting. Several ponies were wiping their eyes. Wind Whistle hugged her and said, "Finally."`,
+      questions: [
+        { type: 'inference', question: 'Why was Breezy finally able to write a spring song?',
+          choices: ['She stopped forcing it and listened to spring', 'Someone else wrote all of the words for her instead', 'She practiced the autumn song more', 'Wind Whistle taught her a new melody'], correctIndex: 0,
+          hint: 'Think about what she did differently this year.' },
+        { type: 'inference', question: 'Why were some ponies wiping their eyes?',
+          choices: ['The wind was blowing dust', 'They were sad it was over', 'The song moved them', 'They had colds'], correctIndex: 2,
+          hint: 'Think about how they had waited years for this song.' },
+      ],
+    },
+    {
+      title: 'A Bridge That Would Not Melt',
+      passage: `Cloud Skip had a problem. Her cloud bridge to the Fire zone kept melting into steam whenever it got close to the hot air. So she flew to the Magma Forge to ask Emberwarden Cinda for advice.
+
+Cinda listened carefully. Then she led Cloud to a workshop where Fire ponies were making glass. "Glass starts as sand," Cinda said. "When we heat it, it turns into something new that the heat cannot hurt anymore."
+
+Cloud's eyes went wide. She flew home, gathered a heap of clouds and asked Fire ponies to blow their warm breath across it, just a little at a time. Slowly, the clouds began to change. They grew thicker and firmer, like soft white stone.
+
+Two months later, a sturdy bridge stretched from Cloudperch all the way to Ashfall Camp. On its railing, Cloud carved a small flame next to a small cloud.`,
+      questions: [
+        { type: 'inference', question: 'What gave Cloud the idea for her new bridge?',
+          choices: ['Watching Fire ponies swim in the hot springs at camp', 'Seeing the bridge in Brindlewood', 'A book in the Spire library', 'Learning how heat turns sand into glass'], correctIndex: 3,
+          hint: 'Think about what Cinda showed her in the workshop.' },
+        { type: 'inference', question: 'Why did Cloud carve a flame next to a cloud?',
+          choices: ['To show the Air and Fire zones built it together', 'She thought a flame and a cloud looked pretty side by side', 'Cinda asked her to do it', 'To warn travelers about the heat'], correctIndex: 0,
+          hint: 'Think about who helped make the bridge possible.' },
+      ],
+    },
+    {
+      title: 'A Hoarse Whistle',
+      passage: `Wind Whistle woke up one morning with a sore throat. When she tried to whistle, only a rough, scratchy sound came out. Her voice was so hoarse that she could barely speak above a whisper.
+
+This was a serious problem. That afternoon, the Air ponies were supposed to fly a group of young Earth ponies across Windwhistle Pass. Wind Whistle's job was to calm the strong winds in the pass with her whistle.
+
+Galehoof suggested they wait until she felt better. But the young Earth ponies had traveled a long way, and they were eager to see Cloudperch.
+
+Wind Whistle thought for a moment. Then she flew to the kitchen and came back with a big pot of honey tea. She drank three cups, rested her voice all morning and did not say a single word to anyone.
+
+By afternoon, her whistle was soft but steady. The trip across the pass was smooth.`,
+      questions: [
+        { type: 'wordMeaning', question: 'In this story, what does "hoarse" mean?',
+          choices: ['Loud and clear', 'Very high and squeaky', 'Rough and scratchy', 'Silent'], correctIndex: 2,
+          hint: 'Look at how her whistle sounded in the first paragraph.' },
+        { type: 'inference', question: 'Why did Wind Whistle not say a word all morning?',
+          choices: ['She was angry at Galehoof', 'She was saving her voice for the trip', 'The Earth ponies were asleep', 'She did not know what to say to the Earth ponies'], correctIndex: 1,
+          hint: 'Think about what she needed her voice for that afternoon.' },
+      ],
+    },
+    {
+      title: 'Galehoof Learns to Land',
+      passage: `Galehoof is the fastest flyer in the Air zone, but his landings are famous for the wrong reason. He comes down so hard that the clouds shake. Young ponies scatter whenever they see him approaching.
+
+One day, Galehoof quietly asked Feather Float for help. Feather was surprised. The great Galehoof, asking her for a lesson?
+
+They practiced on an empty cloud far from the village, where no one could see. Feather showed him how to spread his wings wide and slow down long before reaching the ground. "You are trying to land the way you fly," she said. "Fast. But landing is about letting go of speed."
+
+It took Galehoof three weeks of practice. Then, one morning, he glided down into the center of Cloudperch and touched the ground with barely a sound. The young ponies stared in amazement. Galehoof looked over at Feather and gave her a small nod.`,
+      questions: [
+        { type: 'inference', question: 'Why did they practice on an empty cloud far from the village?',
+          choices: ['The village clouds were too small', 'Galehoof did not want to be seen', 'Feather Float lives there', 'There was more wind there for practice'], correctIndex: 1,
+          hint: 'Think about how famous Galehoof is.' },
+        { type: 'inference', question: 'What did Galehoof\'s nod to Feather mean?',
+          choices: ['He wanted another lesson', 'He was telling her to leave', 'He was challenging her to a race', 'He was thanking her'], correctIndex: 3,
+          hint: 'Think about what she had just helped him do.' },
+      ],
+    },
+    {
+      title: 'The Message That Went Astray',
+      passage: `Gust Dancer sends messages in tiny whirlwinds, and they almost always arrive at the right door. But last week, one went astray.
+
+The message was an invitation to Breezy Lark's party. Gust wrote, "Come to the party at sunset!" Then she spun a little wind around it and sent it to Cloud Skip's house. But a sudden gust from the north caught the whirlwind and blew it far off course.
+
+The message landed on a sleepy owl's nest in Whisperwood, in the Spirit zone. The owl, whose name was Hoot, read it carefully. Then he fluffed his feathers, smoothed them down and flew all the way to Cloudperch.
+
+At sunset, Breezy opened her door to find Cloud Skip and a very proud owl standing side by side. Breezy laughed and invited him in. Hoot stayed until midnight and ate four slices of cake.`,
+      questions: [
+        { type: 'wordMeaning', question: 'In this story, what does "astray" mean?',
+          choices: ['Off the right path', 'Very fast', 'Upside down', 'Exactly on time, as usual'], correctIndex: 0,
+          hint: 'A gust blew it far off course.' },
+        { type: 'inference', question: 'Why did Hoot fly all the way to Cloudperch?',
+          choices: ['He was lost in the storm', 'He wanted to return the note to Gust Dancer', 'He thought the invitation was for him', 'He was looking for a new nest'], correctIndex: 2,
+          hint: 'Think about where the message landed and what it said.' },
+      ],
+    },
+    {
+      title: 'Where Clouds Come From',
+      passage: `The ponies of Cloudperch live on clouds, so young ones often ask where clouds come from. The answer begins with water.
+
+When the sun warms a lake, a river or the sea, some of the water turns into an invisible gas called water vapor. Warm air carries the vapor upward. The higher it rises, the colder the air becomes.
+
+High in the sky, the cold makes the vapor condense. That means it changes back into tiny droplets of liquid water. Each droplet is far too small to see by itself. But when billions of them gather together, they become a cloud.
+
+If the droplets keep bumping into each other, they join and grow heavier. Eventually they are too heavy to float, and they fall as rain. The rain fills the lakes and rivers again, and the whole process starts over.`,
+      questions: [
+        { type: 'mainIdea', question: 'What is this passage mostly about?',
+          choices: ['Why Cloudperch is built on clouds', 'How warm air rises above lakes and rivers', 'Why young ponies ask questions', 'How clouds form and turn into rain'], correctIndex: 3,
+          hint: 'Think about the question at the start and how the passage answers it.' },
+        { type: 'wordMeaning', question: 'In this passage, what does "condense" mean?',
+          choices: ['To change from gas into liquid', 'To float higher and higher in the sky', 'To get warmer', 'To disappear'], correctIndex: 0,
+          hint: 'The passage explains the word in the next sentence.' },
+      ],
+    },
+    {
+      title: 'The Sky Chamber',
+      passage: `At the very top of Galecrest Spire is the Sky Chamber, where Skywarden Zephyra battles trainers for the Air badge. The chamber is round and open to the sky on every side, with no walls at all, only tall white pillars holding up the roof.
+
+Battling there is not like battling anywhere else. The wind blows through the chamber constantly, and it changes direction without warning. Zephyra's Air ponies know how to ride the wind. They use it to speed up their attacks and to dodge at the last moment.
+
+Trainers from other zones often struggle at first. Their ponies are pushed off balance, and their attacks get blown off course. The trainers who win are usually the ones who stop fighting the wind. They pay attention to its pattern and wait for the calm moments between gusts.
+
+Zephyra says the wind is the real test.`,
+      questions: [
+        { type: 'mainIdea', question: 'What is the main idea of this passage?',
+          choices: ['Zephyra\'s ponies are faster than any others in the realm', 'The Sky Chamber has white pillars', 'The wind makes battles in the Sky Chamber hard', 'Trainers from other zones always lose'], correctIndex: 2,
+          hint: 'Think about what most of the passage explains.' },
+        { type: 'inference', question: 'What does Zephyra mean when she says the wind is the real test?',
+          choices: ['She wants trainers to battle the wind instead of her', 'Winning depends on handling the wind', 'The wind is stronger than her ponies', 'She likes the wind more than battling'], correctIndex: 1,
+          hint: 'Think about what the winning trainers learn to do.' },
+      ],
+    },
+    {
+      title: 'Grounded',
+      passage: `Galehoof flies every single day, rain or shine. So when he hurt his wing in a fall, the healer's orders were hard to hear. "No flying for two weeks," she said.
+
+The first few days were miserable. Galehoof sat at his window and watched the other ponies zoom past. He barely ate. He did not want visitors.
+
+On the fourth day, Feather Float knocked on his door with a stack of books. "I thought you might like to read about the great flyers of the past," she said. Galehoof sighed, but he opened the top book.
+
+He did not look up until dinner. That night, he asked Feather if she had any more. By the end of two weeks, he had read every book about flying in the Spire library. When his wing healed, he tried a turn from one of the books. It worked perfectly.`,
+      questions: [
+        { type: 'inference', question: 'How did Galehoof feel during the first few days?',
+          choices: ['Relieved to rest', 'Unhappy and left out', 'Excited to read all day long', 'Proud of himself'], correctIndex: 1,
+          hint: 'Look at how he spent those days.' },
+        { type: 'inference', question: 'What changed for Galehoof after Feather\'s visit?',
+          choices: ['He decided to stop flying forever and stay home', 'His wing healed right away', 'He became a healer', 'He found a new way to enjoy flying'], correctIndex: 3,
+          hint: 'Think about what he did with the books.' },
+      ],
+    },
+    {
+      title: 'The Storm Watcher',
+      passage: `High on the east side of Galecrest Spire, a small round window looks out over the whole sky. Every day, an old Air pony named Nimbus sits there with a spyglass and a notebook. Nimbus is the Spire's storm watcher.
+
+Nimbus studies the clouds all day long. Flat, gray sheets often mean steady rain. Tall, puffy clouds that grow taller in the afternoon can mean thunder. Thin, wispy clouds high in the sky may mean the weather will change within a day or two.
+
+When Nimbus sees a storm coming, she rings a silver bell. Its sound carries through every floor of the Spire. Ponies who are out flying hurry home, and those who are home close their shutters.
+
+Last month, the bell rang on a bright, sunny morning. Several young ponies laughed and kept playing outside. By lunch, they were soaked and shivering.`,
+      questions: [
+        { type: 'inference', question: 'Why did the young ponies get soaked last month?',
+          choices: ['They ignored the warning', 'The bell was broken', 'Nimbus rang the bell too late', 'They were swimming'], correctIndex: 0,
+          hint: 'Think about what they did when they heard the bell.' },
+        { type: 'recall', question: 'What can tall, puffy clouds that grow taller mean?',
+          choices: ['Steady rain', 'A change within two days', 'Thunder', 'Clear skies'], correctIndex: 2,
+          hint: 'Read the second paragraph.' },
+      ],
+    },
+    {
+      title: 'Travelers in the Sky',
+      passage: `Every autumn, huge flocks of birds pass over the Air zone on their long journey south. Every spring, they return north again. This yearly journey is called migration.
+
+Birds migrate to find food and warm weather. In winter, the northern lands become cold and snowy, and food is hard to find. So the birds fly south, where it stays warm. When spring arrives, they fly back north to build nests and raise their chicks.
+
+Some birds fly for weeks without stopping for long. They need places to rest along the way. Galecrest Spire is one of their favorite stops. Air ponies leave out bowls of seeds and water on the Spire's balconies, and thousands of birds land to rest and eat.
+
+The Air ponies love this time of year. The whole Spire fills with feathers and birdsong.`,
+      questions: [
+        { type: 'mainIdea', question: 'What is this passage mostly about?',
+          choices: ['How Air ponies make bird feeders out of seeds and bowls', 'Which birds sing the loudest', 'How to build a nest', 'Why birds migrate and how the Spire helps them'], correctIndex: 3,
+          hint: 'Think about the big idea of all the paragraphs together.' },
+        { type: 'inference', question: 'Why is the Spire a favorite stop for the birds?',
+          choices: ['The ponies give them food, water and rest', 'It is the warmest place in the realm', 'It is where they build nests', 'It is at the end of their trip'], correctIndex: 0,
+          hint: 'Think about what the Air ponies leave on the balconies.' },
+      ],
+    },
+    {
+      title: 'A View from the Top',
+      passage: `Pip was a young Air pony who had a secret. Even though he had wings, he was afraid of heights. While his friends flew between the clouds of Cloudperch, Pip stayed close to the ground and pretended he was busy.
+
+Cloud Skip noticed. One afternoon, she asked Pip to help her test a new cloud bridge. It was only a few hooves above the ground. "Just walk across," she said. Pip did.
+
+The next day, she built a bridge a little higher. Then a little higher the day after that. Each time, Cloud walked beside him, talking about clouds and pointing out birds.
+
+After a month, they stood together on a bridge high above the village. Pip looked down. His legs did not shake. Then he looked out at the endless sky, opened his wings and flew a small, careful circle. Cloud cheered louder than anyone.`,
+      questions: [
+        { type: 'inference', question: 'Why did Cloud build each bridge a little higher?',
+          choices: ['She was running out of low clouds', 'To test how strong her bridges were', 'To help Pip get used to heights slowly', 'Because Pip asked her to'], correctIndex: 2,
+          hint: 'Think about what Pip was afraid of.' },
+        { type: 'inference', question: 'Why did Pip pretend to be busy at the start?',
+          choices: ['He did not like his friends', 'He was hiding his fear', 'He had too many chores', 'He was building a bridge'], correctIndex: 1,
+          hint: 'Read the first paragraph again.' },
+      ],
+    },
+    {
+      title: 'The Kite Festival',
+      passage: `Every summer, Cloudperch holds a kite festival. But kites in the Air zone are not like kites anywhere else. Air ponies build them from silk and feathers, and they fly them from the tops of clouds instead of from the ground.
+
+The trickiest part of the festival is the wind. In Cloudperch, a sudden gust can come from any direction. A strong gust can snap a kite string or send a kite spinning into the clouds.
+
+Gust Dancer, who was named for her love of strong winds, always wins the prize for the highest kite. Her secret is that she does not fight the gusts. When one comes, she lets out more string and allows the kite to rise with it. Then she slowly reels it back in.
+
+This year, her kite flew so high that it disappeared completely. She had to send a whirlwind up to bring it back.`,
+      questions: [
+        { type: 'wordMeaning', question: 'In this passage, what does "gust" mean?',
+          choices: ['A kind of kite string', 'A short, strong rush of wind', 'A thick gray cloud', 'A feather'], correctIndex: 1,
+          hint: 'It can snap a kite string or send a kite spinning.' },
+        { type: 'inference', question: 'Why does Gust Dancer let out more string during a gust?',
+          choices: ['She wants the kite to fall', 'Her string is too short', 'She is tired of holding it', 'To let the wind lift the kite higher'], correctIndex: 3,
+          hint: 'Think about her secret for winning.' },
+      ],
+    },
+    {
+      title: 'Wind Whistle\'s Apprentice',
+      passage: `Wind Whistle has calmed the winds of Windwhistle Pass for many years. Recently, she began to think about who would take over someday. So she chose an apprentice, a young pony named Zuri who had a strong, clear whistle.
+
+At first, Zuri was impatient. She wanted to start calming storms right away. But Wind Whistle had her spend the first month doing nothing but listening. Zuri sat at the pass from dawn to dusk, learning how the wind sounded in every kind of weather.
+
+"This is boring," Zuri grumbled.
+
+"You cannot calm the wind if you do not understand it," Wind Whistle replied.
+
+During the second month, a fierce storm blew through the pass. Wind Whistle was away visiting the Fire zone. Zuri listened to the wind, chose the perfect note and whistled. Slowly, the storm calmed. When Wind Whistle returned and heard the news, she simply smiled.`,
+      questions: [
+        { type: 'inference', question: 'Why was Zuri able to calm the storm by herself?',
+          choices: ['Her month of listening taught her the wind', 'The storm was very small', 'Another pony helped her', 'She read about it in a book'], correctIndex: 0,
+          hint: 'Think about what Wind Whistle made her do first.' },
+        { type: 'wordMeaning', question: 'In this story, what does "apprentice" mean?',
+          choices: ['A strong storm', 'A guardian of a zone', 'A person learning a skill from an expert', 'A whistle'], correctIndex: 2,
+          hint: 'Wind Whistle chose Zuri to learn her job and take over someday.' },
+      ],
+    },
+    {
+      title: 'The Feather Market',
+      passage: `Once a month, Feather Float sets up a stall at the market in Cloudperch. She trades feathers from her huge collection. Ponies use them to decorate hats, stuff pillows and build kites.
+
+One morning, a small foal came up to the stall holding a single coin. She pointed at a long, shimmering parrot feather, the most beautiful one on the table. "Is that enough?" she asked hopefully.
+
+The feather was worth much more than one coin. Feather Float looked at the foal, then at the coin. She asked what the feather was for.
+
+"My grandma is sick," the foal explained. "She used to fly every day. I want to give her something that reminds her of the sky."
+
+Feather Float wrapped the parrot feather in soft cloth. She took the coin, then quietly slipped it back into the foal's bag when she was not looking.`,
+      questions: [
+        { type: 'inference', question: 'What does Feather Float\'s choice show about her?',
+          choices: ['She is careless with money', 'She did not like that feather', 'She wanted the foal to leave', 'She is kind and generous'], correctIndex: 3,
+          hint: 'Think about what she did with the coin.' },
+        { type: 'inference', question: 'Why did the foal want that feather?',
+          choices: ['To remind her grandmother of flying', 'To decorate her own hat', 'To build a kite for herself', 'To start her own collection'], correctIndex: 0,
+          hint: 'Read what the foal explains.' },
+      ],
+    },
+  ],
   6: [],
 }
