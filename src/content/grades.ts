@@ -13,7 +13,6 @@ import { GRADE5_LOGIC } from './grade5/logic'
 import { GRADE3_READING } from './grade3/reading'
 import { GRADE4_READING } from './grade4/reading'
 import { GRADE5_READING } from './grade5/reading'
-import { COMPREHENSION_BANK } from './comprehensionBank'
 
 export const MATH: Record<Grade, ZoneSkills> = { 3: GRADE3_MATH, 4: GRADE4_MATH, 5: GRADE5_MATH }
 export const LOGIC: Record<Grade, ZoneLogic> = { 3: GRADE3_LOGIC, 4: GRADE4_LOGIC, 5: GRADE5_LOGIC }
@@ -50,12 +49,6 @@ export function logicFor(grade: Grade, zone: number, rng: () => number = Math.ra
 export function readingFor(grade: Grade, zone: number, rng: () => number = Math.random): ComprehensionProblem {
   const z = toZone(zone)
   const passages = READING[grade][z]
-  if (passages.length === 0) {
-    // Not written for this grade yet: the pre-grade bank (§23) fills in.
-    const old = COMPREHENSION_BANK.filter((e) => e.zone === z)
-    const e = old[freshIndex(`reading-old:${z}`, old.length, rng)]
-    return { type: 'comprehension', passage: e.passage, question: e.question, choices: e.choices, correctIndex: e.correctIndex, hint: e.hint }
-  }
   const p = passages[freshIndex(`reading:${grade}:${z}`, passages.length, rng)]
   const q = pick(rng, p.questions)
   return { type: 'comprehension', passage: p.passage, question: q.question, choices: q.choices, correctIndex: q.correctIndex, hint: q.hint }

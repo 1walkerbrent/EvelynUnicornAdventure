@@ -1,5 +1,5 @@
-// `npm run check:reading`: every written grade/zone passes the §23 reading
-// rules, and a status table shows what's written so far.
+// `npm run check:reading`: every grade/zone passes the §23 reading rules,
+// and a status table shows each one's lengths and question count.
 import { describe, it, expect, afterAll } from 'vitest'
 import { READING, readingFor } from './grades'
 import { GRADES } from './gradeTypes'
@@ -26,7 +26,6 @@ describe('reading passages by grade', () => {
 
     it(`grade ${grade} passages get longer, never shorter, zone by zone`, () => {
       const avgs = ZONES.map((z) => READING[grade][z])
-        .filter((ps) => ps.length > 0)
         .map((ps) => ps.reduce((n, p) => n + wordCount(p.passage), 0) / ps.length)
       for (let i = 1; i < avgs.length; i++) expect(avgs[i]).toBeGreaterThanOrEqual(avgs[i - 1])
     })
@@ -57,8 +56,8 @@ describe('reading passages by grade', () => {
 
 afterAll(() => {
   const rows = GRADES.flatMap((g) => ZONES.map((z) => zoneStatus(g, z, READING[g][z])))
-  const written = rows.filter((r) => r.passages > 0).length
-  console.log(`\nReading: ${written} of ${rows.length} grade/zones written`)
+  const passages = rows.reduce((n, r) => n + r.passages, 0)
+  console.log(`\nReading: ${passages} passages across ${rows.length} grade/zones`)
   console.table(rows.map((r) => ({
     grade: r.grade, zone: r.zone, passages: r.passages, words: r.words,
     'words/sentence': r.wordsPerSentence, questions: r.questions, problems: r.errors,

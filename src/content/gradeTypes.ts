@@ -55,5 +55,5 @@ export interface ReadingPassage {
   questions: ReadingQuestion[]
 }
 
-/** Each zone's 15 passages. An empty zone is one not written yet. */
+/** Each zone's 15 passages. */
 export type ZoneReading = Record<Zone, ReadingPassage[]>

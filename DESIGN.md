@@ -287,7 +287,7 @@ Problems are **generated from rules, never stored as a fixed list** — a hand-w
 
 - **Math** — bare equations only ("56 + 43 = __ ", "__ − 28 = 45"). No story wrappers. Player types the missing number. All three modes (Practice, Hunt, Quest) use math. *Two distinct difficulty bands*: Quest/Practice use zone-progression bands (harder); Hunt uses simpler per-zone bands so early zones are faster confidence-builders.
 - **Logic** — varied-format multiple-choice puzzles. Each band group has ≥8 templates (not all elimination-style): Z1–Z2 = comparison, pattern continuation, odd-one-out, categorization, if/then (3 choices); Z3–Z4 = two-attribute filter, ordering, chain reasoning, must-be-true (4 choices); Z5–Z6 = three-attribute deduction, impossibility detection, seating constraints (5 choices). Templates mix freely so the same format rarely appears twice in a row.
-- **Comprehension** — read a short passage then answer a multiple-choice question (4 choices, 3 plausible distractors). Static bank of **90 passages** (15 per zone, `src/content/comprehensionBank.ts`) — passages are zone-themed (Zone 1 = Brindlewood ponies, Zone 6 = Starfall Temple lore). Because the bank is finite, anti-repeat cycling ensures each zone's pool cycles before repeating.
+- **Comprehension** — read a passage then answer a multiple-choice question. **Superseded by §23 (Reading by grade):** each grade now has its own 90 passages. The old single bank of 90 short passages (`src/content/comprehensionBank.ts`) is removed. Passages are still zone-themed, and each zone's pool still cycles before repeating.
 - **Spelling** — **audio-first**: the word is spoken, never shown, and she rebuilds it from scrambled letter tiles. Static bank of **150 words** (25 per zone, `src/content/spellingBank.ts`). Three audio buttons — **🔊 Hear the word**, **🐢 Slower**, **💬 In a sentence** — are all re-tappable as many times as she likes, which is the whole point: she sounds it out at her own pace. See the *Spelling generator* subsection.
 
 ### Where each category appears
@@ -583,10 +583,14 @@ Build Zone 1 end-to-end before anything else, with placeholder art (colored shap
   - **Grade.** Save **v12** adds `grade` (older saves → 3). The store has `grade` and `chooseGrade`, which clears the accuracy window when the grade changes. Character creation shows three grade tiles; Party shows "Grade N".
   - **Samples.** `docs/grade-samples.md` has 3 math and 3 logic problems per zone per grade, written by `scripts/grade-samples.test.ts` (skipped unless `WRITE_SAMPLES=1`).
   - Tests: `content/grades.test.ts` checks every skill in every grade and zone (150 samples each; every answer that's plain arithmetic is re-derived from the prompt), grade ranges, the Hunt rule, answer checking, one-answer checks for ordering, grid and elimination read back from the printed clues, two-rule patterns, backward chains, logic growing with grade, the v12 migration and grade changes. 431 tests passing, lint and build clean.
-- **M5f — Scratch paper ✅ DONE (current milestone):** the §24 design, built. A ✏️ Scratch Paper button on every math problem opens a drawing panel; nothing is saved.
+- **M5f — Scratch paper ✅ DONE:** the §24 design, built. A ✏️ Scratch Paper button on every math problem opens a drawing panel; nothing is saved.
   - `src/scratch/`: `scratchModel.ts` (the page as a list of strokes and clears, undo, palm rejection; pure), `ScratchCanvas.tsx` (pointer-event drawing), `ScratchPaper.tsx` (the panel and tools), `scratchLayout.ts` (which way the panel opens, the tools she picked; in memory only). `ProblemCard` owns the page for its problem; App makes room for the panel.
   - Onboarding: a one-step `scratch` tour on the first math problem, and the pencil tip on Quest, Practice and Hunt (§22). Pre-v11 saves start with `intro` and `battle` done, not `scratch`. No save version change.
   - Tests: `scratch/scratch.test.tsx` covers undo depth, clear and its undo, palm rejection, layout by orientation, and the panel in a problem card (math only, kept on reopen, blank on a new problem, clear asks first, no storage writes).
+- **M5g — Reading by grade ✅ DONE (current milestone):** §23's *Reading by grade*, built. 270 new passages: 15 per zone for each of grades 3, 4 and 5. No change to math, logic, spelling or game systems.
+  - **Content.** `src/content/grade3|4|5/reading.ts`, typed by `ReadingPassage` and `ReadingQuestion` in `gradeTypes.ts`. `grades.ts` gains `READING` and `readingFor`, and Explore's reading focus and mix go through it. Removed: `content/comprehensionBank.ts`, `engine/comprehensionGenerator.ts` and `engine/comprehension.test.ts`.
+  - **Display.** `ProblemCard` shows passage paragraphs at `text-base` instead of one `text-sm` block.
+  - Tests: `content/reading.test.ts` (`npm run check:reading`) runs `checkZone` from `content/readingRules.ts` on all 18 grade/zones, checks that lengths rise by zone, that no passage repeats across grades, that a zone's 15 passages all show before a repeat, and that a served question belongs to its passage. 458 tests passing, lint and build clean.
 ---
 
 ## 15. Phase 2 (deferred — not in initial build)
@@ -767,7 +771,7 @@ Proving Glade and the Champion go straight into battle, so in practice their tip
 
 ## 23. Grade Levels
 
-Players are Evelyn (3rd grade) and her 4th-grade friends. Each journey's math and logic match the player's grade. Reading and spelling are the same for every grade (reading gets its own grade pass later). Grade affects problems only: XP, Stardust, trophies, combat and balance are identical.
+Players are Evelyn (3rd grade) and her 4th-grade friends. Each journey's math, logic and reading match the player's grade. Spelling is the same for every grade. Grade affects problems only: XP, Stardust, trophies, combat and balance are identical.
 
 ### Choosing a grade
 
@@ -784,6 +788,7 @@ Players are Evelyn (3rd grade) and her 4th-grade friends. Each journey's math an
 - **Times Tables** (Explore focus): only the zone's × and ÷ skills. Every zone of every grade has at least one.
 - **Hunt** keeps its "simpler" role (§9): its math comes from the same grade **one zone lower** (Zone 1 uses its own).
 - **Logic:** one of the zone's formats, with an anti-repeat tracker per grade and zone.
+- **Reading** (`readingFor`): one of the zone's 15 passages, none repeating until all 15 have shown, and one of that passage's questions at random. The zone comes from the §9 difficulty band, as before.
 - **Quests:** Area 1 is math at the zone's own skills; Area 2's logic comes from the grade. Spelling is unchanged.
 
 ### Audit of the pre-grade content
@@ -875,6 +880,36 @@ The same formats in every grade, scaled by settings in `src/content/gradeN/logic
 | Biggest number | Z1–Z2 (3-digit) | none | none |
 
 The full sample set, 3 math and 3 logic per zone per grade, is `docs/grade-samples.md`.
+
+### Reading by grade
+
+Each grade has 15 passages per zone, 90 per grade, in `src/content/gradeN/reading.ts`. They are original pony-themed stories and simple nonfiction about the game world, such as guides to a zone, how an element works or a pony's job. Grade 3 is mostly stories, with about 1 passage in 8 nonfiction. Nonfiction is about 40% of grade 4 and a little under half of grade 5, where it adds letters, a recipe, instructions and a persuasive piece for the author's-purpose questions.
+
+- **Passages** have paragraphs, separated by a blank line, and the problem card shows them at normal text size.
+- **Questions:** each passage has 1–2 questions, with 3–4 choices each and exactly one right answer. Wrong answers are believable but clearly ruled out by the text. Each time a passage shows, one of its questions is picked, so the problem card, XP and the Bookworm trophy work as before.
+- **Ramp:** the main question type in every grade moves from recall (Zones 1–2) to telling apart two similar facts (Zones 3–4) to inference (Zones 5–6). Grades 4 and 5 add their own types on top. Passage length also climbs zone by zone, from the bottom of the grade's range to the top.
+
+| | Grade 3 | Grade 4 | Grade 5 |
+|---|---|---|---|
+| Words per passage | 80–120 | 120–180 | 180–250 |
+| Average words per sentence | ≤ 11 | ≤ 14 | ≤ 18 |
+| Zones 1–2 | recall | recall, word meaning | recall, two similar facts, word meaning |
+| Zones 3–4 | two similar facts | two similar facts, main idea, word meaning | comparing two details, author's purpose, main idea |
+| Zones 5–6 | inference | inference, main idea, word meaning | inference, theme, author's purpose, comparing |
+
+**Validation.** `npm run check:reading` (`content/reading.test.ts`, rules in `content/readingRules.ts`) prints a table per grade and zone and fails if any of these is broken:
+- Every grade and zone has exactly 15 passages.
+- Word counts and sentence length are in the grade's range.
+- Each passage has 1–2 questions, each with 3–4 distinct choices and a right answer that is one of them.
+- Question types are allowed for the zone, and the ramp's types appear often enough. For example, at least 8 of 15 grade 3 Zone 5 passages ask inference.
+- A word-meaning question quotes a word that is in the passage.
+- The right answer is the longest choice in at most a third of a zone's questions, and no answer spot (A–D) holds more than 40% of them.
+- Zone averages never get shorter as zones go up.
+- No passage is used twice.
+
+The validator can't tell whether a wrong answer is also right by meaning, so every question was read by hand.
+
+**Audit of the pre-grade bank.** The old 90 passages (`content/comprehensionBank.ts`, now removed) were 18–71 words, about grade 1–2 for Zones 1–4 and early grade 3 for Zones 5–6. None reached grade 3's 80 words, and in Zones 5–6 the right answer was usually the longest choice. None were kept word for word. Their ponies, places and story ideas carry over into the new grade 3 set.
 
 ---
 

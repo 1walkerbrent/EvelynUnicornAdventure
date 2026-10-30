@@ -67,9 +67,8 @@ export const paragraphs = (text: string) => text.split(/\n\s*\n/).map((p) => p.r
 
 const norm = (s: string) => s.trim().toLowerCase()
 
-/** Everything wrong with one grade/zone's passages; empty means it passes. An empty zone isn't written yet and passes. */
+/** Everything wrong with one grade/zone's passages; empty means it passes. */
 export function checkZone(grade: Grade, zone: Zone, passages: ReadingPassage[]): string[] {
-  if (passages.length === 0) return []
   const rule = READING_RULES[grade]
   const zr = rule.zones[zone]
   const at = (p: ReadingPassage) => `G${grade} Z${zone} "${p.title}"`
