@@ -526,7 +526,271 @@ Warden Bramblewood is said to have the most sensitive hooves of all. He can feel
       ],
     },
   ],
-  3: [],
+  // ── Zone 3 (Water): Saltspray Cove, Mistreef, Coral Sanctum ───────────────
+  3: [
+    {
+      title: 'Swimmers and Mist-Makers',
+      passage: `Not every Water pony has the same talents. In Saltspray Cove, most Water ponies are either swimmers or mist-makers.
+
+Swimmers, like Tidalhoof and Pearl Ripple, are built for the sea. They have strong legs and long, flat tails that push them through the waves. Some can hold their breath for several minutes and dive to the bottom of Mistreef.
+
+Mist-makers, like Misty Wave, have a different gift. They can pull water out of the air and shape it into fog, mist or even a light rain. They rarely swim far, but they can hide the whole cove in a cloud when danger comes near.
+
+Both kinds of Water ponies are important. Swimmers gather food and explore the reef. Mist-makers protect the cove and water the gardens on dry days.`,
+      questions: [
+        { type: 'twoFact', question: 'Which kind of Water pony waters the gardens on dry days?',
+          choices: ['Mist-makers', 'Swimmers like Tidalhoof', 'Both kinds equally', 'Neither kind'], correctIndex: 0,
+          hint: 'Each kind has its own jobs. Read the last paragraph.' },
+        { type: 'mainIdea', question: 'What is this passage mostly about?',
+          choices: ['How to hold your breath for a very long time underwater', 'Why Misty Wave makes fog', 'The bottom of Mistreef', 'Two kinds of Water ponies and their talents'], correctIndex: 3,
+          hint: 'Think about what every paragraph talks about.' },
+      ],
+    },
+    {
+      title: 'Pearls Near and Far',
+      passage: `Pearl Ripple is the best pearl diver in Saltspray Cove. She has learned that where a pearl is found tells you a lot about it.
+
+Pearls from the shallow water near the shore are easy to reach. Young divers can find them in an afternoon. These pearls are small and white, and there are plenty of them. Pearl collects them to make necklaces for her friends.
+
+Pearls from the deep water of Mistreef are much harder to get. Only strong divers can reach them, and it may take a week to find even one. Deep-water pearls are larger and shimmer with pink, silver or gold.
+
+Pearl never takes more pearls than she needs. "If we take them all now," she says, "there will be none left for the divers who come after us."`,
+      questions: [
+        { type: 'twoFact', question: 'Which pearls are larger and shimmer with color?',
+          choices: ['Pearls from the shallow water', 'Pearls from the deep water', 'Pearls made into necklaces', 'Pearls that young divers find'], correctIndex: 1,
+          hint: 'Compare the paragraph about shallow water to the one about deep water.' },
+        { type: 'twoFact', question: 'What are shallow-water pearls like?',
+          choices: ['Small, white and plentiful', 'Large and pink', 'Very rare and hard to reach', 'Silver and gold'], correctIndex: 0,
+          hint: 'Read the second paragraph.' },
+      ],
+    },
+    {
+      title: 'Tidalhoof\'s Training',
+      passage: `Tidalhoof is one of the strongest swimmers in the Water zone, and he trains every single day to stay that way. His training has two parts.
+
+In the morning, he works on speed. He swims laps between the dock and the big gray rock, back and forth twenty times. He tries to finish faster than he did the day before. On a good morning, he can swim all twenty laps before breakfast.
+
+In the evening, he works on breath. He floats quietly in a calm tide pool and practices holding his breath underwater. He started with thirty seconds. Now he can stay under for four whole minutes.
+
+Tidalhoof says the morning practice makes him fast, but the evening practice makes him brave. "When you can stay calm underwater," he says, "the deep sea is not scary anymore."`,
+      questions: [
+        { type: 'twoFact', question: 'What does Tidalhoof practice in the evening?',
+          choices: ['Swimming laps to the gray rock', 'Holding his breath underwater', 'Diving for pearls', 'Racing Misty Wave on the sand'], correctIndex: 1,
+          hint: 'His training has a morning part and an evening part.' },
+        { type: 'recall', question: 'How long can Tidalhoof stay underwater now?',
+          choices: ['Thirty seconds', 'Two minutes', 'Ten minutes', 'Four minutes'], correctIndex: 3,
+          hint: 'Thirty seconds is how long he could stay at the start.' },
+      ],
+    },
+    {
+      title: 'The Living Reef',
+      passage: `From above the water, the coral of Mistreef looks like a garden of colorful rocks. But coral is not a rock, and it is not a plant. Coral is made of thousands of tiny animals.
+
+Each little coral animal is smaller than a grain of rice. It builds a hard cup around its soft body to protect itself. When millions of these animals live side by side, their cups join together. Over many years, they form the huge branching shapes that make up the reef.
+
+A healthy reef is home to many creatures. Fish hide in its branches, crabs live in its cracks and sea turtles visit to eat. The Water ponies take good care of Mistreef. They never stand on the coral, and they clean up any trash that drifts in from the waves.`,
+      questions: [
+        { type: 'mainIdea', question: 'What is this passage mostly about?',
+          choices: ['How fish and crabs hide from danger in the reef', 'Why Water ponies swim so well', 'How to clean up a beach', 'What coral is and why the reef matters'], correctIndex: 3,
+          hint: 'Think about the big idea of all three paragraphs together.' },
+        { type: 'recall', question: 'What does each coral animal build around its body?',
+          choices: ['A hard cup', 'A soft nest of sand', 'A shell like a snail\'s', 'A web of seaweed'], correctIndex: 0,
+          hint: 'Read the second paragraph.' },
+      ],
+    },
+    {
+      title: 'Facing Nerida',
+      passage: `Tidecaller Nerida is the guardian of the Water zone. Trainers who want the Water badge must defeat her in the Trial, which is held in the Hall of Echoes inside the Coral Sanctum.
+
+Nerida's ponies are known for two things. First, they are very fast. They can strike before the other side has even moved. Second, they are slippery. Attacks often slide right off them, as if they were covered in sea foam.
+
+Experienced trainers have learned how to prepare. Against speed, they bring ponies with sturdy defenses who can take a hit and keep going. Against slipperiness, they bring Earth ponies, because water soaks into soil instead of sliding away.
+
+Nerida respects trainers who think ahead. After a good battle, she often gives them a small shell from her crown.`,
+      questions: [
+        { type: 'twoFact', question: 'Which kind of pony do trainers bring against slipperiness?',
+          choices: ['Ponies with sturdy defenses', 'Fast Fire ponies', 'Earth ponies', 'Air ponies that fly'], correctIndex: 2,
+          hint: 'Trainers prepare one way for speed and another way for slipperiness.' },
+        { type: 'recall', question: 'Where is the Water Trial held?',
+          choices: ['On the beach of Saltspray Cove', 'In the Hall of Echoes', 'In the Hall of Pearls', 'At the bottom of Mistreef'], correctIndex: 1,
+          hint: 'Look in the first paragraph.' },
+      ],
+    },
+    {
+      title: 'Bubble School',
+      passage: `Every summer, Bubble Brook teaches the young ponies of Saltspray Cove how to blow bubbles. She always starts with two recipes.
+
+For pink bubbles, you mix seawater with crushed rose petals. Pink bubbles are big and beautiful, but they pop within a few seconds. They are good for practicing, because you can blow lots of them quickly.
+
+For blue bubbles, you mix seawater with a pinch of crushed blue shell and a drop of honey. The honey makes the bubble skin thicker. Blue bubbles are smaller, but they can float for an hour or more.
+
+On the last day of Bubble School, everyone blows a blue bubble at the same time. Hundreds of them drift over the cove together, like a sky full of tiny moons. The parents always come to watch.`,
+      questions: [
+        { type: 'twoFact', question: 'What makes blue bubbles last longer?',
+          choices: ['The crushed rose petals', 'Blowing them very quickly', 'The honey in the mix', 'The cold seawater'], correctIndex: 2,
+          hint: 'Read the paragraph about blue bubbles.' },
+        { type: 'twoFact', question: 'Why are pink bubbles good for practicing?',
+          choices: ['They float over the cove for an hour or more', 'They are small and strong', 'You can blow lots of them quickly', 'They never pop'], correctIndex: 2,
+          hint: 'Read the paragraph about pink bubbles.' },
+      ],
+    },
+    {
+      title: 'Summer and Winter in the Cove',
+      passage: `Saltspray Cove feels like two different places depending on the season.
+
+In summer, the water is warm and calm. Gentle waves roll onto the beach, and the sand is soft and hot. Young ponies spend all day swimming, building sandcastles and searching tide pools. At night, families eat dinner on the beach and watch the sunset.
+
+In winter, the cove changes completely. Cold winds blow in from the open sea and whip the waves into tall, white peaks. Storms can last for days. Water ponies still swim, but only in the sheltered bay behind the big rocks.
+
+Winter is also the best time to find treasure. The big waves wash up shells, sea glass and driftwood that stayed hidden all summer. Splash Pebble says her best finds always come the morning after a storm.`,
+      questions: [
+        { type: 'twoFact', question: 'Where do Water ponies swim in winter?',
+          choices: ['Out in the open sea', 'In the warm tide pools', 'In the sheltered bay behind the rocks', 'Out in the open sea where the big waves are'], correctIndex: 2,
+          hint: 'Read the paragraph about winter.' },
+        { type: 'mainIdea', question: 'What is the main idea of this passage?',
+          choices: ['Winter storms are dangerous for young ponies on the beach', 'Splash Pebble finds treasure', 'The cove is very different in summer and winter', 'Young ponies love sandcastles'], correctIndex: 2,
+          hint: 'Look at the first sentence. The rest of the passage explains it.' },
+      ],
+    },
+    {
+      title: 'Splash and the Hermit Crab',
+      passage: `While exploring a tide pool, Splash Pebble noticed a small snail shell moving across the sand. Snails move slowly, but this shell was scurrying quickly. Splash leaned closer and saw two tiny claws poking out.
+
+It was a hermit crab. Hermit crabs do not grow their own shells. Instead, they live inside empty shells left behind by other sea creatures. As a hermit crab grows bigger, its shell gets too tight, and it has to find a larger one.
+
+This crab's shell was clearly too small. Its legs were squeezed, and it kept stopping to rest. Splash had an idea. She ran home and came back with three empty shells from her collection, each a little bigger than the last.
+
+The crab tried the middle one, wiggled inside and scurried happily away.`,
+      questions: [
+        { type: 'twoFact', question: 'Which of Splash\'s shells did the crab choose?',
+          choices: ['The smallest one', 'The middle one', 'The biggest one', 'None of them'], correctIndex: 1,
+          hint: 'She brought three shells of different sizes. Read the last sentence.' },
+        { type: 'recall', question: 'Why do hermit crabs need new shells?',
+          choices: ['They grow too big for them', 'Their old shells break', 'They want prettier ones', 'Other crabs steal their shells at night'], correctIndex: 0,
+          hint: 'Read the second paragraph.' },
+      ],
+    },
+    {
+      title: 'The Fog Signals',
+      passage: `When Misty Wave covers Saltspray Cove in thick fog, it can be hard to tell what is happening. So the Water ponies use a large spiral shell as a horn. When someone blows into it, it makes a deep sound that travels through the fog.
+
+The ponies of the cove agreed on two signals. One long blow means "Stay where you are. The fog will lift soon." Three short blows mean "Come to the beach right away." The three-blow signal is only used for emergencies, such as when a young pony is missing.
+
+Last spring, a foal wandered off during a fog. Misty blew three short blasts on the horn. Within minutes, ponies arrived from every direction to help search. They found the foal napping safely behind a sand dune.`,
+      questions: [
+        { type: 'twoFact', question: 'What does one long blow on the horn mean?',
+          choices: ['Come to the beach right away', 'A young pony is missing', 'Stay where you are', 'The fog is getting thicker'], correctIndex: 2,
+          hint: 'There are two signals. One is a long blow and one is three short blows.' },
+        { type: 'recall', question: 'Where was the missing foal found?',
+          choices: ['On the dock', 'Behind a sand dune', 'In a tide pool', 'At the Coral Sanctum'], correctIndex: 1,
+          hint: 'Read the last sentence.' },
+      ],
+    },
+    {
+      title: 'The Cooking Contest',
+      passage: `At the Saltspray Summer Festival, there is always a cooking contest. This year, Coral Shimmer entered two dishes: her crispy kelp cakes and her famous seaweed soup.
+
+Five judges tasted everything. Three of them voted for the kelp cakes. They said the cakes were the crunchiest they had ever eaten. Two judges voted for the soup, saying it was rich and full of flavor.
+
+So the kelp cakes won first prize, a golden ladle. The soup came in second and won a silver spoon.
+
+Coral was pleased, but she laughed when she held up her prizes. "I still think the soup is better," she told the crowd. Then she served a bowl of soup to every pony at the festival, and many of them agreed with her.`,
+      questions: [
+        { type: 'twoFact', question: 'How many judges voted for the soup?',
+          choices: ['One', 'Two', 'Three', 'Five'], correctIndex: 1,
+          hint: 'Some judges voted for the cakes and some for the soup.' },
+        { type: 'twoFact', question: 'What prize did the soup win?',
+          choices: ['A golden ladle', 'A blue ribbon', 'A silver spoon', 'A basket of shells'], correctIndex: 2,
+          hint: 'First place and second place won different prizes.' },
+      ],
+    },
+    {
+      title: 'Why Tides Happen',
+      passage: `Twice each day, the sea rises up the beach of Saltspray Cove, and twice each day it slides back out. These changes are called tides. But what makes them happen?
+
+The answer is the moon. Even though the moon is very far away, it pulls on everything on our world, including the water in the sea. Its pull is strongest on the side of the world that faces it. The water on that side bulges toward the moon a little bit. When the bulge reaches the cove, the tide is high.
+
+As the world turns, the cove moves away from the bulge, and the tide goes out. This happens over and over, every day.
+
+Water ponies can feel the pull of the tides. Many of them wake up at high tide without needing anyone to call them.`,
+      questions: [
+        { type: 'mainIdea', question: 'What is this passage mostly about?',
+          choices: ['How the moon causes the tides', 'Why Water ponies wake up early', 'How to find tide pools', 'How far away the moon is'], correctIndex: 0,
+          hint: 'The first paragraph asks a question. The passage answers it.' },
+        { type: 'wordMeaning', question: 'In this passage, what does "bulges" mean?',
+          choices: ['Freezes solid', 'Sinks down', 'Becomes much saltier', 'Swells outward'], correctIndex: 3,
+          hint: 'The water rises toward the moon a little bit.' },
+      ],
+    },
+    {
+      title: 'Turtle Night',
+      passage: `Once a year, on a warm night in early summer, something special happens on the beach of Saltspray Cove. Sea turtles crawl out of the waves to lay their eggs in the sand.
+
+A mother turtle digs a deep hole with her back flippers. She lays about one hundred eggs, covers them with sand and slowly returns to the sea. About two months later, the baby turtles hatch. They dig their way out and scramble toward the water.
+
+The Water ponies of the cove protect the nests. They mark each one with a ring of shells so nobody steps on it. When the babies hatch, the ponies stand guard to keep seagulls away. They also cover their lanterns, because bright lights can confuse the babies and lead them away from the sea.`,
+      questions: [
+        { type: 'mainIdea', question: 'What is the main idea of this passage?',
+          choices: ['Seagulls are dangerous to baby turtles on the beach at night', 'Why lanterns are bright', 'How turtles swim in the deep sea', 'How sea turtles nest and how ponies protect them'], correctIndex: 3,
+          hint: 'Think about what the whole passage explains, not just one detail.' },
+        { type: 'recall', question: 'Why do the ponies cover their lanterns?',
+          choices: ['To save oil', 'So they can see the stars', 'So they will not wake the seagulls', 'Bright lights confuse the babies'], correctIndex: 3,
+          hint: 'Read the last sentence.' },
+      ],
+    },
+    {
+      title: 'Two Roommates',
+      passage: `Bubble Brook and Misty Wave share a little house on the dock. They are best friends, but they are very different roommates.
+
+Bubble is extremely tidy. She folds her blanket every morning and keeps her seaweed rings lined up on a shelf from smallest to largest. She sweeps the sand out the door twice a day.
+
+Misty is not tidy at all. Her side of the room is covered in shells, scarves and half-finished drawings. Her fog sometimes leaves little puddles on the floor.
+
+For a while, this caused arguments. Then they made a deal. Misty promised to dry up her puddles every night. In return, Bubble agreed not to touch anything on Misty's side of the room. Now they get along perfectly.`,
+      questions: [
+        { type: 'twoFact', question: 'Who sweeps the sand out the door twice a day?',
+          choices: ['Misty Wave', 'Bubble Brook', 'They take turns', 'Nobody does'], correctIndex: 1,
+          hint: 'One roommate is tidy and the other is not.' },
+        { type: 'twoFact', question: 'What did Misty promise in the deal?',
+          choices: ['To dry up her puddles every night', 'To keep her side tidy', 'To stop making fog', 'To fold her blanket every single morning'], correctIndex: 0,
+          hint: 'Each friend promised something different.' },
+      ],
+    },
+    {
+      title: 'The Glowing Waves',
+      passage: `On some summer nights, the waves at Saltspray Cove begin to glow. Each time a wave breaks on the sand, it flashes bright blue, as if someone had switched on a light.
+
+This glow comes from creatures so tiny that you cannot see them one at a time. Millions of them float near the surface of the water. When the water is stirred up, each tiny creature gives off a small spark of blue light. Together, their sparks make the whole wave shimmer.
+
+The Water ponies love these nights. They wade into the shallow water and kick their hooves to make the sea sparkle. Bubble Brook blows bubbles over the glowing waves, and the bubbles reflect the blue light like little lanterns. Nobody goes to bed early on a glowing night.`,
+      questions: [
+        { type: 'mainIdea', question: 'What is this passage mostly about?',
+          choices: ['Why the waves sometimes glow blue', 'How Bubble Brook blows bubbles over the cove', 'Why nobody goes to bed early', 'How to wade in shallow water'], correctIndex: 0,
+          hint: 'Think about what the passage explains from beginning to end.' },
+        { type: 'wordMeaning', question: 'In this passage, what does "shimmer" mean?',
+          choices: ['Shine with a flickering light', 'Go completely dark', 'Grow very cold', 'Make a loud crashing noise on the sand'], correctIndex: 0,
+          hint: 'Millions of tiny sparks light up the wave together.' },
+      ],
+    },
+    {
+      title: 'Splash\'s Reef Map',
+      passage: `Splash Pebble is making a map of Mistreef for young swimmers. So far, she has marked two favorite places to visit.
+
+The first is the Coral Garden. It is close to the surface, so even beginners can reach it. The water there is bright and clear, and colorful fish dart all around. Splash marked it with a green star on her map, which means it is safe for everyone.
+
+The second is the Sunken Rowboat. It lies much deeper, at the edge of the reef where the water turns dark blue. An old wooden boat rests on the sand there, covered in seaweed and full of curious crabs. Splash marked it with a red star, which means only strong swimmers should go there, and never alone.
+
+She plans to add five more places by the end of summer.`,
+      questions: [
+        { type: 'twoFact', question: 'What does a red star on Splash\'s map mean?',
+          choices: ['Safe for everyone', 'A place with colorful fish', 'A place she has not visited', 'Only for strong swimmers'], correctIndex: 3,
+          hint: 'Splash uses green stars and red stars. Find what each one means.' },
+        { type: 'twoFact', question: 'Which place is close to the surface?',
+          choices: ['The Sunken Rowboat', 'The Coral Garden', 'The edge of the reef', 'Both places'], correctIndex: 1,
+          hint: 'Compare the two places on her map.' },
+      ],
+    },
+  ],
   4: [],
   5: [],
   6: [],
